@@ -6,7 +6,7 @@
 apk update
 
 if id "www" >/dev/null 2>&1; then
-  echo "certbox-nginx already installed"
+  echo "www user already instanced"
 else
   sudo adduser -D -g 'nginx www user' -h /home/www/ www
 fi
