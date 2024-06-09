@@ -1,0 +1,19 @@
+
+pre {
+  background-color: #111;
+  color: #bbb;
+}
+
+body {
+  background-color: #111;
+}
+
+a:visited {
+  color: #eee;
+  text-decoration: none;
+}
+
+a:link {
+  color: #eee;
+  text-decoration: none;
+}

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>2024-06-08 :: disast.rs</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+
+    <body class="yot" >
+    <pre>
+
+    [<a href="/">root</a>] :: [<a href="/dates.html">dates</a>] :: [<a href="/who.html">who</a>]
+
+    Hello!
+
+    This site is just me playing in the space, having fun, seeing what sticks.
+    Something more interesting may occur here, that is my goal.
+
+
+    Presently I would like to use DISASTRS as a:
+    - personal writing platform (a blog?)
+    - sandbox for making art over the internet
+
+    I like the domain because:
+    - I find the idea of evil omens & ill portents (bad stars) oddly moving
+    - <a href="http://music.disasterpeace.com/">this artist</a>, whose music changed me
+
+    ::::
+
+    Here are some things I've learned as a result of this project:
+
+    ### Rsync across destination users ###
+    Since this is just a bunch of static files in a directory named `site/`
+    I figured I could get a dead sinple deployment workflow by rsyncing over
+    the files, like so:
+
+      rsync -avP --rsync-path 'sudo -u www rsync' site/ $SSH_HOST:/home/www
+
+    This changes to the `www` user on my remote host before copying to `/home/www`.
+    I thought this was rather clever, and now I don't need to worry about knowing
+    the (possibly-different) name of my server admin user -- just the `www` user
+
+    ### inotify for iterative site development ###
+
+    So, now I'd like to deploy my new static html every time it changes as I
+    edit it. How to? `Inotify`!
+
+    I wrapped up the rsync command above in a script named "static-site", so:
+    
+      inotifywait -q -m -r -e modify,create site/ | while read DIRECTORY EVENT FILE; do 
+        sh static-site.sh;
+      done
+
+    Now I'd like to figure out refreshing my open browser on edit...
+    but it's not a priority for tonight.
+
+    - somni 20240608
+    </pre>
+  </body>
+</html>
+
