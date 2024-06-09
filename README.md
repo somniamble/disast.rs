@@ -29,5 +29,3 @@ This was tested against Alpine linux 3.15, since that's what capsul offers
 # TODO
 - [ ] Automated cert renewel
 - [ ] Put the certbot config for disast.rs in another file, and include that from nginx.conf?
-
-# inotifywait -q -m -r -e modify,create site | while read DIRECTORY EVENT FILE; do sh static-site.sh; done
