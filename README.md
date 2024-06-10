@@ -5,6 +5,8 @@ _exactly_ the setup I want to hack on. basically.
 
 I was going to use Docker for this but decided to just do it live
 
+## Hot Reloading
+
 ## Some dependencies
 
 ### SSH
