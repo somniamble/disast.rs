@@ -25,11 +25,21 @@ footer {
   height: 2.5rem;            /* Footer height */
 }
 
+.semi-visible {
+  color: #222;
+}
+
+.invisible {
+  color: #111;
+}
+
 #webring {
   height: 1em;
   color: #bbb;
   filter: invert(72%) sepia(0%) saturate(13%) hue-rotate(224deg) brightness(104%) contrast(96%);
 }
 
-
+.footnote {
+  color: #aaa !important;
+}
 
