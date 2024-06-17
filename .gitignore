@@ -1,0 +1,8 @@
+html/out
+html/temp
+html/out/
+html/out/*
+html/temp/
+html/temp/*
+html/src/all.html
+scratch/

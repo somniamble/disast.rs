@@ -1,0 +1,168 @@
+#!/bin/sh -e
+
+start_time=$(date +%s)
+
+# configuration
+directory='./src'
+HEAD_INJECT_START="<!-- head inject start -->"
+HEAD_INJECT_END="<!-- head inject end -->"
+HEAD_TITLE="disast.rs"
+REFERENCES_BLACKLIST="index.html"
+ORPHANED_BLACKLIST="index.html meta.html"
+# Code starts here
+
+ORPHANED_PAGES=""
+
+generate() {
+	eval "$(
+		echo 'cat << ZZ'
+		cat "$@" || true
+		echo
+		printf ZZ
+	)"
+}
+
+printf "\n%s\n\n" "Building site..."
+
+rm -fR ./temp
+mkdir ./temp
+echo "$REFERENCES_BLACKLIST" >"./temp/blacklist"
+echo "$ORPHANED_BLACKLIST" >"./temp/orphaned_blacklist"
+rm -fR out
+mkdir out
+cp -fR static/* out
+cp -fR images out
+
+# Generate pages/all.html
+ALL_BODY=""
+for file in "$directory"/*.html; do
+	filename="${file#"$directory"/}"
+	title=$(head -n 1 "$file" | awk '{gsub(/<[^>]*>/,""); print}')
+	if [ "${title}" != "" ]; then
+    # don't capitalize
+		# line="<li style='text-transform: capitalize'><a href=\"${filename}\">${title}</a></li>"
+		line="<li><a href=\"${filename}\">${title}</a></li>"
+		ALL_BODY="$ALL_BODY ${line}"
+	fi
+done
+
+ALL_BODY=$(echo "$ALL_BODY" | sort -t '>' -k 3)
+printf '%s\n' '<h1>All pages</h1>' >"$directory"/all.html
+printf '%s\n' "<ul>$ALL_BODY</ul>"  >>"$directory"/all.html
+
+cp -fR "$directory"/* ./temp/
+
+# Start building pages
+for currentFile in ./temp/*.html; do
+	HEAD_TITLE="disast.rs"
+	TITLE=""
+	HEAD_INJECT=""
+	BODY=""
+	REFERENCES=""
+	REFERENCE_TITLES=""
+	HTML_REFERENCES=""
+	ORIGINAL_IFS=$IFS
+
+	# Generate pages
+	if [ -e "${currentFile}" ]; then
+		# Title, header inject and body
+		FILENAME="${currentFile#"./temp"/}"
+		IFS=''
+
+		printf "\n" >> "$currentFile"
+		printf "\n" >> "$currentFile"
+
+		while read -r line; do
+			if echo "$line" | grep -q "<h1>"; then
+				TITLE=$(echo "$line" | awk '{gsub(/<[^>]*>/,""); print}')
+				HEAD_TITLE="${HEAD_TITLE} :: ${TITLE}"
+			elif [ "${line}" = "${HEAD_INJECT_START}" ]; then
+				HEAD_INJECT=""
+				while IFS= read -r line && [ "${line}" != "${HEAD_INJECT_END}" ]; do
+					HEAD_INJECT="$HEAD_INJECT${line}"
+				done
+			else
+        BODY="$(printf '%s\n%s' $BODY $line)"
+			fi
+		done <"${currentFile}"
+
+		IFS=$ORIGINAL_IFS
+
+		# References
+		# Finding References
+		for file in "$directory"/*.html; do
+			if [ "$currentFile" != "$file" ]; then
+				name="${file#"$directory"/}"
+				pattern=\=\"\/${FILENAME}\"
+				# Check if the current file is mentioned in the other file
+				if grep -qF "${pattern}" "${file}"; then
+					REFERENCES="$REFERENCES ${name}"
+				fi
+			fi
+		done
+
+		# Handle Orphaned page
+		if [ "$REFERENCES" = "" ] || [ "$REFERENCES" = " Website_Changelog.html" ]; then
+			if grep -q "$FILENAME" ./temp/orphaned_blacklist; then
+				:
+			else
+				ORPHANED_PAGES="$ORPHANED_PAGES\n- ${FILENAME}"
+			fi
+		fi
+
+		# Cleanup References
+		IFS=' '
+		CLEAN_REFERENCES=""
+		for i in $REFERENCES; do
+			if grep -v -q "$i" ./temp/blacklist; then
+				CLEAN_REFERENCES="$CLEAN_REFERENCES $i"
+			fi
+		done
+
+		# Generate HTML Element for References
+		if [ ${#CLEAN_REFERENCES} -gt 0 ]; then
+			# Set Reference Titles
+			for i in $CLEAN_REFERENCES; do
+				first_line=$(head -n 1 "${directory}/${i}")
+				title=$(echo "$first_line" | awk '{ gsub(/.*<h1>|<\/h1>.*/, ""); print }')
+				if [ "$REFERENCE_TITLES" != "" ]; then
+					REFERENCE_TITLES="$REFERENCE_TITLES|$title"
+				else
+					REFERENCE_TITLES="$title"
+				fi
+			done
+
+			# HTML_REFERENCES="<ul>"
+			counter=1
+			for i in $CLEAN_REFERENCES; do
+				title=$(echo "$REFERENCE_TITLES" | awk -F'|' -v counter="$counter" '{print $counter}')
+				HTML_REFERENCES="$HTML_REFERENCES :: <a href=\"$i\">$title</a>"
+				counter=$((counter + 1))
+			done
+
+			if [ "$HTML_REFERENCES" = "" ]; then
+				HTML_REFERENCES=""
+			else
+				# HTML_REFERENCES="<section class=\"references\"><header><h3>incoming</h3></header>${HTML_REFERENCES}</section>"
+				HTML_REFERENCES="<span>incoming</span>${HTML_REFERENCES}"
+			fi
+		fi
+	fi
+	IFS=$ORIGINAL_IFS
+	# Generate output
+	printf '%s\n' "- ${FILENAME}"
+	generate template.html >"out/${FILENAME%%.*}.html"
+done
+
+rm -fR ./temp
+rm "$directory"/all.html
+
+# List Orphaned pages
+printf '\n\n%s\n' "Orphaned pages:"
+printf "$ORPHANED_PAGES"
+
+## ENDING
+end_time=$(date +%s)
+duration=$((end_time - start_time))
+
+printf '\n\n%s\n\n' "Finished in ${duration} seconds. Site built in the 'out' directory."

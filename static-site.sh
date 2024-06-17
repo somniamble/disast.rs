@@ -16,8 +16,8 @@ fi
 # we don't always need to do this
 # cat setup-remote.sh | ssh disast.rs
 
-chmod 755 -R site
-rsync -avP --rsync-path 'sudo -u www rsync' site $SITE_NAME:/home/www
+chmod 755 -R out
+rsync -avP --rsync-path 'sudo -u www rsync' out $SITE_NAME:/home/www/site
 
 if [ "$1" == "--nginx" ]; then
   # now nginx stuff

@@ -1,0 +1,36 @@
+<h1>.NET Memory Heap Dump</h1>
+
+Maybe you also need to check if your pod is leaking memory --
+
+Here's how I did this on a pod running alpine linux:
+
+<pre>
+  # Get a shell on the container
+  kubectl exec -it -n [your namespace] [your pod name] -- ash
+
+  # everything below is run ON the container
+  apk update
+  apk add dotnet6-sdk
+  export PATH="$PATH:/root/.dotnet/tools"
+  dotnet tool install --global dotnet-dump
+
+  # get your PID -- probably PID 1 since this is a container
+  dotnet-dump ps
+
+  # generate dump
+  # Quite possibly you will OOMkill from trying to write Heap dump,
+  #  even though it is techincally smaller
+  # dotnet-dump collect -p 1 --type Heap -o coredump
+
+  # Generate a Full dump, basically an image of the application memory
+  dotnet-dump collect -p 1 --type Full -o coredump
+
+  # analyze, you can pipe this to a file or whatever you want
+  # Sorted smallest to largest by total object class size
+  dotnet-dump analyze coredump -c 'dumpheap -stat' -c 'exit'
+</pre>
+<!---->
+<!-- --- -->
+<!---->
+<!-- Tags: -->
+<!-- dotnet, kubernetes -->
