@@ -10,7 +10,7 @@ I was going to use Docker for this but decided to just do it live
 ## Some dependencies
 
 ### SSH
-NEed to figure out ssh-agent stuff OR have a running connection with the
+Need to figure out ssh-agent stuff OR have a running connection with the
 following host config in `.ssh/config`:
 
 ```config
