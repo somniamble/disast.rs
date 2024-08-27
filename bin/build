@@ -35,7 +35,7 @@ cp -fR images out
 
 # Generate pages/all.html
 ALL_BODY=""
-for file in "$directory"/*.html; do
+for file in $(find "$directory" -name '*.html'); do
 	filename="${file#"$directory"/}"
 	title=$(head -n 1 "$file" | awk '{gsub(/<[^>]*>/,""); print}')
 	if [ "${title}" != "" ]; then
@@ -50,10 +50,34 @@ ALL_BODY=$(echo "$ALL_BODY" | sort -t '>' -k 3)
 printf '%s\n' '<h1>All pages</h1>' >"$directory"/all.html
 printf '%s\n' "<ul>$ALL_BODY</ul>"  >>"$directory"/all.html
 
+# generate pages/dated/index.html
+DATED_BODY=""
+for file in $(find "$directory/dated" -name '*.html'); do
+	filename="${file#"$directory"/dated/}"
+  # skip the dated index file
+  if [ "$filename" == "index.html" ]; then
+    continue;
+  fi
+	title=$(head -n 1 "$file" | awk '{gsub(/<[^>]*>/,""); print}')
+  display_title="${filename%%.*}"
+  # strip out spaces from title
+	if [ ! -z "${title// }" ]; then
+    # don't capitalize
+		# line="<li style='text-transform: capitalize'><a href=\"${filename}\">${title}</a></li>"
+    display_title="${filename%%.*} :: $title"
+	fi
+  line="<li><a href=\"${filename}\">${display_title}</a></li>"
+  DATED_BODY="$DATED_BODY ${line}"
+done
+
+DATED_BODY=$(echo "$DATED_BODY" | sort -t '>' -k 3)
+printf '%s\n' '<h1>Dated pages</h1>' >"$directory"/dated/index.html
+printf '%s\n' "<ul>$DATED_BODY</ul>"  >>"$directory"/dated/index.html
+
 cp -fR "$directory"/* ./temp/
 
 # Start building pages
-for currentFile in ./temp/*.html; do
+for currentFile in $(find "./temp" -name '*.html'); do
 	HEAD_TITLE="disast.rs"
 	TITLE=""
 	HEAD_INJECT=""
@@ -90,7 +114,7 @@ for currentFile in ./temp/*.html; do
 
 		# References
 		# Finding References
-		for file in "$directory"/*.html; do
+    for file in $(find "$directory" -name '*.html'); do
 			if [ "$currentFile" != "$file" ]; then
 				name="${file#"$directory"/}"
 				pattern=\=\"\/${FILENAME}\"
@@ -151,6 +175,9 @@ for currentFile in ./temp/*.html; do
 	IFS=$ORIGINAL_IFS
 	# Generate output
 	printf '%s\n' "- ${FILENAME}"
+  output_directory="out/$(dirname $FILENAME)"
+  # echo $output_directory
+  mkdir -pv "$output_directory"
 	generate template.html >"out/${FILENAME%%.*}.html"
 done
 
