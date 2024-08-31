@@ -7,3 +7,24 @@
 <!-- <h1>I am getting old</h1> -->
 <!---->
 <!-- it's a fact :) -->
+<p>: : : :</p>
+
+<p>here is how I wrote this blog entry:</p>
+
+<p><pre>blog() {
+  directory="$HOME/projects/disast.rs/html/src/dated"
+  filename="${directory}/$(date +%Y-%m-%d).html"
+  TEXT="$@"
+  if [ -z "$TEXT" ]; then
+    echo "${filename}:"
+    cat $filename
+  else
+    OUTPUT="&lt;p&gt;$TEXT&lt;/p&gt;"
+    echo "$OUTPUT" >> "$filename"
+    echo "wrote '$OUTPUT' to $filename"
+  fi
+
+}</pre>
+</p>
+<p>: : : :</p>
+<p>working with raw html is freeing. for me, it's freeing. my primary concern is producing valid &lt;body&gt; content.</p>
