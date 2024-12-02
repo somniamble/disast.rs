@@ -1,0 +1,82 @@
+<h1>how do I rss?</h1>
+<p>how to rss?</p>
+
+<p>a sample rss file looks like this: (pulled from <a classname="outlink" href="https://www.todepond.com">todepond dot com</a>)</p>
+<pre>
+&lt;rss version="2.0"&gt;
+  &lt;channel&gt;
+    &lt;title&gt;Todepond dot com&lt;/title&gt;
+    &lt;link&gt;http://www.todepond.com/&lt;/link&gt;
+    &lt;description&gt;place for todes - ribbits aplenty&lt;/description&gt;
+    &lt;item&gt;
+      &lt;title&gt;It’s weird when people recognise me&lt;/title&gt;
+      &lt;pubDate&gt;Tue, 05 Nov 2024 00:38:00 GMT&lt;/pubDate&gt;
+      &lt;link&gt; https://www.todepond.com/wikiblogarden/social-media/para/meeting/ &lt;/link&gt;
+      &lt;guid&gt; https://www.todepond.com/wikiblogarden/social-media/para/meeting/ &lt;/guid&gt;
+      &lt;description&gt; I am increasingly exposed to people knowing who I am when I attend events. It’s weird. &lt;/description&gt;
+    &lt;/item&gt;
+    . . .
+    &lt;item&gt;
+      &lt;title&gt;Talk season is over&lt;/title&gt;
+      &lt;pubDate&gt;Tue, 29 Oct 2024 12:57:00 GMT&lt;/pubDate&gt;
+      &lt;link&gt;https://www.todepond.com/talk/season/over&lt;/link&gt;
+      &lt;guid&gt;https://www.todepond.com/talk/season/over&lt;/guid&gt;
+      &lt;description&gt; I gave five talks in a month. Here's the full write-up. &lt;/description&gt;
+    &lt;/item&gt;
+  &lt;/channel&gt;
+&lt;/rss&gt;
+</pre>
+
+<p>so, maybe an rss file has a schema like this?:</p>
+<pre>
+rss
+  channel
+    title
+    link
+    description
+    item[]
+      title
+      pubDate
+      link
+      guid
+      description
+</pre>
+
+<p>so, let's try a first-pass at my own rss feed:</p>
+<pre>
+&lt;rss version="2.0"&gt;
+  &lt;channel&gt;
+    &lt;title&gt;DISASTRS!&lt;/title&gt;
+    &lt;link&gt;https://disast.rs&lt;/link&gt;
+    &lt;description&gt;DISASTRS&lt;/description&gt;
+    &lt;item&gt;
+      &lt;title&gt;How do I rss?&lt;/title&gt;
+      &lt;pubDate&gt;2024-11-12 13:12 CST&lt;/pubDate&gt;
+      &lt;link&gt;https://disast.rs/notes/how-to-rss.html&lt;/link&gt;
+      &lt;guid&gt;https://disast.rs/notes/how-to-rss.html&lt;/guid&gt;
+      &lt;description&gt;In which I experiment with hand-writing an rss feed for my own site&lt;/description&gt;
+    &lt;/item&gt;
+&lt;/rss&gt;
+</pre>
+
+<p>
+<a href="/index.xml">and it seems like it's a common practice to name it "index.xml"</a>
+</p>
+
+<h3>seems like that worked.</h3>
+
+<p>Now what?</p>
+
+<p>Some things come to mind:</p>
+<ul>
+  <li>Create new RSS items for new pages</li>
+  <li>Update the RSS feed when I update a page?</li>
+</ul>
+
+<p>It seems like changing the <code>guid</code> property 
+is one way to announce an update to a page, since that's <i>probably</i> what a
+feed-reader is going to use to distinguish items. it seems like it would be
+a little rude to bounce the guid for an existing page every time I touch it, though.</p>
+
+<!--tag: rss-->
+<!--tag: web-->

@@ -1,0 +1,151 @@
+<h1>December Adventure 2024</h1>
+
+<p>Welcome to my <em>#2024DecentureAdvember</em> log</p>
+
+<p>This december I'm deciding to focus on term re-writing. <!-- and present-tense writing --></p>
+
+<p>A secondary objective will be re-writing the site. It's important!</p>
+
+<h2>Days</h2>
+<ol>
+  <li><a href="#Day 1">Day 1 :: Intro to modal :: In which I am confused by single-token re-writes</a></li>
+</ol>
+
+<h2>Rules</h2>
+<ol>
+  <li>have some fun</li>
+  <li>simplify (!)</li>
+  <li>stay hydrated</li>
+</ol>
+
+
+<h2 id="Day 1">Day 1</h2>
+
+<pre>
+Let's enumerate a couple ideas for December Adventure:
+- re-build disast.rs (using term rewriting??)
+- learn modal, and the ecosystem around it, and use it
+
+<a href="https://www.youtube.com/watch?v=vJyy1yUsPvk">"But how we get from A to B, it can't be up to me"</a>
+
+<!-- Everything that I write here is getting published, I have decided -->
+</pre>
+
+<p>::::</p>
+
+<pre>
+Without further ado, modal:
+
+::
+
+I thought it would be nice to build logic circuits out of nand:
+
+<> (nand #t #t) #f
+<> (nand #t #f) #t
+<> (nand #f #t) #t
+<> (nand #f #f) #t
+
+?(?-) (It seems we have to explicitly unpack if we want to build things with nand)
+?(?-) (I suspect this is because I am inadvertantly matching non-boolean expressions)
+?(?-) (more on this later?)
+
+<> (nand (?x) (?y)) (nand ?x ?y)
+
+?(?-) (The rest of the circuitry)
+<> (not ?x) (nand ?x ?x)
+<> (and ?x ?y) (not (nand ?x ?y))
+<> (or ?x ?y) (nand (not ?x) (not ?y))
+<> (xor ?x ?y) (and (or ?x ?y) (nand ?x ?y))
+
+?(?-) (Now can we build up some kind of if-else expression?)
+?(?-) (We will have to unpack here as well?)
+<> (if #t ?x ?y) ?x
+<> (if #f ?x ?y) ?y
+<> (eq ?x ?x) #t
+<> (eq ?x ?y) #f
+
+?(?-) (Somehow our ternary operator does not behave as expected.)
+
+?(?-) (Eval: `(if (#f) True! False!)`)
+.. if (eq #t #f) True!  False!
+
+?(?-) (Evaluates to `False!`, which is more like what we would expect)
+.. if eq #t #f True!  False!
+
+?(?-) (So, why is it that we seem to rewrite to a token sometimes and a one-element tuple other times?)
+</pre>
+<p>::::</p>
+
+<pre>
+?(?-) (I decide to go and cover some basics)
+
+?(?-) (A rule has the following syntax)
+?(?-) (<> left right)
+<> hello goodbye
+.. hello          ?(?-) (evaluates to `goodbye`)
+.. hellogoodbye   ?(?-) (no match; no rule is applied)
+
+?(?-) (What if we want to evaluate to something a little bigger than a token?)
+?(?-) (tuples are "unpacked", I think this is a vocabulary word I am possibly misusing.)
+<> good (even better)
+.. good bye       ?(?-) (evaluates to "even better bye")
+
+
+?(?-) (Use registers)
+<> (swap ?x ?y) (?y ?x)
+<> (spin ?x ?y ?z) (?y ?z ?x)
+
+.. swap it out            ?(?-) (evaluates to `out it`)
+.. spin me right round    ?(?-) (evaluates to `right round me`)
+.. spin swap a b c d e    ?(?-) (evaluates to `a b d c e`)
+.. spin (swap a b) c d e  ?(?-) (evaluates to `c d (b a) e`)
+
+?(?-) (I get as far as the I/O section before realizing that rule evaluation is tricky)
+
+?(?-) (Consider I/O, maybe we want to check if a user enters the same thing twice?)
+?(?-) (use the ?~ register to read input)
+?(?-) (Oh, actually I don't know how to use stdin as an arg twice)
+<> (read ?~) ?~
+<> (eq ?x ?x) (these terms are equivalent)
+<> (eq ?x ?y) (these terms are different)
+
+
+?(?-) (Oops, we match the eq rule here, and always get the true result.)
+eq (read stdin) (read stdin)
+
+
+?(?-) (How would we achieve application of `eq` to the results of two sequential reads?)
+
+</pre>
+
+<p>:: I decide to try zooming in on what was confusing me above ::</p>
+
+<pre>
+
+?(?-) (I will try to dig a little more into tuple/token rewriting now)
+
+
+<> (does-this-wrap ?x) (?x)
+.. does-this-wrap abc     ?(?-) (evaluates to `abc`)
+.. does-this-wrap (abc)   ?(?-) (evaluates to `(abc)`)
+.. (does-this-wrap abc)   ?(?-) (evaluates to `(abc)`)
+.. (does-this-wrap (abc)) ?(?-) (evaluates to `((abc))`)
+
+
+<> (what-about-this ?x) ?x
+.. what-about-this efg     ?(?-) (evaluates to `efg`)
+.. what-about-this (efg)   ?(?-) (evaluates to `(efg)`)
+.. (what-about-this efg)   ?(?-) (evaluates to `(efg)`)
+.. (what-about-this (efg)) ?(?-) (evaluates to `((efg))`)
+
+
+<> (and-this ?x) ((?x))
+.. and-this hij     ?(?-) (evaluates to `(hij)`)
+.. and-this (hij)   ?(?-) (evaluates to `((hij))`)
+.. (and-this hij)   ?(?-) (evaluates to `((hij))`)
+.. (and-this (hij)) ?(?-) (evaluates to `(((hij)))`)
+</pre>
+
+<p>::::</p>
+
+<p>Then I go and have some dinner and prepare this log entry</p>

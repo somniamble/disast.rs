@@ -1,0 +1,14 @@
+<rss version="2.0">
+  <channel>
+    <title>DISASTRS</title>
+    <link>https://disast.rs</link>
+    <description>rosin's personal wiki, which you may like to receive updates for</description>
+    <item>
+      <title>How do I rss?</title>
+      <pubDate>2024-11-12 13:12 CST</pubDate>
+      <link>https://disast.rs/notes/how-to-rss.html</link>
+      <guid>https://disast.rs/notes/how-to-rss.html (bounce) (bounce)</guid>
+      <description>In which I experiment with hand-writing an rss feed for my own site</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,130 @@
+<h1>a few terraform recipes</h1>
+<p>sed s/terraform/tofu</p>
+
+<h2>HCL language stuff</h2>
+
+Some basic nice stuff:
+<pre>
+# Get module basename:
+basename(abspath(path.module))
+</pre>
+
+<p>: : : :</p>
+
+<p>Iteration is kind of tricky in Terraform. 
+You're only permitted to iterate over a 
+<code>set(string)</code> OR a <code>map(any)</code>.
+For this reason you will often see people projecting a set of objects into a mapping
+from an index (cast to string) to an objec</p>
+
+<p>Provision a list of resources based on the contents of a map:</p>
+<p>use <code>each.key</code> and <code>each.value</code> to access item key/values, respectively</p>
+<pre>
+# from a servicebus module
+resource "azurerm_servicebus_subscription" "subscription" {
+  for_each = local.topic_subscriptions
+  # . . .
+  topic_id = "${local.namespace_id}/topics/${each.key}"
+  max_delivery_count = each.value.max_delivery_count
+  lock_duration = each.value.lock_duration
+}
+
+</pre>
+
+<p>: : : :</p>
+
+<p>You can use the <code>random</code> provider to generate a password</p>
+
+<p>Use the <code>keepers</code> property to manage regeneration</p>
+
+<pre>
+
+variable "password_timestamp" {
+  description = "A description of the last time the dbadmin password was refreshed."
+  type        = string
+  default     = null
+}
+
+resource "random_string" "database_admin_password" {
+  length           = 25
+  special          = true
+  min_lower        = 1
+  min_upper        = 1
+  min_numeric      = 1
+  min_special      = 1
+  override_special = "@!_%"
+  keepers = {
+    "last_generated" = var.password_timestamp
+  }
+}
+
+output "admin_password" {
+  value     = random_string.database_admin_password.result
+  sensitive = true
+}
+
+</pre>
+
+<p>: : : :</p>
+
+<p>Interpolate defaults for an object with nullable fields</p>
+
+Here we use <code>coalesce</code> to do, you guessed it, null coalescence
+<pre>
+
+variable "some_object_configurations" {
+  type = map(object({
+    rules     = optional(set(string))
+    character = optional(string)
+    stock     = optional(number)
+    items     = optional(bool)
+  }))
+  default = {
+    "example" = {}
+  }
+}
+
+variable "some_object_config_defaults" {
+  type = object({
+    rules     = set(string)
+    character = string
+    stock     = number
+    items     = bool
+  })
+  default = {
+    rules = ["fox only", "no items", final destination"]
+    character = "fox"
+    stock = 4
+    items = false
+  }
+}
+
+locals {
+  some_object_applied_configurations = { 
+    for object_name, object_config in var.some_object_configurations:
+      object_name =&gt; {
+        for k, v in object_config:
+          k =&gt; coalesce(v, var.some_object_config_defaults[k])
+      }
+  }
+}
+</pre>
+
+<p> : : : : </p>
+
+<p>Use null-resource to run some command</p>
+<pre>
+resource "null_resource" "example_env" {
+  # ...
+
+  provisioner "local-exec" {
+    command = "echo $FOO $BAR $BAZ &gt;&gt; env_vars.txt"
+
+    environment = {
+      FOO = "bar"
+      BAR = 1
+      BAZ = "true"
+    }
+  }
+}
+</pre>

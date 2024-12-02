@@ -1,0 +1,32 @@
+<h1>nvlime</h1>
+
+<p>it is a fork of <code>vlime</code> for neovim</p>
+
+<h3>Starting up a lisp image with nvlime running</h3>
+
+<p>This assumes you already have <code>nvlime</code> cloned to e.g. <code>~/common-lisp</code>
+
+<p>
+To get a server running on port 7002 (by default)
+</p>
+
+<pre>
+sbcl --load $HOME/common-lisp/nvlime/lisp/start-nvlime.lisp \
+# ... then whatever else
+</pre>
+
+<p>
+If there's already something on that port, you'll get a 
+<code>USOCKET:ADDRESS-IN-USE</code> signal, and a restart 
+[0] to choose a different port. Pretty nice?
+</p>
+
+<h3>Loading nvlime from a running lisp image</h3>
+
+<p>TODO, unfortunately</p>
+
+<h3>Links</h3>
+<ul>
+  <li>- <a class="outlink" href="https://github.com/monkoose/nvlime">repo here</a>
+  </li>
+</ul>

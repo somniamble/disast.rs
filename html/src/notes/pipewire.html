@@ -1,0 +1,82 @@
+<h1>pipewire</h1>
+
+<p>
+  I use pipewire as my audio driver, since I'm a computer musician and kind of
+  <i>need</i> low-latency audio handling/complex routing
+</p>
+
+<h2>Creating a virtual device</h2>
+
+<p>I had this idea to create a couple of sinks and then set up auto-connection with them</p>
+
+<pre>
+# ~/.config/pipewire/pipewire.conf.d/virtual-sink.conf:
+
+context.modules = [
+    {   
+      name = libpipewire-module-loopback
+      args = {
+        audio.position = [ FL FR ]
+        node.description = "System Sound Loopback"
+        capture.props = {
+          media.class = Audio/Sink
+          node.name = SystemSound
+          node.description = "System Sound"
+        }
+        playback.props = {
+          node.name = "SystemSound.output"
+          node.passive = true
+          target.object = "my-default-sink"
+        }
+      }
+    }
+    {   
+      name = libpipewire-module-loopback
+      args = {
+        audio.position = [ FL FR ]
+        node.description = "Outboard Gear Loopback"
+        capture.props = {
+          media.class = Audio/Sink
+          node.name = OutboardGear
+          node.description = "Outboard Gear"
+        }
+        playback.props = {
+          node.name = "OutboardGear.output"
+          node.passive = true
+          target.object = "my-default-sink"
+        }
+      }
+    }
+]
+</pre>
+
+<h4>useful links</h4>
+<ul>
+  <li><a class="outlink" href="https://gitlab.freedesktop.org/pipewire/pipewire/-/wikis/Virtual-Devices">pipewire wiki virtual devices</a></li>
+  <li><a class="outlink" href="https://bennett.dev/auto-link-pipewire-ports-wireplumber/">Bennett Hardwick "auto-link-pipewire-ports"</a></li>
+</ul>
+
+<h3>Commands</h3>
+<pre>
+wpexec     # run a lua script
+wpctl      # get wireplumber runtime info
+pipewire   # start pipewire daemon, using default config
+</pre>
+
+<h3>Config</h3>
+<pre>
+# pipewire
+~/.config/pipewire/pipewire.conf
+~/.config/pipewire/pipewire.conf.d/*
+
+# wireplumber
+~/.config/
+</pre>
+
+<h3>Discovered Oddities</h3>
+
+<p>Pulseaudio config is in "$HOME/.config/pulse", and on my system it looks like <i>that's</i> where my default sink is configured. That will have to change.</p>
+
+<!--tag: sysadmin-->
+<!--tag: audio>
+<!--tag: linux>
