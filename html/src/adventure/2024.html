@@ -9,6 +9,10 @@
 <h2>Days</h2>
 <ol>
   <li><a href="#Day 1">Day 1 :: Intro to modal :: In which I am confused by single-token re-writes</a></li>
+  <li><a href="#Day 2">Day 2 :: Cursors and registers in modal :: In which I am enticed by a NAS</a></li>
+  <li><a href="#Day 3">Day 3 :: A cursor with personality :: In which I attempt a challenge</a></li>
+  <li><a href="#Day 4">Day 4 :: Rewriting Addled :: In which I solve the challenge</a></li>
+  <li><a href="#Day 5">Day 5 :: Tic Tac Toe :: In which I gain confidence, and a head-cold</a></li>
 </ol>
 
 <h2>Rules</h2>
@@ -18,6 +22,198 @@
   <li>stay hydrated</li>
 </ol>
 
+<h2 id="Day 5">Day 5</h2>
+
+<p>I asked around on Merveilles what I should do next with modal, and Devine suggested I make a game</p>
+
+<p>I woke up and decided to try implementing Tic Tac Toe. I did not know if I could do it. Then, I did it.</p>
+
+<pre>
+&lt;&gt; (console ?:) ?:
+&lt;&gt; (print-state (?x ?y) { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i }) (console (current turn: ?x \n) console (?a | ?b | ?c \n) console (?d | ?e | ?f \n) console (?g | ?h | ?i \n))
+
+?(?-) (x wins by diagonal)
+&lt;&gt; (?m ?n ?o { x | ?b | ?c ?d |  x | ?f ?g | ?h |  x }) (console (x wins))
+&lt;&gt; (?m ?n ?o { ?a | ?b |  x ?d |  x | ?f x | ?h | ?i }) (console (x wins))
+
+?(?-) (x wins by row)
+&lt;&gt; (?m ?n ?o { x |  x |  x ?d | ?e | ?f ?g | ?h | ?i }) (console (x wins))
+&lt;&gt; (?m ?n ?o { ?a | ?b | ?c x |  x |  x ?g | ?h | ?i }) (console (x wins))
+&lt;&gt; (?m ?n ?o { ?a | ?b | ?c ?d | ?e | ?f x |  x |  x }) (console (x wins))
+
+?(?-) (x wins by column)
+&lt;&gt; (?m ?n ?o { x | ?b | ?c x | ?e | ?f x | ?h | ?i }) (console (x wins))
+&lt;&gt; (?m ?n ?o { ?a |  x | ?c ?d |  x | ?f ?g |  x | ?i }) (console (x wins))
+&lt;&gt; (?m ?n ?o { ?a | ?b |  x ?d | ?e |  x ?g | ?h |  x }) (console (x wins))
+
+?(?-) (o wins by diagonal)
+&lt;&gt; (?m ?n ?o { o | ?b | ?c ?d |  o | ?f ?g | ?h |  o }) (console (o wins))
+&lt;&gt; (?m ?n ?o { ?a | ?b |  o ?d |  o | ?f o | ?h | ?i }) (console (o wins))
+
+?(?-) (o wins by row)
+&lt;&gt; (?m ?n ?o { o |  o |  o ?d | ?e | ?f ?g | ?h | ?i }) (console (o wins))
+&lt;&gt; (?m ?n ?o { ?a | ?b | ?c o |  o |  o ?g | ?h | ?i }) (console (o wins))
+&lt;&gt; (?m ?n ?o { ?a | ?b | ?c ?d | ?e | ?f o |  o |  o }) (console (o wins))
+
+?(?-) (o wins by column)
+&lt;&gt; (?m ?n ?o { o | ?b | ?c o | ?e | ?f o | ?h | ?i }) (console (o wins))
+&lt;&gt; (?m ?n ?o { ?a |  o | ?c ?d |  o | ?f ?g |  o | ?i }) (console (o wins))
+&lt;&gt; (?m ?n ?o { ?a | ?b |  o ?d | ?e |  o ?g | ?h |  o }) (console (o wins))
+
+
+&lt;&gt; ( (?x ?y) (read) (turn ?x ?~) { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i }) (  (?x ?y) (go) (turn ?x ?~) { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i })
+
+&lt;&gt; ( (?x ?y) (go) (turn ?x 1) { _  | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?x | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i })
+&lt;&gt; ( (?x ?y) (go) (turn ?x 2) { ?a | _ | ?c ?d | ?e | ?f ?g | ?h | ?i  }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a | ?x | ?c ?d | ?e | ?f ?g | ?h | ?i })
+&lt;&gt; ( (?x ?y) (go) (turn ?x 3) { ?a | ?b | _ ?d | ?e | ?f ?g | ?h | ?i  }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a | ?b | ?x ?d | ?e | ?f ?g | ?h | ?i })
+
+&lt;&gt; ( (?x ?y) (go) (turn ?x 4) { ?a | ?b | ?c _  | ?e | ?f ?g | ?h | ?i }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a | ?b | ?c ?x | ?e | ?f ?g | ?h | ?i })
+&lt;&gt; ( (?x ?y) (go) (turn ?x 5) { ?a | ?b | ?c ?d | _  | ?f ?g | ?h | ?i }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a | ?b | ?c ?d | ?x | ?f ?g | ?h | ?i })
+&lt;&gt; ( (?x ?y) (go) (turn ?x 6) { ?a | ?b | ?c ?d | ?e | _  ?g | ?h | ?i }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a | ?b | ?c ?d | ?e | ?x ?g | ?h | ?i })
+
+&lt;&gt; ( (?x ?y) (go) (turn ?x 7) { ?a | ?b | ?c ?d | ?e | ?f _  | ?h | ?i }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a | ?b | ?c ?d | ?e | ?f ?x | ?h | ?i })
+&lt;&gt; ( (?x ?y) (go) (turn ?x 8) { ?a | ?b | ?c ?d | ?e | ?f ?g | _  | ?i }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a | ?b | ?c ?d | ?e | ?f ?g | ?x | ?i })
+&lt;&gt; ( (?x ?y) (go) (turn ?x 9) { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | _  }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?x })
+
+?(?-) (Helpfully output game state to player)
+&lt;&gt; (dbg ?x ?y ?z { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i }) (print-state ?x { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i } ?x ?y ?z { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i })
+?(?-) (Helpfully notify player when an illegal move is attempted)
+&lt;&gt; ((?x ?y) (go) (turn ?x ?z) { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i }) ((console (?x attempted to mark ?z illegally\n)) (?x ?y) (read) (turn ?x (?~)) { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i })
+
+?(?-) (Play the game, start on turn x)
+console (enter a number between 1 and 9 to indicate the space you wish to mark \n)
+dbg
+(x o)
+(read)
+(turn x ?~)
+{
+_ | _ | _
+_ | _ | _
+_ | _ | _
+}
+</pre>
+
+<p>: : : :</p>
+
+<p>It seems I've come down with a cold</p>
+
+<h2 id="Day 4">Day 4</h2>
+
+<p>I went to bed last night wondering how I would reverse a tuple without exploding it</p>
+
+<p>Then it struck me that I could unpack it into the land of square-braks</p>
+
+<pre>
+?(?-) (Use our cursor from before, as well as a NEW friend)
+&lt;&gt; (&lt;-_-&gt; ()) ()
+&lt;&gt; (&lt;-_-&gt; (?x ?y)) (?x &lt;-_-&gt; ?y)
+&lt;&gt; (() &lt;-_-&gt;) ()
+&lt;&gt; ((?x ?y) &lt;-_-&gt;) (?x &lt;-_-&gt; ?y)
+
+.. (&lt;-_-&gt; (1 (2 (3 ()))))
+.. ((((() a) b) c) &lt;-_-&gt;)
+
+&lt;&gt; ([ ] ^v^]&gt; ?x) (?x)
+&lt;&gt; (?i ] ^v^]&gt; ?x) (] ^v^]&gt; (?x ?i))
+&lt;&gt; (revAgain ?.) ([ ?. ] ^v^]&gt; () &lt;-_-&gt;)
+
+(revAgain (mary had a little lamb)) 
+?(?-) (Evaluates to (lamb little a had mary))
+
+(revAgain (foo bar baa ma (nested list) (another nested list) (an even (more (deeply) nested) list)))
+?(?-) (Evaluates to ((an even (more (deeply) nested) list) (another nested list) (nested list) ma baa bar foo))
+</pre>
+
+<p>We can now reverse a tuple, without disturbing tuples it may contain. <em>Success!</em></p>
+
+<p>: : : :</p>
+<p>To brush up on the state of the art, I attempt reading <a href="https://wiki.xxiivv.com/site/rewriting.html">Devine's page on rewriting languages</a>, until my eyes cross</p>
+
+<h2 id="Day 3">Day 3</h2>
+
+<p>I spoke with my brother a bit before today's DecAdvemCture work</p>
+
+<p>While he was describing to me his goal of doing 20,000 (!) pull-ups this year, a thought occurred to me:</p>
+
+<p>"Some goals require pushing towards, and some goals pull you along. The pulling goals are <em>over there</em>. Pushing goals are <em>right here</em>. Pulling goals are <em>bounded</em>. Pushing goals are <em>boundless</em>."</p>
+
+<p>That is to say, a goal that can be accomplished is a pulling-goal. It pulls you toward it. Some effort is required, but it, the situation, naturally directs your efforts.</p>
+
+<p>: : : :</p>
+
+<p>Today I gave myself a challenge with modal: reverse a tuple</p>
+
+<pre>
+?(?-) (Given a tuple of any number of elements, re-write the tuple in reverse order)
+
+?(?-) (here is a cursor, her name is "zyp", and she flattens cons-cells into tuples)
+?(?-) (she is very talented, and can work from either direction.)
+<> (<-_-> ()) ()
+<> (<-_-> (?x ?y)) (?x <-_-> ?y)
+<> (() <-_->) ()
+<> ((?x ?y) <-_->) (?x <-_-> ?y)
+
+.. (<-_-> (1 (2 (3 ()))))
+.. ((((() a) b) c) <-_->)
+
+?(?-) (Now, given zyp's example, can we reverse an exploded tuple?)
+<> (flipcons ()) ()
+<> (flipcons (?x ?y)) (flipcons ?y ?x)
+
+<> (rev ?*) (flipcons (?*))
+
+(rev (1 2 3 4))
+
+?(?-) (Unfortunately, it doesn't behave like we expect -- instead it explodes nested lists too)
+(rev (foo bar baa ma (nested list) (another nested list) (an even (more (deeply) nested) list)))
+</pre>
+
+<p>A little disappointing, but it's ok. I enjoyed starting with a file that contained only a prompt, then trying to fulfill that prompt</p>
+
+<p>That was setting myself a "pulling-goal", rather than a "pushing goal" of "I'm going to figure out modal."</p>
+
+
+<h2 id="Day 2">Day 2</h2>
+
+<pre>
+Today I
+- worked my day job
+- researched and ordered parts for a cheap, high capacity NAS
+- experimented further with Modal. Joined the discord. It was immediately helpful.
+</pre>
+
+<p>: : : :</p>
+
+<pre>
+?(?-) (Some things clicked for me in modal)
+?(?-) (First of all, these comments make use of a no-op lambda to do, no op)
+
+?(?-) (Second, the idea of using cursors clicked for me:)
+?(?-) (go and pick up a ball and move it all the way to the left)
+
+<> (> _) (_ >)
+<> (> *) (* <)
+<> (_ * <) (* < _)
+
+<> (> |) (< |)
+<> (_ <) (< _)
+<> (| <) (| >)
+
+| > _ _ _ _ _ _ _ _ * |
+
+?(?-) (Third, I start to grasp the special registers)
+
+<> (explode ?*) ?*
+
+.. (explode (foo bar baz)) ?(?-) (Evalulates to (foo (bar (baz ()))))
+
+?(?-) (Basically, a special register matches and then something special happens to whatever is matched)
+?(?-) (e.g. when we read using ?~, whatever is matched is tossed, and replaced by stdin)
+?(?~ ?~) thisCouldBeAnyTokenButLetsCallItRead
+
+</pre>
+
+<p>Tomorrow is a new day, and I should like to make a cursor with some personality</p>
 
 <h2 id="Day 1">Day 1</h2>
 
@@ -149,3 +345,11 @@ eq (read stdin) (read stdin)
 <p>::::</p>
 
 <p>Then I go and have some dinner and prepare this log entry</p>
+
+<style>
+pre {
+  background: #eee;
+  margin: 0 -1em;
+  padding: .5em 2em;
+}
+</style>

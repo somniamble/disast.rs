@@ -1,0 +1,169 @@
+<h1>How to write an azure pipeline</h1>
+<p>In this guide I will describe how to write an azure pipeline, The
+  different parts of an azure pipeline, Gotchas to be aware of, and so on.</p>
+
+<p>It is my hope that by writing this, I can spare you much frustration copy-pasting
+pre-existing azure pipelines and stack-overflow answers that you don't understand</p>
+
+<h2>What is an azure pipeline</h2>
+
+<p>An azure pipeline is basically a way of telling Azure DevOps that you
+  would - like to run some process - using azure infrastructure</p>
+
+<p>Here are some common use-cases for azure pipelines: - Build
+  automation – testing, building, and pushing a docker image to a
+  container registry - Managing deployments on a kubernetes cluster, or
+  other cloud computing platform - Performing scheduled database
+  maintenance - Miscellaneous automation of Azure infrastructure – using
+  Azure service endpoints</p>
+
+<h2>Anatomy of an azure pipeline</h2>
+<p>I generally like to think of an azure pipeline in two parts:</p>
+<ul>
+  <li>
+    Frontmatter
+  </li>
+  <li>
+    The Work
+  </li>
+</ul>
+<p>The frontmatter contains declarations for your <code>trigger</code>,
+  <code>pool</code>, <code>variables</code>, <code>parameters</code>, and so on
+</p>
+<p>The <code>steps</code> are where the actual work happens – these are
+  your your <code>tasks</code>, <code>scripts</code>, etc.</p>
+<h3>Syntax of Frontmatter</h3>
+<p>99% of my pipelines have frontmatter like this:</p>
+<pre>
+  pool:
+    vmImage: ubuntu-latest
+
+  variables:
+    - name: foo
+      value: bar
+    - name: duck
+      value: soup
+
+  # use parameters for more complex objects, for example
+  # I often use these instead of variables if I need to create a pipeline using iteration.
+  parameters:
+    - name: 'environments'
+      type: object
+      default:
+        - name: development
+          namespace: dev
+          filename: DevFileNameOne.txt
+
+        - name: production
+          namespace: prod
+          filename: ProductionFilenameTwo.txt
+</pre>
+
+<h3 id="syntax-of-the-work">Syntax of The Work</h3>
+<p>The Work contains the work that is “run” during an azure pipeline
+  run. Depending on how complex your pipeline is, it may be organized like
+  so:</p>
+<ul>
+  <li>A pipeline consisting of one or more stages</li>
+  <li>Each stage containing one or more jobs</li>
+  <li>Each job containing one or more step</li>
+</ul>
+<p>Each subdivision here can be thought of as an enclosing scope, from
+  the most gross (<code>pipeline</code>), to the most granular
+  (<code>step</code>).</p>
+<p>This is an important point to get. Here’s the heirarchy again:</p>
+<pre><code>Pipeline &gt; Stage &gt; Job &gt; Step</code></pre>
+<p>Here is a very bare example of the syntax used:</p>
+
+<pre>
+  stages:
+    - stage: Build
+    jobs:
+      - job:
+      displayName: "Build Job A"
+      steps:
+        - task: ...
+        - script: ...
+        - stage: Deploy
+        ...
+</pre>
+
+<p>If your pipeline is simple (one stage, one job), then you may drop
+  the enclosing <code>stages/jobs</code> declaration and just define an
+  array named <code>steps</code>:</p>
+<pre>
+  steps:
+    - task: ...
+    - task: ...
+    - script: ...
+</pre>
+
+<h3 id="variable-and-parameter-reference">Variable and Parameter reference</h3>
+<p>I’m lifting this <a
+    href="https://learn.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&amp;tabs=yaml%2Cbatch#understand-variable-syntax">straight
+    from the docs</a>:</p>
+<p>There are different ways of referencing/expanding variables,
+  according to when you need the variable expanded</p>
+<p>Macro syntax - <code>$()</code> - is used to expand variables <em>at
+    run-time</em>, just before a task executes. When a variable is not
+  found, the expression is rendered as-is - i.e., <code>$(foo)</code>
+  remains <code>$(foo)</code> if the pipeline has no such variable.</p>
+<p>Template Expression syntax - <code>${{ }}</code> - is used to expand
+  variables <em>at compile-time</em>. It can also be used to expand
+  pipeline parameters, which are not modifiable at run-time. Because of
+  this, variables expanded with <code>${{ }}</code> may be used as
+  <em>structural elements</em> of a pipeline – i.e. as keys <em>as well
+    as</em> values.
+</p>
+<p>If a template expression has no value (e.g. in the case a
+  non-existent variable is referenced), then the compiler silently renders
+  it with an empty string at compile-time</p>
+<p>Runtime Expression syntax - <code>$[ ]</code> - is used to evaluate
+  expressions at <em>run-time</em>. This is commonly used for conditional
+  execution of <code>jobs</code> or <code>stages</code></p>
+<p>I usually use <code>$(var)</code>, but it might be better to use
+  <code>${{variables.var}}</code> unless I’m explicitly referencing a
+  variable I’m expecting to set during runtime.
+</p>
+
+<p>Here's a handy table, which I stole:</p>
+
+<table>
+  <tr>
+    <td>Syntax</td>
+    <td>Example</td>
+    <td>When is it processed?</td>
+    <td>Where does it expand in a pipeline definition?</td>
+    <td>How does it render when not found?</td>
+  </tr>
+  <tr>
+    <td>macro</td>
+    <td>$(var)</td>
+    <td>runtime before a task executes</td>
+    <td>value (right side)</td>
+    <td>prints $(var)</td>
+  </tr>
+  <tr>
+    <td>template expression</td>
+    <td>${{ variables.var }}</td>
+    <td>compile time</td>
+    <td>key or value (left or right side)</td>
+    <td>empty string</td>
+  </tr>
+  <tr>
+    <td>runtime expression</td>
+    <td>$[variables.var]</td>
+    <td>runtime</td>
+    <td>value (right side)</td>
+    <td>empty string</td>
+  </tr>
+</table>
+
+<style>
+  table,
+  th,
+  td {
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+</style>
