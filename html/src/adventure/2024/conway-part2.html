@@ -1,0 +1,69 @@
+<h1>Conway Pt 2:</h1>
+
+<blockquote><em>The sky above the port was the color of a television, tuned to a dead channel.</em>
+</blockquote>
+
+<pre>
+
+?(?-) (A TV static simulator.)
+
+?(?-) (Applicative order rule definitions)
+&lt;&gt; ((?x) (?y) &lt;=&excl;=&gt;) (&lt;&gt; ?x ?y)
+&lt;&gt; ((?x) ?. &lt;=&excl;=&gt;) (&lt;&gt; ?x (?.))
+&lt;&gt; (?x ?y &lt;=&excl;=&gt;) (&lt;&gt; ?x ?y)
+&lt;&gt; (&lt;&excl;&gt; ?x ?y) ((?x) (?y) ?(?x ?x) &lt;=&excl;=&gt;)
+
+?(?-) (Applicative-order lambdas)
+&lt;&gt; ((?l ?r) ?. &lt;=&excl;@=&gt;) (?(?l ?r) ?.)
+&lt;&gt; (&lt;&excl;@&gt; (?l ?r) ?x) ((?l ?r) ?x ?(?z ?z) &lt;=&excl;@=&gt;)
+
+?(?-) (Function application)
+&lt;&gt; (?. &lt;=$=&gt; ?f) (?f ?.)
+&lt;&gt; ((?a) &lt;=$=&gt; ?f) (?f ?a)
+&lt;&gt; (&lt;$&gt; ?f ?a) (?a ?(?x ?x) &lt;=$=&gt; ?f)
+
+
+$screen-size -&gt; ((number 48))
+$live-color -&gt; ((color #ffffff))
+$dead-color -&gt; ((color #000000))
+
+&lt;&gt; (?x -&gt; ?y) (&lt;&gt; ?x ?y)
+
+?(?-) (Point type:
+ (point 
+  (number :x)
+  (number :y))
+)
+
+
+?(?-) (Utils)
+&lt;&gt; (&excl;random) (?((?: ?0 ?1) ?:) rand 0 2)
+&lt;&gt; (eq (?x ?x)) #t
+&lt;&gt; (eq (?x ?y)) #f
+&lt;&gt; ((number ?0) (number ?1) `?:) ((number ?:))
+&lt;&gt; (-1 (number ?x)) ((number ?x) (number 1) `-)
+&lt;&gt; (+1 (number ?x)) ((number ?x) (number 1) `+)
+&lt;&gt; (read ?: (point (number ?0) (number ?1)) (color ?2)) ?:
+&lt;&gt; (draw ?: (point (number ?0) (number ?1)) (color ?2)) ?:
+
+?(?-) (Initialize the game board)
+
+&lt;&excl;&gt; (?p (number 0) cell) (draw pixel ?p $dead-color)
+&lt;&excl;&gt; (?p (number 1) cell) (draw pixel ?p $live-color)
+&lt;&gt; (random-painter ?p) (?p (number 0) (number 2) `rand cell)
+
+
+&lt;&gt; (handle-event (Tic ?x)) ($screen-size $screen-size init)
+&lt;&gt; (handle-event ?x) (?(?: ?:) (print (Unknown event: ?x \n)))
+&lt;&gt; (on-event ?~) (handle-event ?~ on-event Any)
+
+&lt;&gt; ((number 0)  (number 0) init) ()
+&lt;&gt; ((number 0)  (number ?j) init) ($screen-size (number ?j) (number 1) `- init)
+&lt;&gt; ((number ?i) (number ?j) init) (
+  (point (number ?i) (number ?j)) (number 0) (number 2) `rand cell
+  (number ?i) (number 1) `- (number ?j) init
+)
+
+&lt;&excl;@&gt; (((number ?0) (number ?1) ?:) ?:) ($screen-size $screen-size size)
+on-event Any
+</pre>

@@ -13,6 +13,14 @@
   <li><a href="#Day 3">Day 3 :: A cursor with personality :: In which I attempt a challenge</a></li>
   <li><a href="#Day 4">Day 4 :: Rewriting Addled :: In which I solve the challenge</a></li>
   <li><a href="#Day 5">Day 5 :: Tic Tac Toe :: In which I gain confidence, and a head-cold</a></li>
+  <li><a href="#Day 6">Day 6 :: Tri-angler :: In which I am awed</a></li>
+  <li><a href="#Day 7">Day 7 :: Brush Bubble :: Om Swasti</a></li>
+  <li><a href="#Day 8">Day 8 :: Fun can work :: In which I refine the sketchpad</a></li>
+  <li><a href="#Day 9">Day 9 :: Percolation :: In which I modify the site</a></li>
+  <li><a href="#Day 10">Day 10 :: Game of Life pt. 1 :: In which I begin another challenge</a></li>
+  <li><a href="#Day 11">Day 11 :: Brief Diversion :: In which I implement applicative-order evaluation</a></li>
+  <li><a href="#Day 12">Day 12 :: Static, Life :: In which I iterate</a></li>
+  <li><a href="#Day 13">Day 13 :: Try to Optimize :: In which I am lead down a false path</a></li>
 </ol>
 
 <h2>Rules</h2>
@@ -22,63 +30,486 @@
   <li>stay hydrated</li>
 </ol>
 
-<h2 id="Day 5">Day 5</h2>
+<section id="Day 13">
+  </h2>Day 13</h2>
 
-<p>I asked around on Merveilles what I should do next with modal, and Devine suggested I make a game</p>
+  <p>Today I decided I would try chunking my iteration step into rows</p>
 
-<p>I woke up and decided to try implementing Tic Tac Toe. I did not know if I could do it. Then, I did it.</p>
+  <p>This way, for a grid of 256x256 pixels, I could cut some math rewrites out of the inner iteration loop</p>
 
-<pre>
+  <p>I <em>was</em> successful at creating a rule which would draw an entire row of random pixels</p>
+
+  <p>However, I needed some way to deal with the remains of evaluation of the row-rule, which was producing <i>vast</i> nested empty tuples.</p>
+
+  <p>I tried to flatten my cons-cells out using `flip-flatten`, but this resulted in modal applying the `flip-flatten` rule inside the row-iteration step</p>
+  
+  <p>This resulted in a noticeably slower implementation than yesterdays.</p>
+
+  <p>Have I learned a lesson?</p>
+
+  <pre>
+
+?(?-) (
+  A tv-snow simulator running smoothly at 30fps, 256 x 256.
+  A resounding failure.
+)
+
+&lt;&gt; $screen-size 16
+
+?(?-) (Utils)
+&lt;&gt; (?0 ?1 `?:) ?:
+&lt;&gt; ((draw ?: ?0 ?1 ?2)) ?:
+&lt;&gt; (draw ?: ?0 ?1 ?2) ?:
+
+?(?-) (Initialize the game board)
+
+&lt;&gt; ((?x ?y (0) cell)) (draw pixel ?x ?y #000000)
+&lt;&gt; ((?x ?y (1) cell)) (draw pixel ?x ?y #FFFFFF)
+
+&lt;&gt; (handle-event (Tic ?x)) (($screen-size) do-row)
+&lt;&gt; (handle-event ?x) (?(?: ?:) (print (Unknown event: ?x \n)))
+&lt;&gt; (on-event ?~) (handle-event ?~ on-event Any)
+
+&lt;&gt; ((0) do-row) ()
+&lt;&gt; (flip-flatten ()) ()
+&lt;&gt; (flip-flatten (?x ?y)) (flip-flatten ?y ?x)
+
+&lt;&gt; (?s &lt;put-it&gt;) (&lt;&gt; ((?r) do-row) (?s (?r 1 `-) do-row))
+&lt;&gt; ((0)  unroll ?s) ((flip-flatten ?s) &lt;put-it&gt;)
+&lt;&gt; ((?x) unroll ?s) ((?x 1 `-) unroll ((?x ?r (0 2 `rand) cell) ?s))
+
+($screen-size) unroll ()
+
+on-event Any
+  </pre>
+
+  <p>I spent an hour or so banging away at this. Then decided it was ok to admit defeat.</p>
+
+  <p><a href="https://www.youtube.com/watch?v=9aYn-PNJ4Tc">Into every life a little rain must fall!</a></p>
+
+</section>
+
+<section id="Day 12">
+  <h2>Day 12</h2>
+
+  <p>I decide today's the day to learn to iterate</p>
+
+  <p>The code became rather long again, so I will link to it: <a href="2024/conway-part2.html">Conway Part 2</a></p>
+
+  <p>I can now draw a <strike>48x48</strike> 64x64 box of tv snow. Any larger and it is noticeably slow.</p>
+
+  <p>It takes me <strike>6</strike> 5 re-writes to draw one pixel with this implementation. I wonder if I could get it lower?</p>
+  
+  <p>(As I wrote this entry, I came up with another little optimization to save one more rewrite.)</p>
+
+  <img src="/images/tv-snow.gif" alt="a 48x48 box of flickering black and white TV snow" />
+
+  <p>: : : :</p>
+
+  <p>When I started today's work, I made an implementation of a random-pixel-painter using my function-application tool.</p>
+
+  <p>These were nice for readability, but they added additional re-write steps.</p>
+
+  <p>I also had a conditional expression, until I realized it was better to leverage the rewriter to handle conditional evaluation for me.</p>
+
+  <p>To optimize in Modal, it's best to take out as many intermediate re-write steps as possible.</p>
+
+  <p>It seems that there is no way to reduce IO rewrites. Or, is there?</p>
+
+  <p>I also wonder if it's possible to perform loop-unrolling.</p>
+
+  <p>I might run out of memory. Or, will I?</p>
+</section>
+
+<section id="Day 11">
+  <h2>Day 11</h2>
+
+  <p>I haven't been able to use variables in rule definitions. It's been bugging me a little bit.</p>
+
+  <p>I decide to take a brief diversion from Life to figure this out.</p>
+
+  <p>Variables are necessary for code readability.</p>
+
+  <p>More than variables, it also allows applying all rewrites to the right-hand-side 
+  of a rule <em>before</em> creating it. If we're going to do much iteration, it would
+  be helpful to move as much of the re-writing needed for an evaluation <em>outside</em>
+  of the iteration step as possible. It's an optimization.</p>
+
+  <p>Shift things left, basically.</p>
+
+  <p>Is this applicative-order evaluation? I <i>think</i> so. In this case, we are fully-evaluating all rules before we register the new rule.</p>
+
+  <pre>
+?(?-) (Implement a syntax for evaluating variables in rule definition right-hand side)
+
+?(?-) (
+  The trick here is to use a lambda to delay evaluation of (?x ?y &lt;=&gt;) until after ?y is evaluated.
+
+  This may be used as an alternative "fully evaluating" rule definition
+
+  In order to match the syntax of "non-evaluating" rule definition, we need to match two cases:
+  - right-hand-side is a tuple of 1 element (semantic unpack)
+  - otherwise, unpack right-hand-side using ?. register
+)
+&lt;&gt; ((?x) (?y) &lt;=!=&gt;) (&lt;&gt; ?x ?y)
+&lt;&gt; ((?x) ?. &lt;=!=&gt;) (&lt;&gt; ?x (?.))
+&lt;&gt; (?x ?y &lt;=!=&gt;) (&lt;&gt; ?x ?y)
+&lt;&gt; (&lt;!&gt; ?x ?y) ((?x) (?y) ?(?x ?x) &lt;=!=&gt;)
+
+&lt;!&gt; $bam (of an englishmun)
+&lt;!&gt; $bar (I smell the blood)
+&lt;!&gt; ($fum) ($bar $bam)
+&lt;!&gt; (fee fie foe) ($fum)
+
+?(?-) (this evaluates to:
+  &lt;&gt; $giant-says (I smell the blood of an englishmun)
+)
+&lt;!&gt; $giant-says (fee fie foe)
+
+$giant-says
+
+?(?-) (And do something similar, for lambdas. Have to use a different symbol than ?...)
+&lt;&gt; ((?l ?r) ?. &lt;=!@=&gt;) (?(?l ?r) ?.)
+&lt;&gt; (&lt;!@&gt; (?l ?r) ?x) ((?l ?r) ?x ?(?z ?z) &lt;=!@=&gt;)
+
+&lt;&gt; $x 10
+&lt;&gt; $y 20
+
+?(?-) (Because we rely on intermediate non-prefix syntax, the right-hand-side must always be a tuple)
+&lt;!@&gt; ((?0 ?: ?1) ?:) ($x + $y)
+  </pre>
+
+  <p>It feels good to work on something like this, before starting the dayjob-workday</p>
+
+  <p>I'm still recovering from a cold and a rather severe poison-ivy reaction, both of which totally disrupted my sleep schedule</p>
+
+  <p>But I'm pleased to say I got up before sunrise today, and did this all before opening the browser window.</p>
+  <p><a href="https://www.youtube.com/watch?v=4P3tOw0uDpA">Just how I like it!</a></p>
+</section>
+
+<section id="Day 10">
+  <h2>Day 10 :: 
+    <span title="Happy Guru Rinpoche Day!" style="-webkit-text-stroke: 1px black;
+text-shadow: 1px 1px 0 black; 1px  1px 0 black, -1px  1px 0 black, 1px -1px 0 black, -1px -1px 0 black;
+">
+    <span style="color: yellow; ">⬤</span>
+    <span style="color: white;  ">⬤</span>
+    <span style="color: red;    ">⬤</span>
+    <span style="color: green;  ">⬤</span>
+    <span style="color: blue;   ">⬤</span>
+    </span>
+
+
+  </h2>
+  <!-- happy Guru Rinpoche day! -->
+  <p>I realize I am getting stuck in my head about doing more modal, so I decide to just do something:</p>
+  <pre>
+?(?-) (An implementation of conway's game of life, with a grid-size of 256.
+
+Incomplete.)
+
+?((?0 ?1 ?:) ?:) 256 256 size
+
+&lt;&gt; (?x -&gt; ?y) (&lt;&gt; ?x ?y)
+
+$screen-size -&gt; (number 256)
+$live-color -&gt; (color #ffffff)
+$dead-color -&gt; (color #000000)
+
+?(?-) (Utils)
+&lt;&gt; (?0 ?1 `?:) ?:
+&lt;&gt; (-1 ?x) (?x 1 `-)
+&lt;&gt; (+1 ?x) (?x 1 `+)
+&lt;&gt; (read ?: (point ?0 ?1) (color ?2)) ?:
+&lt;&gt; (draw ?: (point ?0 ?1) (color ?2)) ?:
+
+?(?-) (Operations)
+&lt;&gt; (neighbors (point ?x ?y)) (
+    (point -1 ?x -1 ?y)
+    (point -1 ?x ?y)
+    (point -1 ?x +1 ?y)
+    (point ?x -1 ?y)
+    (point ?x ?y)
+    (point ?x +1 ?y)
+    (point +1 ?x -1 ?y)
+    (point +1 ?x ?y)
+    (point +1 ?x +1 ?y)
+)
+
+draw pixel (point 128 128) (color #ffffff)
+
+read @pixel (point 128 128) (color #000000)
+
+(neighbors (point 128 128))
+  </pre>
+
+  <p>It took a little effort figuring out how to read a pixel. It turns out the documentation for Thuesday is not quite correct; you must supply a color to use as a default, in case you try to access out-of-bounds.</p>
+  
+  <p>Stay tuned.</p>
+</section>
+
+<section id="Day 9">
+  <h2>Day 9</h2>
+  <p>Work was a little heavy today, so I let my study of modal breathe a bit</p>
+
+  <p>Instead, I made rice stir-fry, cleaned the kitchen, did my laundry, and read more <i>Hidden In Plain Sight (Amdur)</i></p>
+
+  <p>: : : :</p>
+
+  <p>I particularly liked this advice from <a href="https://avanier.dev/renaissance">Josh Avanier's site</a>, regarding website redesigns:</p>
+  <blockquote><i>Strip everything down to just plain markup tags. No classes, no styling. Focus on how the information you’re presenting flows vertically. Format things semantically—use the correct headings, use articles and sections, etc. (see HTML § guidelines).</i></blockquote>
+
+  <p>This adventure log is where I'm testing styles out. I'm trying to only add what's needed.</p>
+
+  <p>Here is my stylesheet so far:</p>
+  <pre>
+pre {
+  background: #eee;
+  margin: 0 -1em;
+  padding: .5em 2em;
+  overflow-x: scroll;
+}</pre>
+
+  <p>Other than that, I refined the notes page, my about page, and deleted a lot of unlinked loose-leaf.</p>
+
+  <p>You cannot see it, but this page is now subdivided with &lt;section&gt; tags :]</p>
+
+
+</section>
+
+<section id="Day 8">
+  <h2>Day 8</h2>
+
+  <p>I have a little less time today, because I spent so long in the city</p>
+
+  <p>No problem though. It was a good use of time.</p>
+
+  <p>: : : :</p>
+
+  <p>I start off thinking about how I could make a buffered canvas -- like you would have for a drawing program</p>
+
+  <p>You'd need something like that if you wanted to 1) draw a cursor without 2) drawing it permanently on your nice
+  picture</p>
+
+  <p>One idea that presents itself to me is buffering to a sprite. But there's an issue there, I don't understand how
+  sprites work in modal</p>
+
+  <p>I spend a little time reading thuesday's source, then I cut up Devine's sprite demo. Then, I start to get it.</p>
+
+  <p>More on this later.</p>
+
+  <p>: : : :</p>
+
+  <p>I had this idea to add more brushes to my sketchpad, and make it behave slightly more like a real sketchpad (i.e.
+  only draw when you're touching the page)</p>
+
+  <p>The source code for it ended up a little bit large, so here's a link to it instead: <a
+    href="2024/sketchbook.html">sketchbook.modal</a></p>
+
+  <img src="/images/smudge.png" alt="smudge" />
+
+  <p>After a few attempts, I even draw a passable <em>Hung</em>(<span class="tib">ཧཱུྃ</span>).</p>
+
+  <img src="/images/hung01.png" alt="HUNG" />
+
+  <p>I also retooled my triangle sketcher a bit, and made the lines 3-wide on the diagonal. I think it looks pleasant.</p>
+
+  <img src="/images/curtain.png" alt="curtain" />
+  <img src="/images/faceted.png" alt="faceted" />
+
+  <p>Then I have some cold sake, and write up this entry. What a day!</p>
+</section>
+
+<section id="Day 7">
+  <h2>Day 7</h2>
+
+  <p>I've been reflecting on what my teacher said to me the other day, talking about the way we converse with tools</p>
+
+  <p>"If you can do anything you dream of, you'll find out your dreams are boring."</p>
+
+  <p>: : : :</p>
+
+  <p>In order to understand evaluation order, I thought it would be good to do a project that required some math</p>
+
+  <p>My original idea was to draw a vector at the mouse indicating speed/direction.</p>
+
+  <p>I found this very visually boring, so I made it draw a circle with a radius scaling off velocity instead. Oh my.</p>
+
+  <img src="/images/bubbles.png" alt="bubbles" />
+  <img src="/images/worm.png" alt="scrawls" />
+
+  <pre>
+?(?-) (Draw a vector indicating the current direction and velocity of the mouse cursor)
+
+?(?-) (Variables and procedures)
+&lt;&gt; ($screen-size) ((number 512))
+&lt;&gt; ($screen-color) ((color #FFFFFF))
+&lt;&gt; ($brush-color) ((color #000000))
+&lt;&gt; (!clear-screen) ((number 0) (number 0) $screen-size $screen-size $screen-color draw fill-rect)
+
+?((?0 ?1 ?:) ?:) 512 512 size
+
+?(?-) (
+Keybinds:
+c - clear screen
+q - quit
+)
+&lt;&gt; (?s handle-event (Key (?x c))) (
+!clear-screen
+?s
+)
+&lt;&gt; ((state ?s ?f) handle-event (Key (?x q)))
+(cmd quit)
+
+&lt;&gt; (cmd ?:) ?:
+
+&lt;&gt; (read-event ?~) (handle-event ?~ read-event Any)
+&lt;&gt; ((state (?a ?b ?c ?d) polling) handle-event (Move (?x ?y ?z))) ((state (?c ?d ?x ?y) drawing))
+&lt;&gt; (handle-event ?x) ()
+
+?(?-) (I will use a type system to enforce evaluation order, because I am not that clever)
+&lt;&gt; ((number ?0) (number ?1) `?:) ((number ?:))
+&lt;&gt; ((number ?0) (number ?1) (number ?2) (number ?3) (color ?4) draw ?:) ?:
+&lt;&gt; ((draw ?: (number ?0) (number ?1) (number ?2) (color ?3))) ?:
+
+&lt;&gt; (state (?a ?b ?c ?d) drawing) (
+(draw circ
+(number ?c)
+(number ?d)
+(number ?d) (number ?b) `-
+(number ?a) (number ?c) `- `+
+$brush-color)
+state (?a ?b ?c ?d) polling)
+
+!clear-screen
+(state (0 0 1 1) polling) read-event Any
+  </pre>
+
+  <p>This is the sort of thing I'll idly draw on napkins, or in the margins of paper.</p>
+</section>
+
+<section>
+  <h2 id="Day 6">Day 6</h2>
+
+  <p>I am simply in awe of Modal</p>
+
+  <pre>
+?(?-) (Draw a triangle with points indicated by three mouse clicks)
+
+?((?0 ?1 ?:) ?:) 1024 1024 size
+
+?(?-) (First we may begin by getting the mouse position)
+
+&lt;&gt; (read-event ?~) (handle-event ?~ read-event Any)
+
+&lt;&gt; ((state ((?a ?b) ?s) debouncing) handle-event (Touch (?x ?y ?z)))
+((state ((?x ?y) ?s) listening))
+
+&lt;&gt; ((state ?s listening) handle-event (Touch (?x ?y 1)))
+((state ((?x ?y) ?s) debouncing))
+
+?(?-) (c - Clear)
+&lt;&gt; ((state ?s ?f) handle-event (Key (?x c)))
+((draw fill-rect 0 0 1024 1024 #000000 state () listening))
+
+?(?-) (q - Quit)
+&lt;&gt; ((state ?s ?f) handle-event (Key (?x q)))
+(cmd quit)
+
+&lt;&gt; (handle-event ?x) ()
+
+?(?-) (State Handlers)
+&lt;&gt; (state ((?a ?b) ((?c ?d) ((?e ?g) ?s))) listening)
+(draw line ?a ?b ?c ?d #ffffff
+draw line ?c ?d ?e ?g #ffffff
+draw line ?e ?g ?a ?b #ffffff
+state ?s listening)
+
+?(?-) (Action handlers)
+&lt;&gt; (draw ?: ?0 ?1 ?2 ?3 ?4) ?:
+
+&lt;&gt; (cmd ?:) ?:
+
+draw fill-rect 0 0 1024 1024 #000000
+(state () listening) read-event Any
+  </pre>
+
+  <p>Astonishing. Marvellous.</p>
+
+  <img src="/images/triangle1.png" alt="triangles in black space" />
+</section>
+
+<section>
+  <h2 id="Day 5">Day 5</h2>
+
+  <p>I asked around on Merveilles what I should do next with modal, and Devine suggested I make a game</p>
+
+  <p>I woke up and decided to try implementing Tic Tac Toe. I did not know if I could do it. Then, I did it.</p>
+
+  <pre>
 &lt;&gt; (console ?:) ?:
-&lt;&gt; (print-state (?x ?y) { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i }) (console (current turn: ?x \n) console (?a | ?b | ?c \n) console (?d | ?e | ?f \n) console (?g | ?h | ?i \n))
+&lt;&gt; (print-state (?x ?y) { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i }) (console (current turn: ?x \n) console (?a |
+?b | ?c \n) console (?d | ?e | ?f \n) console (?g | ?h | ?i \n))
 
 ?(?-) (x wins by diagonal)
-&lt;&gt; (?m ?n ?o { x | ?b | ?c ?d |  x | ?f ?g | ?h |  x }) (console (x wins))
-&lt;&gt; (?m ?n ?o { ?a | ?b |  x ?d |  x | ?f x | ?h | ?i }) (console (x wins))
+&lt;&gt; (?m ?n ?o { x | ?b | ?c ?d | x | ?f ?g | ?h | x }) (console (x wins))
+&lt;&gt; (?m ?n ?o { ?a | ?b | x ?d | x | ?f x | ?h | ?i }) (console (x wins))
 
 ?(?-) (x wins by row)
-&lt;&gt; (?m ?n ?o { x |  x |  x ?d | ?e | ?f ?g | ?h | ?i }) (console (x wins))
-&lt;&gt; (?m ?n ?o { ?a | ?b | ?c x |  x |  x ?g | ?h | ?i }) (console (x wins))
-&lt;&gt; (?m ?n ?o { ?a | ?b | ?c ?d | ?e | ?f x |  x |  x }) (console (x wins))
+&lt;&gt; (?m ?n ?o { x | x | x ?d | ?e | ?f ?g | ?h | ?i }) (console (x wins))
+&lt;&gt; (?m ?n ?o { ?a | ?b | ?c x | x | x ?g | ?h | ?i }) (console (x wins))
+&lt;&gt; (?m ?n ?o { ?a | ?b | ?c ?d | ?e | ?f x | x | x }) (console (x wins))
 
 ?(?-) (x wins by column)
 &lt;&gt; (?m ?n ?o { x | ?b | ?c x | ?e | ?f x | ?h | ?i }) (console (x wins))
-&lt;&gt; (?m ?n ?o { ?a |  x | ?c ?d |  x | ?f ?g |  x | ?i }) (console (x wins))
-&lt;&gt; (?m ?n ?o { ?a | ?b |  x ?d | ?e |  x ?g | ?h |  x }) (console (x wins))
+&lt;&gt; (?m ?n ?o { ?a | x | ?c ?d | x | ?f ?g | x | ?i }) (console (x wins))
+&lt;&gt; (?m ?n ?o { ?a | ?b | x ?d | ?e | x ?g | ?h | x }) (console (x wins))
 
 ?(?-) (o wins by diagonal)
-&lt;&gt; (?m ?n ?o { o | ?b | ?c ?d |  o | ?f ?g | ?h |  o }) (console (o wins))
-&lt;&gt; (?m ?n ?o { ?a | ?b |  o ?d |  o | ?f o | ?h | ?i }) (console (o wins))
+&lt;&gt; (?m ?n ?o { o | ?b | ?c ?d | o | ?f ?g | ?h | o }) (console (o wins))
+&lt;&gt; (?m ?n ?o { ?a | ?b | o ?d | o | ?f o | ?h | ?i }) (console (o wins))
 
 ?(?-) (o wins by row)
-&lt;&gt; (?m ?n ?o { o |  o |  o ?d | ?e | ?f ?g | ?h | ?i }) (console (o wins))
-&lt;&gt; (?m ?n ?o { ?a | ?b | ?c o |  o |  o ?g | ?h | ?i }) (console (o wins))
-&lt;&gt; (?m ?n ?o { ?a | ?b | ?c ?d | ?e | ?f o |  o |  o }) (console (o wins))
+&lt;&gt; (?m ?n ?o { o | o | o ?d | ?e | ?f ?g | ?h | ?i }) (console (o wins))
+&lt;&gt; (?m ?n ?o { ?a | ?b | ?c o | o | o ?g | ?h | ?i }) (console (o wins))
+&lt;&gt; (?m ?n ?o { ?a | ?b | ?c ?d | ?e | ?f o | o | o }) (console (o wins))
 
 ?(?-) (o wins by column)
 &lt;&gt; (?m ?n ?o { o | ?b | ?c o | ?e | ?f o | ?h | ?i }) (console (o wins))
-&lt;&gt; (?m ?n ?o { ?a |  o | ?c ?d |  o | ?f ?g |  o | ?i }) (console (o wins))
-&lt;&gt; (?m ?n ?o { ?a | ?b |  o ?d | ?e |  o ?g | ?h |  o }) (console (o wins))
+&lt;&gt; (?m ?n ?o { ?a | o | ?c ?d | o | ?f ?g | o | ?i }) (console (o wins))
+&lt;&gt; (?m ?n ?o { ?a | ?b | o ?d | ?e | o ?g | ?h | o }) (console (o wins))
 
 
-&lt;&gt; ( (?x ?y) (read) (turn ?x ?~) { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i }) (  (?x ?y) (go) (turn ?x ?~) { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i })
+&lt;&gt; ( (?x ?y) (read) (turn ?x ?~) { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i }) ( (?x ?y) (go) (turn ?x ?~) { ?a |
+?b | ?c ?d | ?e | ?f ?g | ?h | ?i })
 
-&lt;&gt; ( (?x ?y) (go) (turn ?x 1) { _  | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?x | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i })
-&lt;&gt; ( (?x ?y) (go) (turn ?x 2) { ?a | _ | ?c ?d | ?e | ?f ?g | ?h | ?i  }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a | ?x | ?c ?d | ?e | ?f ?g | ?h | ?i })
-&lt;&gt; ( (?x ?y) (go) (turn ?x 3) { ?a | ?b | _ ?d | ?e | ?f ?g | ?h | ?i  }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a | ?b | ?x ?d | ?e | ?f ?g | ?h | ?i })
+&lt;&gt; ( (?x ?y) (go) (turn ?x 1) { _ | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?x
+| ?b | ?c ?d | ?e | ?f ?g | ?h | ?i })
+&lt;&gt; ( (?x ?y) (go) (turn ?x 2) { ?a | _ | ?c ?d | ?e | ?f ?g | ?h | ?i }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a
+| ?x | ?c ?d | ?e | ?f ?g | ?h | ?i })
+&lt;&gt; ( (?x ?y) (go) (turn ?x 3) { ?a | ?b | _ ?d | ?e | ?f ?g | ?h | ?i }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a
+| ?b | ?x ?d | ?e | ?f ?g | ?h | ?i })
 
-&lt;&gt; ( (?x ?y) (go) (turn ?x 4) { ?a | ?b | ?c _  | ?e | ?f ?g | ?h | ?i }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a | ?b | ?c ?x | ?e | ?f ?g | ?h | ?i })
-&lt;&gt; ( (?x ?y) (go) (turn ?x 5) { ?a | ?b | ?c ?d | _  | ?f ?g | ?h | ?i }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a | ?b | ?c ?d | ?x | ?f ?g | ?h | ?i })
-&lt;&gt; ( (?x ?y) (go) (turn ?x 6) { ?a | ?b | ?c ?d | ?e | _  ?g | ?h | ?i }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a | ?b | ?c ?d | ?e | ?x ?g | ?h | ?i })
+&lt;&gt; ( (?x ?y) (go) (turn ?x 4) { ?a | ?b | ?c _ | ?e | ?f ?g | ?h | ?i }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a
+| ?b | ?c ?x | ?e | ?f ?g | ?h | ?i })
+&lt;&gt; ( (?x ?y) (go) (turn ?x 5) { ?a | ?b | ?c ?d | _ | ?f ?g | ?h | ?i }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a
+| ?b | ?c ?d | ?x | ?f ?g | ?h | ?i })
+&lt;&gt; ( (?x ?y) (go) (turn ?x 6) { ?a | ?b | ?c ?d | ?e | _ ?g | ?h | ?i }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a
+| ?b | ?c ?d | ?e | ?x ?g | ?h | ?i })
 
-&lt;&gt; ( (?x ?y) (go) (turn ?x 7) { ?a | ?b | ?c ?d | ?e | ?f _  | ?h | ?i }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a | ?b | ?c ?d | ?e | ?f ?x | ?h | ?i })
-&lt;&gt; ( (?x ?y) (go) (turn ?x 8) { ?a | ?b | ?c ?d | ?e | ?f ?g | _  | ?i }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a | ?b | ?c ?d | ?e | ?f ?g | ?x | ?i })
-&lt;&gt; ( (?x ?y) (go) (turn ?x 9) { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | _  }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?x })
+&lt;&gt; ( (?x ?y) (go) (turn ?x 7) { ?a | ?b | ?c ?d | ?e | ?f _ | ?h | ?i }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a
+| ?b | ?c ?d | ?e | ?f ?x | ?h | ?i })
+&lt;&gt; ( (?x ?y) (go) (turn ?x 8) { ?a | ?b | ?c ?d | ?e | ?f ?g | _ | ?i }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a
+| ?b | ?c ?d | ?e | ?f ?g | ?x | ?i })
+&lt;&gt; ( (?x ?y) (go) (turn ?x 9) { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | _ }) (dbg (?y ?x) (read) (turn ?y (?~)) { ?a
+| ?b | ?c ?d | ?e | ?f ?g | ?h | ?x })
 
 ?(?-) (Helpfully output game state to player)
-&lt;&gt; (dbg ?x ?y ?z { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i }) (print-state ?x { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i } ?x ?y ?z { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i })
+&lt;&gt; (dbg ?x ?y ?z { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i }) (print-state ?x { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h
+| ?i } ?x ?y ?z { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i })
 ?(?-) (Helpfully notify player when an illegal move is attempted)
-&lt;&gt; ((?x ?y) (go) (turn ?x ?z) { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i }) ((console (?x attempted to mark ?z illegally\n)) (?x ?y) (read) (turn ?x (?~)) { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i })
+&lt;&gt; ((?x ?y) (go) (turn ?x ?z) { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i }) ((console (?x attempted to mark ?z
+illegally\n)) (?x ?y) (read) (turn ?x (?~)) { ?a | ?b | ?c ?d | ?e | ?f ?g | ?h | ?i })
 
 ?(?-) (Play the game, start on turn x)
 console (enter a number between 1 and 9 to indicate the space you wish to mark \n)
@@ -91,19 +522,21 @@ _ | _ | _
 _ | _ | _
 _ | _ | _
 }
-</pre>
+  </pre>
 
-<p>: : : :</p>
+  <p>: : : :</p>
 
-<p>It seems I've come down with a cold</p>
+  <p>It seems I've come down with a cold</p>
+</section>
 
-<h2 id="Day 4">Day 4</h2>
+<section id="Day 4">
+  <h2>Day 4</h2>
 
-<p>I went to bed last night wondering how I would reverse a tuple without exploding it</p>
+  <p>I went to bed last night wondering how I would reverse a tuple without exploding it</p>
 
-<p>Then it struck me that I could unpack it into the land of square-braks</p>
+  <p>Then it struck me that I could unpack it into the land of square-braks</p>
 
-<pre>
+  <pre>
 ?(?-) (Use our cursor from before, as well as a NEW friend)
 &lt;&gt; (&lt;-_-&gt; ()) ()
 &lt;&gt; (&lt;-_-&gt; (?x ?y)) (?x &lt;-_-&gt; ?y)
@@ -117,107 +550,117 @@ _ | _ | _
 &lt;&gt; (?i ] ^v^]&gt; ?x) (] ^v^]&gt; (?x ?i))
 &lt;&gt; (revAgain ?.) ([ ?. ] ^v^]&gt; () &lt;-_-&gt;)
 
-(revAgain (mary had a little lamb)) 
+(revAgain (mary had a little lamb))
 ?(?-) (Evaluates to (lamb little a had mary))
 
 (revAgain (foo bar baa ma (nested list) (another nested list) (an even (more (deeply) nested) list)))
 ?(?-) (Evaluates to ((an even (more (deeply) nested) list) (another nested list) (nested list) ma baa bar foo))
-</pre>
+  </pre>
 
-<p>We can now reverse a tuple, without disturbing tuples it may contain. <em>Success!</em></p>
+  <p>We can now reverse a tuple, without disturbing tuples it may contain. <em>Success!</em></p>
 
-<p>: : : :</p>
-<p>To brush up on the state of the art, I attempt reading <a href="https://wiki.xxiivv.com/site/rewriting.html">Devine's page on rewriting languages</a>, until my eyes cross</p>
+  <p>: : : :</p>
+  <p>To brush up on the state of the art, I attempt reading <a href="https://wiki.xxiivv.com/site/rewriting.html">Devine's
+    page on rewriting languages</a>, until my eyes cross</p>
+</section>
 
-<h2 id="Day 3">Day 3</h2>
+<section id="Day 3">
+  <h2>Day 3</h2>
 
-<p>I spoke with my brother a bit before today's DecAdvemCture work</p>
+  <p>I spoke with my brother a bit before today's DecAdvemCture work</p>
 
-<p>While he was describing to me his goal of doing 20,000 (!) pull-ups this year, a thought occurred to me:</p>
+  <p>While he was describing to me his goal of doing 20,000 (!) pull-ups this year, a thought occurred to me:</p>
 
-<p>"Some goals require pushing towards, and some goals pull you along. The pulling goals are <em>over there</em>. Pushing goals are <em>right here</em>. Pulling goals are <em>bounded</em>. Pushing goals are <em>boundless</em>."</p>
+  <p>"Some goals require pushing towards, and some goals pull you along. The pulling goals are <em>over there</em>.
+  Pushing goals are <em>right here</em>. Pulling goals are <em>bounded</em>. Pushing goals are <em>boundless</em>."</p>
 
-<p>That is to say, a goal that can be accomplished is a pulling-goal. It pulls you toward it. Some effort is required, but it, the situation, naturally directs your efforts.</p>
+  <p>That is to say, a goal that can be accomplished is a pulling-goal. It pulls you toward it. Some effort is required,
+  but it, the situation, naturally directs your efforts.</p>
 
-<p>: : : :</p>
+  <p>: : : :</p>
 
-<p>Today I gave myself a challenge with modal: reverse a tuple</p>
+  <p>Today I gave myself a challenge with modal: reverse a tuple</p>
 
-<pre>
+  <pre>
 ?(?-) (Given a tuple of any number of elements, re-write the tuple in reverse order)
 
 ?(?-) (here is a cursor, her name is "zyp", and she flattens cons-cells into tuples)
 ?(?-) (she is very talented, and can work from either direction.)
-<> (<-_-> ()) ()
-<> (<-_-> (?x ?y)) (?x <-_-> ?y)
-<> (() <-_->) ()
-<> ((?x ?y) <-_->) (?x <-_-> ?y)
+&lt;&gt; (&lt;-_-&gt; ()) ()
+&lt;&gt; (&lt;-_-&gt; (?x ?y)) (?x &lt;-_-&gt; ?y)
+&lt;&gt; (() &lt;-_-&gt;) ()
+&lt;&gt; ((?x ?y) &lt;-_-&gt;) (?x &lt;-_-&gt; ?y)
 
-.. (<-_-> (1 (2 (3 ()))))
-.. ((((() a) b) c) <-_->)
+.. (&lt;-_-&gt; (1 (2 (3 ()))))
+.. ((((() a) b) c) &lt;-_-&gt;)
 
 ?(?-) (Now, given zyp's example, can we reverse an exploded tuple?)
-<> (flipcons ()) ()
-<> (flipcons (?x ?y)) (flipcons ?y ?x)
+&lt;&gt; (flipcons ()) ()
+&lt;&gt; (flipcons (?x ?y)) (flipcons ?y ?x)
 
-<> (rev ?*) (flipcons (?*))
+&lt;&gt; (rev ?*) (flipcons (?*))
 
 (rev (1 2 3 4))
 
 ?(?-) (Unfortunately, it doesn't behave like we expect -- instead it explodes nested lists too)
 (rev (foo bar baa ma (nested list) (another nested list) (an even (more (deeply) nested) list)))
-</pre>
+  </pre>
 
-<p>A little disappointing, but it's ok. I enjoyed starting with a file that contained only a prompt, then trying to fulfill that prompt</p>
+  <p>A little disappointing, but it's ok. I enjoyed starting with a file that contained only a prompt, then trying to
+  fulfill that prompt</p>
 
-<p>That was setting myself a "pulling-goal", rather than a "pushing goal" of "I'm going to figure out modal."</p>
+  <p>That was setting myself a "pulling-goal", rather than a "pushing goal" of "I'm going to figure out modal."</p>
 
+</section>
 
-<h2 id="Day 2">Day 2</h2>
+<section id="Day 2">
+  <h2>Day 2</h2>
 
-<pre>
-Today I
-- worked my day job
-- researched and ordered parts for a cheap, high capacity NAS
-- experimented further with Modal. Joined the discord. It was immediately helpful.
-</pre>
+  <p>
+    Today I:
+    <ul>
+    <li>worked my day job</li>
+    <li>researched and ordered parts for a cheap, high capacity NAS</li>
+    <li>experimented further with Modal. Joined the discord. It was immediately helpful.</li>
+  </p>
 
-<p>: : : :</p>
+  <p>: : : :</p>
 
-<pre>
+  <pre>
 ?(?-) (Some things clicked for me in modal)
 ?(?-) (First of all, these comments make use of a no-op lambda to do, no op)
 
 ?(?-) (Second, the idea of using cursors clicked for me:)
 ?(?-) (go and pick up a ball and move it all the way to the left)
 
-<> (> _) (_ >)
-<> (> *) (* <)
-<> (_ * <) (* < _)
+&lt;&gt; (&gt; _) (_ &gt;)
+&lt;&gt; (&gt; *) (* &lt;)
+&lt;&gt; (_ * &lt;) (* &lt; _)
 
-<> (> |) (< |)
-<> (_ <) (< _)
-<> (| <) (| >)
+&lt;&gt; (&gt; |) (&lt; |)
+&lt;&gt; (_ &lt;) (&lt; _)
+&lt;&gt; (| &lt;) (| &gt;)
 
-| > _ _ _ _ _ _ _ _ * |
+| &gt; _ _ _ _ _ _ _ _ * |
 
 ?(?-) (Third, I start to grasp the special registers)
 
-<> (explode ?*) ?*
+&lt;&gt; (explode ?*) ?*
 
 .. (explode (foo bar baz)) ?(?-) (Evalulates to (foo (bar (baz ()))))
 
 ?(?-) (Basically, a special register matches and then something special happens to whatever is matched)
 ?(?-) (e.g. when we read using ?~, whatever is matched is tossed, and replaced by stdin)
 ?(?~ ?~) thisCouldBeAnyTokenButLetsCallItRead
+  </pre>
 
-</pre>
+  <p>Tomorrow is a new day, and I should like to make a cursor with some personality</p>
+</section>
 
-<p>Tomorrow is a new day, and I should like to make a cursor with some personality</p>
+<section id="Day 1">
+  <h2>Day 1</h2>
 
-<h2 id="Day 1">Day 1</h2>
-
-<pre>
+  <pre>
 Let's enumerate a couple ideas for December Adventure:
 - re-build disast.rs (using term rewriting??)
 - learn modal, and the ecosystem around it, and use it
@@ -225,85 +668,85 @@ Let's enumerate a couple ideas for December Adventure:
 <a href="https://www.youtube.com/watch?v=vJyy1yUsPvk">"But how we get from A to B, it can't be up to me"</a>
 
 <!-- Everything that I write here is getting published, I have decided -->
-</pre>
+  </pre>
 
-<p>::::</p>
+  <p>::::</p>
 
-<pre>
+  <pre>
 Without further ado, modal:
 
 ::
 
 I thought it would be nice to build logic circuits out of nand:
 
-<> (nand #t #t) #f
-<> (nand #t #f) #t
-<> (nand #f #t) #t
-<> (nand #f #f) #t
+&lt;&gt; (nand #t #t) #f
+&lt;&gt; (nand #t #f) #t
+&lt;&gt; (nand #f #t) #t
+&lt;&gt; (nand #f #f) #t
 
 ?(?-) (It seems we have to explicitly unpack if we want to build things with nand)
 ?(?-) (I suspect this is because I am inadvertantly matching non-boolean expressions)
 ?(?-) (more on this later?)
 
-<> (nand (?x) (?y)) (nand ?x ?y)
+&lt;&gt; (nand (?x) (?y)) (nand ?x ?y)
 
 ?(?-) (The rest of the circuitry)
-<> (not ?x) (nand ?x ?x)
-<> (and ?x ?y) (not (nand ?x ?y))
-<> (or ?x ?y) (nand (not ?x) (not ?y))
-<> (xor ?x ?y) (and (or ?x ?y) (nand ?x ?y))
+&lt;&gt; (not ?x) (nand ?x ?x)
+&lt;&gt; (and ?x ?y) (not (nand ?x ?y))
+&lt;&gt; (or ?x ?y) (nand (not ?x) (not ?y))
+&lt;&gt; (xor ?x ?y) (and (or ?x ?y) (nand ?x ?y))
 
 ?(?-) (Now can we build up some kind of if-else expression?)
 ?(?-) (We will have to unpack here as well?)
-<> (if #t ?x ?y) ?x
-<> (if #f ?x ?y) ?y
-<> (eq ?x ?x) #t
-<> (eq ?x ?y) #f
+&lt;&gt; (if #t ?x ?y) ?x
+&lt;&gt; (if #f ?x ?y) ?y
+&lt;&gt; (eq ?x ?x) #t
+&lt;&gt; (eq ?x ?y) #f
 
 ?(?-) (Somehow our ternary operator does not behave as expected.)
 
 ?(?-) (Eval: `(if (#f) True! False!)`)
-.. if (eq #t #f) True!  False!
+.. if (eq #t #f) True! False!
 
 ?(?-) (Evaluates to `False!`, which is more like what we would expect)
-.. if eq #t #f True!  False!
+.. if eq #t #f True! False!
 
 ?(?-) (So, why is it that we seem to rewrite to a token sometimes and a one-element tuple other times?)
-</pre>
-<p>::::</p>
+  </pre>
+  <p>::::</p>
 
-<pre>
+  <pre>
 ?(?-) (I decide to go and cover some basics)
 
 ?(?-) (A rule has the following syntax)
-?(?-) (<> left right)
-<> hello goodbye
-.. hello          ?(?-) (evaluates to `goodbye`)
-.. hellogoodbye   ?(?-) (no match; no rule is applied)
+?(?-) (&lt;&gt; left right)
+&lt;&gt; hello goodbye
+.. hello ?(?-) (evaluates to `goodbye`)
+.. hellogoodbye ?(?-) (no match; no rule is applied)
 
 ?(?-) (What if we want to evaluate to something a little bigger than a token?)
 ?(?-) (tuples are "unpacked", I think this is a vocabulary word I am possibly misusing.)
-<> good (even better)
-.. good bye       ?(?-) (evaluates to "even better bye")
+&lt;&gt; good (even better)
+.. good bye ?(?-) (evaluates to "even better bye")
 
 
 ?(?-) (Use registers)
-<> (swap ?x ?y) (?y ?x)
-<> (spin ?x ?y ?z) (?y ?z ?x)
+&lt;&gt; (swap ?x ?y) (?y ?x)
+&lt;&gt; (spin ?x ?y ?z) (?y ?z ?x)
 
-.. swap it out            ?(?-) (evaluates to `out it`)
-.. spin me right round    ?(?-) (evaluates to `right round me`)
-.. spin swap a b c d e    ?(?-) (evaluates to `a b d c e`)
-.. spin (swap a b) c d e  ?(?-) (evaluates to `c d (b a) e`)
+.. swap it out ?(?-) (evaluates to `out it`)
+.. spin me right round ?(?-) (evaluates to `right round me`)
+.. spin swap a b c d e ?(?-) (evaluates to `a b d c e`)
+.. spin (swap a b) c d e ?(?-) (evaluates to `c d (b a) e`)
 
 ?(?-) (I get as far as the I/O section before realizing that rule evaluation is tricky)
 
 ?(?-) (Consider I/O, maybe we want to check if a user enters the same thing twice?)
 ?(?-) (use the ?~ register to read input)
 ?(?-) (Oh, actually I don't know how to use stdin as an arg twice)
-<> (read ?~) ?~
-<> (eq ?x ?x) (these terms are equivalent)
-<> (eq ?x ?y) (these terms are different)
+&lt;&gt; (read ?~) ?~
+&lt;&gt; (eq ?x ?x) (these terms are equivalent)
+&lt;&gt; (eq ?x ?y) (these terms are different)
 
 
 ?(?-) (Oops, we match the eq rule here, and always get the true result.)
@@ -312,44 +755,37 @@ eq (read stdin) (read stdin)
 
 ?(?-) (How would we achieve application of `eq` to the results of two sequential reads?)
 
-</pre>
+  </pre>
 
-<p>:: I decide to try zooming in on what was confusing me above ::</p>
+  <p>:: I decide to try zooming in on what was confusing me above ::</p>
 
-<pre>
+  <pre>
 
 ?(?-) (I will try to dig a little more into tuple/token rewriting now)
 
 
-<> (does-this-wrap ?x) (?x)
-.. does-this-wrap abc     ?(?-) (evaluates to `abc`)
-.. does-this-wrap (abc)   ?(?-) (evaluates to `(abc)`)
-.. (does-this-wrap abc)   ?(?-) (evaluates to `(abc)`)
+&lt;&gt; (does-this-wrap ?x) (?x)
+.. does-this-wrap abc ?(?-) (evaluates to `abc`)
+.. does-this-wrap (abc) ?(?-) (evaluates to `(abc)`)
+.. (does-this-wrap abc) ?(?-) (evaluates to `(abc)`)
 .. (does-this-wrap (abc)) ?(?-) (evaluates to `((abc))`)
 
 
-<> (what-about-this ?x) ?x
-.. what-about-this efg     ?(?-) (evaluates to `efg`)
-.. what-about-this (efg)   ?(?-) (evaluates to `(efg)`)
-.. (what-about-this efg)   ?(?-) (evaluates to `(efg)`)
+&lt;&gt; (what-about-this ?x) ?x
+.. what-about-this efg ?(?-) (evaluates to `efg`)
+.. what-about-this (efg) ?(?-) (evaluates to `(efg)`)
+.. (what-about-this efg) ?(?-) (evaluates to `(efg)`)
 .. (what-about-this (efg)) ?(?-) (evaluates to `((efg))`)
 
 
-<> (and-this ?x) ((?x))
-.. and-this hij     ?(?-) (evaluates to `(hij)`)
-.. and-this (hij)   ?(?-) (evaluates to `((hij))`)
-.. (and-this hij)   ?(?-) (evaluates to `((hij))`)
+&lt;&gt; (and-this ?x) ((?x))
+.. and-this hij ?(?-) (evaluates to `(hij)`)
+.. and-this (hij) ?(?-) (evaluates to `((hij))`)
+.. (and-this hij) ?(?-) (evaluates to `((hij))`)
 .. (and-this (hij)) ?(?-) (evaluates to `(((hij)))`)
-</pre>
+  </pre>
 
-<p>::::</p>
+  <p>::::</p>
 
-<p>Then I go and have some dinner and prepare this log entry</p>
-
-<style>
-pre {
-  background: #eee;
-  margin: 0 -1em;
-  padding: .5em 2em;
-}
-</style>
+  <p>Then I go and have some dinner and prepare this log entry</p>
+</section>

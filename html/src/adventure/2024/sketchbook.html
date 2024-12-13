@@ -1,0 +1,157 @@
+<pre>Keys:
+q - quit
+c - clear
+i - invert brush
+1 - blotter brush
+2 - reverse-direction blotter brush
+3 - Chisel brush
+4 - Pencil
+5 - shimmer
+</pre>
+<img src="/images/smudge.png" />
+<pre>
+?(?-) (A drawing program, with multiple brushes)
+
+  <> ($screen-size) ((number 512))
+  <> ($screen-color) ((color #FFFFFF))
+  <> ($brush-color) ((color #000000))
+<> (!clear-screen) ((number 0) (number 0) $screen-size $screen-size $screen-color draw fill-rect)
+  ?((?0 ?1 ?:) ?:) 512 512 size
+
+  ?(?-) (Keybinds:
+      q - quit
+      c - clear
+      i - invert brush
+      1 - blotter brush
+      2 - reverse-direction blotter brush
+      3 - Chisel brush
+      4 - Pencil
+      5 - shimmer)
+
+  <> ((state ?s ?f) handle-event (Key (?x q))) (cmd quit)
+  <> (?s handle-event (Key (?x c))) (!clear-screen ?s)
+  <> ((state (?a ?b ?c ?d ?e ?f) ?p) handle-event (Key (?x 1))) ((state (?a ?b ?c ?d ?e Blotter) ?p))
+  <> ((state (?a ?b ?c ?d ?e ?f) ?p) handle-event (Key (?x 2))) ((state (?a ?b ?c ?d ?e ReverseBlotter) ?p))
+  <> ((state (?a ?b ?c ?d ?e ?f) ?p) handle-event (Key (?x 3))) ((state (?a ?b ?c ?d ?e Chisel) ?p))
+  <> ((state (?a ?b ?c ?d ?e ?f) ?p) handle-event (Key (?x 4))) ((state (?a ?b ?c ?d ?e Pencil) ?p))
+<> ((state (?a ?b ?c ?d ?e ?f) ?p) handle-event (Key (?x 5))) ((state (?a ?b ?c ?d ?e Shimmer) ?p))
+
+  <> ((state (?a ?b ?c ?d ?e Blotter) ?p) handle-event (Key (?x r))) ((state (?a ?b ?c ?d ?e InverseBlotter) ?p))
+  <> ((state (?a ?b ?c ?d ?e ReverseBlotter) ?p) handle-event (Key (?x r))) ((state (?a ?b ?c ?d ?e InverseReverseBlotter) ?p))
+  <> ((state (?a ?b ?c ?d ?e Chisel) ?p) handle-event (Key (?x r))) ((state (?a ?b ?c ?d ?e InverseChisel) ?p))
+  <> ((state (?a ?b ?c ?d ?e Pencil) ?p) handle-event (Key (?x r))) ((state (?a ?b ?c ?d ?e InversePencil) ?p))
+<> ((state (?a ?b ?c ?d ?e Shimmer) ?p) handle-event (Key (?x r))) ((state (?a ?b ?c ?d ?e InverseShimmer) ?p))
+
+  <> ((state (?a ?b ?c ?d ?e InverseBlotter) ?p) handle-event (Key (?x r))) ((state (?a ?b ?c ?d ?e Blotter) ?p))
+  <> ((state (?a ?b ?c ?d ?e InverseReverseBlotter) ?p) handle-event (Key (?x r))) ((state (?a ?b ?c ?d ?e ReverseBlotter) ?p))
+  <> ((state (?a ?b ?c ?d ?e InverseChisel) ?p) handle-event (Key (?x r))) ((state (?a ?b ?c ?d ?e Chisel) ?p))
+  <> ((state (?a ?b ?c ?d ?e InversePencil) ?p) handle-event (Key (?x r))) ((state (?a ?b ?c ?d ?e Pencil) ?p))
+<> ((state (?a ?b ?c ?d ?e InverseShimmer) ?p) handle-event (Key (?x r))) ((state (?a ?b ?c ?d ?e Shimmer) ?p))
+
+  <> (cmd ?:) ?:
+
+  <> (read-event ?~) (handle-event ?~ read-event Any)
+  <> ((state (?a ?b ?c ?d ?e ?f) polling) handle-event (Move (?x ?y ?z))) ((state (?c ?d ?x ?y ?e ?f) drawing))
+  <> ((state (?a ?b ?c ?d MouseUp ?f) polling) handle-event (Touch (?x ?y 1))) ((state (?c ?d ?x ?y MouseDown ?f) drawing))
+  <> ((state (?a ?b ?c ?d MouseDown ?f) polling) handle-event (Touch (?x ?y 0))) ((state (?c ?d ?x ?y MouseUp ?f) drawing))
+<> (handle-event ?x) ()
+
+  ?(?-) (I will use a type system to enforce evaluation order, because I am not that clever)
+<> ((number ?0) (number ?1) `?:) ((number ?:))
+  <> ((number ?0) (number ?1) (number ?2) (number ?3) (color ?4) draw ?:) ?:
+  <> ((draw ?: (number ?0) (number ?1) (color ?2))) ?:
+  <> ((draw ?: (number ?0) (number ?1) (number ?2) (color ?3))) ?:
+  <> ((draw ?: (number ?0) (number ?1) (number ?2) (number ?3) (color ?4))) ?:
+
+  ?(?-) (
+      <> (state (?a ?b ?c ?d) drawing) (
+        !clear-screen
+        (number ?c)
+        (number ?d)
+        (number ?c) (number 2) `* (number ?a) `-
+        (number ?d) (number 2) `* (number ?b) `-
+        (color #ff0000)
+        draw line
+        state (?a ?b ?c ?d MouseDown) polling)
+
+      <> (state (?a ?b ?c ?d MouseUp ?f) drawing) (
+        (draw circ
+         (number ?c)
+         (number ?d)
+         (number ?d) (number ?b) `-
+         (number ?a) (number ?c) `- `+
+         $brush-color)
+        state (?a ?b ?c ?d MouseUp ?f) polling)
+      )
+
+  <> (state (?a ?b ?c ?d MouseUp ?f) drawing) (
+      state (?a ?b ?c ?d MouseUp ?f) polling)
+
+  <> (state (?a ?b ?c ?d MouseDown Blotter) drawing) (
+      (draw fill-circ
+       (number ?c)
+       (number ?d)
+       (number ?d) (number ?b) `-
+       (number ?a) (number ?c) `- `+ 
+       $brush-color)
+      state (?a ?b ?c ?d MouseDown Blotter) polling)
+
+  <> (state (?a ?b ?c ?d MouseDown ReverseBlotter) drawing) (
+      (draw fill-circ
+       (number ?c)
+       (number ?d)
+       (number ?d) (number ?b) `-
+       (number ?a) (number ?c) `- `-
+       $brush-color)
+      state (?a ?b ?c ?d MouseDown ReverseBlotter) polling)
+
+  <> (state (?a ?b ?c ?d MouseDown Shimmer) drawing) (
+      (draw circ (number ?c) (number ?d) (number ?d) (number ?b) `- (number ?a) (number ?c) `- `+ $brush-color)
+      state (?a ?b ?c ?d MouseDown Shimmer) polling)
+
+  <> (state (?a ?b ?c ?d MouseDown Chisel) drawing) (
+      (draw line (number ?c) (number 2) `- (number ?d) (number 2) `+ (number ?c) (number 2) `+ (number ?d) (number 2) `- $brush-color)
+      (draw line (number ?c) (number 2) `- (number ?d) (number 1) `+ (number ?c) (number 1) `+ (number ?d) (number 2) `- $brush-color)
+      (draw line (number ?c) (number 0) `- (number ?d) (number 1) `+ (number ?c) (number 2) `+ (number ?d) (number 1) `- $brush-color)
+      state (?a ?b ?c ?d MouseDown Chisel) polling)
+
+  <> (state (?a ?b ?c ?d MouseDown Pencil) drawing) (
+      (draw fill-circ (number ?c) (number ?d) (number 1) $brush-color)
+      state (?a ?b ?c ?d MouseDown Pencil) polling)
+
+  <> (state (?a ?b ?c ?d MouseDown InverseBlotter) drawing) (
+      (draw fill-circ
+       (number ?c)
+       (number ?d)
+       (number ?d) (number ?b) `-
+       (number ?a) (number ?c) `- `+ 
+       $screen-color)
+      state (?a ?b ?c ?d MouseDown InverseBlotter) polling)
+
+  <> (state (?a ?b ?c ?d MouseDown InverseReverseBlotter) drawing) (
+      (draw fill-circ
+       (number ?c)
+       (number ?d)
+       (number ?d) (number ?b) `-
+       (number ?a) (number ?c) `- `-
+       $screen-color)
+      state (?a ?b ?c ?d MouseDown InverseReverseBlotter) polling)
+
+  <> (state (?a ?b ?c ?d MouseDown InverseShimmer) drawing) (
+      (draw circ (number ?c) (number ?d) (number ?d) (number ?b) `- (number ?a) (number ?c) `- `+ $screen-color)
+      state (?a ?b ?c ?d MouseDown InverseShimmer) polling)
+
+  <> (state (?a ?b ?c ?d MouseDown InverseChisel) drawing) (
+      (draw line (number ?c) (number 2) `- (number ?d) (number 2) `+ (number ?c) (number 2) `+ (number ?d) (number 2) `- $screen-color)
+      (draw line (number ?c) (number 2) `- (number ?d) (number 1) `+ (number ?c) (number 1) `+ (number ?d) (number 2) `- $screen-color)
+      (draw line (number ?c) (number 0) `- (number ?d) (number 1) `+ (number ?c) (number 2) `+ (number ?d) (number 1) `- $screen-color)
+      (draw pixel (number ?c) (number ?c) (number ?a) `- `+ (number 1) `+ (number ?d) (number ?d) (number ?b) `- `+ (number 1) `+ $screen-color)
+      state (?a ?b ?c ?d MouseDown InverseChisel) polling)
+
+  <> (state (?a ?b ?c ?d MouseDown InversePencil) drawing) (
+      (draw fill-circ (number ?c) (number ?d) (number 1) $screen-color)
+      state (?a ?b ?c ?d MouseDown InversePencil) polling)
+
+  !clear-screen
+  (state (0 0 1 1 MouseUp Blotter) polling) read-event Any
+</pre>
