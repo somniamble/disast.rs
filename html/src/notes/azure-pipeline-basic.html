@@ -159,6 +159,28 @@ pre-existing azure pipelines and stack-overflow answers that you don't understan
   </tr>
 </table>
 
+<h4>Setting variables between steps</h4>
+<p>Sometimes you need to "export" a variable from one step to another. You can use <a href="https://learn.microsoft.com/en-us/azure/devops/pipelines/scripts/logging-commands">logging commands</a> for this.</p>
+<pre>
+steps:
+  - script: |
+      echo "##vso[task.setvariable variable=hey_there]hot_stuff"
+  - script: |
+      echo $(hey_there) # outputs "hot_stuff"
+</pre>
+
+<p>However, some variables are <i>read-only</i>. These are:</p>
+<ul>
+  <li>Output variables, which are set with the flag <code>isOutput=true</code>: 
+    <pre>##vso[task.setVariable variable=third;isOutput=true]three</pre></li>
+    <li>ReadOnly variables, which are set with the flag <code>isReadonly=true</code>: 
+      <pre>##vso[task.setVariable variable=second;isReadonly=true]two</pre></li>
+  <li>System variables (like <code>System.AccessToken</code>), which are documented <a href="https://learn.microsoft.com/en-us/azure/devops/pipelines/build/variables">here</a></li>
+</ul>
+
+<p>Such variables must be referenced using <i>macro</i> syntax or <i>runtime expression</i> syntax.</p>
+<p>Remember that if a variable is not defined at compile time, <i>template expressions will be empty</i>
+
 <style>
   table,
   th,
@@ -167,3 +189,62 @@ pre-existing azure pipelines and stack-overflow answers that you don't understan
     border-collapse: collapse;
   }
 </style>
+
+<section id="template-string">
+<h2>Template string operations</h2>
+<p>Maybe you want to do forbidden magic. I understand.</p>
+
+<h4>Iterate over parameters to generate tasks</h4>
+
+<p>Suppose you have a list of test accounts you need to clean up every morning, and you need to run a
+single task for each one that is identical <em>except for the account ID</em>:</p>
+
+<pre>
+parameters:
+  - name: 'accounts'
+    type: object
+    default:
+      - id: "6411220f-cba5-4c25-afc8-7b3d746da824" 
+      - id: "e9ecd598-f36d-4121-bbc5-3cf06b8a3e02" 
+      - id: "7ee55cc7-3319-44b1-9e2e-c045cbb6acc8" 
+      - id: "44d20d28-fbec-4655-8f6d-6da3b65a8570" 
+      - id: "6f023208-ad55-4a7f-b3af-bf1ecfae226d" 
+
+steps:
+  - ${{each account in parameters.accounts}}:
+    - script: |
+        echo "cleaning up ${{ account.id }}"
+        # ...
+      displayName: "Clean up ${{ account.id }}"
+</pre>
+
+<p>This will interpolate 5 tasks into the pipeline at <i>compile-time</i></p>
+
+
+<h4>Interpolating parameters into a script</h4>
+<p>Use <code>convertToJson</code> to: convert to json</p>
+<p>Handy if you know your way around <a href="/notes/jq-my-beloved.html">jq</a></p>
+<h5 class="achtung">Ware thee: Pass this as a parameter to your script steps; it is usually compiled incorrectly.</h5>
+<pre>
+parameters:
+- name: 'environments'
+  type: object
+  default:
+  - environment: development
+    namespace: dev
+  - environment: production
+    namespace: prod
+
+steps:
+  bash: |
+    printf "$environments" | jq '.'
+  env:
+    environments: "${{ convertToJson(parameters.environments) }}"
+</pre>
+</section>
+
+<section>
+  <h3>Just links:</h3>
+  <p><a href="https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/pr?view=azure-pipelines"><code>pr</code> definition</a></p>
+  <p><a href="https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/resources-repositories-repository?view=azure-pipelines"><code>resources.repositories</code> definition</a></p>
+</section>

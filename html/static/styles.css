@@ -6,8 +6,46 @@
 }
 
 pre {
-  background: #eee;
-  margin: 0 -1em;
-  padding: .5em 2em;
+  background: #efefef;
+  margin: 0 -111em;
+  padding: .5em 112em;
   overflow-x: scroll;
+}
+
+main {
+  max-width: 768px;
+  padding: 0 24px;
+}
+
+.sep {
+  margin-left: 1em;
+}
+
+hr {
+  margin: .5em -10em;
+}
+
+header {
+  margin-left: 24px; 
+}
+
+footer {
+  margin-left: 24px;
+}
+
+img {
+  image-rendering: crisp-edges;
+}
+
+blockquote {
+  font-style: oblique;
+}
+
+/* em-dash before citation */
+cite::before {
+  content: "—";
+}
+
+.achtung {
+  color: red;
 }
