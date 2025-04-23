@@ -1,0 +1,169 @@
+<h1>Building a Network-Attached Storage</h1>
+
+<article>
+  <h1>Building a Network-Attached Storage</h1>
+
+  <p>December 2024, I decided I would finally build a NAS.</p>
+
+  <section>
+    <h2>Disks</h2>
+    <p>
+      I had the good fortune to get a nice deal on some Seagate EXOS hard drives
+      from serverpartdeals.com
+    </p>
+    <p>
+      These are "manufacturer-recertified" HDDs, so they used to live in a
+      datacenter somewhere.
+    </p>
+    <h3>SMART testing the disks</h3>
+    <p>
+      It stands for
+      <a
+        href="https://en.wikipedia.org/wiki/Self-Monitoring,_Analysis_and_Reporting_Technology"
+        >Self-Monitoring, Analysis and Reporting Technology"</a
+      >
+    </p>
+    <p>
+      This is a self-reporting diagnostic tool provided by a drive's firmware.
+    </p>
+    <p>
+      You can also try writing <code>0</code> to every single sector on the
+      drive and see if any sectors are <em>not</em> all <code>0</code>.
+    </p>
+
+    <h4>Tools</h4>
+    <p>
+      I tried badblocks originally, but it can't handle a hard drive with more
+      than 2<sup>32</sup> blocks.
+    </p>
+    <p>
+      In a pinch, Arch Wiki recommends
+      <a href="https://wiki.archlinux.org/title/Badblocks#Alternatives"
+        >smartctl or <i>writing 0</i> to the device</a
+      >. I decided on a long smart test.
+    </p>
+    <pre>
+      # could also write 0s
+      # cryptsetup open /dev/sda new_hard_drive_1 --type plain --cipher aes-xts-plain64
+      # shred -v -n 0 -z /dev/mapper/new_hard_drive_1
+      # cmp -b /dev/zero /dev/mapper/new_hard_drive_1
+
+      man smartctl # is your friend
+      # Decided to use smartmontools
+      # Sketches me out that it was recognized at /dev/sda. Nevertheless.
+      sudo smartctl -t long /dev/sda # starts long test, it says to wait 1742 minutes (~29 hours) to finish. I started
+      about 2025-01-08 13:00.
+      sudo smartctl -a /dev/sda # "Print a large amount of SMART information for drive /dev/sda"
+    </pre>
+    <h3>Power draw</h3>
+    <p>
+      HDDs draw both 5V and 12V power; spinning a platter 7200 times a minute is
+      hard work.
+    </p>
+    <p>
+      Based on
+      <a href="/file/exos-x20-product-manual.pdf">the product manual</a> for my
+      HDDs, that looks like:
+    </p>
+    <table>
+      <tr>
+        <th></th>
+        <th>Current</th>
+        <th>Wattage</th>
+      </tr>
+      <tr>
+        <td>Max 5V</td>
+        <td>0.932</td>
+        <td>4.66</td>
+      </tr>
+      <tr>
+        <td>Max 12V</td>
+        <td>2.197</td>
+        <td>26.364</td>
+      </tr>
+      <tr>
+        <td>Idle 5V</td>
+        <td>0.298</td>
+        <td>1.49</td>
+      </tr>
+      <tr>
+        <td>Idle 12V</td>
+        <td>0.340</td>
+        <td>4.08</td>
+      </tr>
+    </table>
+  </section>
+  <section>
+    <h2>Board</h2>
+  </section>
+  <section>
+    <h2>Power</h2>
+    <p>
+      Assuming I want to scale this out to 5 drives at some point, and erring on
+      the side of caution:
+    </p>
+    <p>
+      I would need <em>at least</em> <b>30 W of 5V</b>, and <b>150 of 12V</b>
+    </p>
+    <p>
+      Even with a couple of fans, 200W might be enough. that's a pretty small
+      PSU.
+    </p>
+    <p>: : : :</p>
+    <p>I decided to go with a Corsair CX-550</p>
+    <table>
+      <tr>
+        <th></th>
+        <th>Max Load</th>
+        <th>Max Output</th>
+      </tr>
+      <tr>
+        <td>+3.3V</td>
+        <td>24A</td>
+        <td>120W*</td>
+      </tr>
+      <tr>
+        <td>+5V</td>
+        <td>20A</td>
+        <td>120W*</td>
+      </tr>
+      <tr>
+        <td>+12V</td>
+        <td>44A</td>
+        <td>528W</td>
+      </tr>
+      <tr>
+        <td>-12V</td>
+        <td>0.3A</td>
+        <td>3.6W</td>
+      </tr>
+      <tr>
+        <td>+5VSB</td>
+        <td>3A</td>
+        <td>15W</td>
+      </tr>
+      <tr>
+        <td>550 Watts total.</td>
+      </tr>
+      <tr>
+        <td>*120W total across both categories.</td>
+      </tr>
+    </table>
+  </section>
+  <section>
+    <h2>Putting it all together</h2>
+    <p>I wasn't sure how to set my disks up -- I have two to spare for this (I'm using my 3rd in my desktop)</p>
+    <p>However, I found a rather helpful reddit post:</p>
+    <blockquote>I have a few Synology NASes here. With the last one, a RackStation 1619xs+, as an experiment, I started with two drives and expanded the array from RAID type to RAID type.
+
+I started with a simple mirror, RAID 1. I added another drive and changed the RAID type to RAID 5. The machine rebuilt the array to incorporate the new drive. There was no data lost.
+
+I then added additional drives until there were eight. After the array was rebuilt incorporating the new drives, I converted it to RAID 6, which required me to add a ninth drive.
+
+The conversion of RAID 5 with eight drives to RAID 6 with nine drives took almost exactly three months. I did not use the NAS during that time, though I could have.
+
+I all cases, I was able to expand the array and add drives as necessary or desired. There was never any data loss.
+  </blockquote>
+  <p>So, I'll start with RAID 1, which is simple mirroring.</p>
+    </section>
+</article>

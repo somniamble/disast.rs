@@ -1,0 +1,28 @@
+<h1>A helpful conversation</h1>
+
+  <details>
+    <summary>(I asked around for an explanation, and lo):</summary>
+    <pre>
+<i>CapitalEx — Today at 2:17 PM</i>
+When I was trying to make modal program fast, the number one thing I tried to do was make my program size stay extremely small
+<i>rosin — Today at 2:17 PM</i>
+I was curious to see if it would be faster to do a single large expansion of size n, rather than n small expansions 
+in fact, as far as I can tell the do-row version of the program has 1 fewer re-write per cell, but it's still slower
+so what I am learning here is that indeed it is better to keep things small
+<i>CapitalEx — Today at 2:19 PM</i>
+Devines implementation flips your program between two buffers. It writes your changes first, then copies the rest of the old buffer. So the long that copy has to be the slower things run.
+<i>rosin — Today at 2:19 PM</i>
+aha
+Thank you for the explanation
+<i>CapitalEx — Today at 2:19 PM</i>
+No problem
+<i>rosin — Today at 2:19 PM</i>
+it was worth the attempt &gt;:)
+<i>(wryl) — Today at 2:19 PM</i>
+The original Python implementation uses a single buffer, a queue, which means we don't need to spend time copying.
+But it's not fast because.. Python.
+<i>CapitalEx — Today at 2:20 PM</i>
+I've been meaning to write a compile to Lua for my implementation cause the C impl is still leagues faster lol
+(Well, outside of some cases where the rolling queue is a major win and the program is small) 
+    </pre>
+  </details>

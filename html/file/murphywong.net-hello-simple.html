@@ -1,0 +1,2315 @@
+<!-- Saved from http://www.murphywong.net/hello/simple.htm at 2025-04-18T20:50:15Z using monolith v2.8.3 -->
+<!DOCTYPE html><html><head>
+<meta http-equiv="Content-Type" content="text/html;
+charset=ISO-8859-1">
+<link rel="StyleSheet" href="data:text/css;base64,Ym9keSB7IGJhY2tncm91bmQtY29sb3I6ICNGOEY0RTc7IGNvbG9yOiAjNTUyODAwOw0gICAgICAgbWFyZ2luLWxlZnQ6IDEwJTsgbWFyZ2luLXJpZ2h0OiAxMCU7DSAgICAgICBmb250LWZhbWlseTogc2Fucy1zZXJpZjsNICAgICB9DXByZSwgY29kZSB7IGZvbnQtZmFtaWx5OiBtb25vc3BhY2U7OzsgfQ1oMSxoMixoMyxoNCxoNSxwLHVsIHsgZm9udC1mYW1pbHk6IHNhbnMtc2VyaWY7IH0NLmNlbnRlcmVkIHsgdGV4dC1hbGlnbjogY2VudGVyOyB9DTpsaW5rIHsgY29sb3I6ICMwMDAwYTA7IH0NOnZpc2l0ZWQgeyBjb2xvcjogI2EwMDBhMDsgfQ06YWN0aXZlIHsgY29sb3I6ICMwMGEwMDA7IH0N" type="text/css">
+<title>Simple Forth</title>
+<meta name="desciption" content="Rudiments of the Forth Programming Language">
+<meta name="keywords" content="ANS Forth,Forth,Forth programming language,Forth tutorial,Forth textbook,Forth source code,Simple Forth,Simple Gifts,Shakers,Joseph Brackett,Leo Wong">
+<link rel="icon" href="data:image/vnd.microsoft.icon;base64,AAABAAIAEBAAAAAAAABoBQAAJgAAACAgAAAAAAAAqAgAAI4FAAAoAAAAEAAAACAAAAABAAgAAAAAAEABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP///wAAKFgA5/T4AAAoVQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMDAwMDAwMEBAMDAwMDBAQDAwMDAwMDBAQEAwMDBAQEAwMDAwMDAwQEBAQDBAQEBAMDAwMDAwMEBAQEBAQEBAQDAwMDAwMDBAQDBAQEAwQEAwMDAwMDAwQEAwMEAwMEBAICAwMDAwMEBAMDAwMDBAQEBAMDAwMDBAQDAwMDAwQEBAQDAwMDAwQEAwMDAwMEBAQEAwMDAwMEBAMDAwMDAgIEBAMDBAMDBAQDAwMDAwMDBAQDBAQEAwQEAwMDAwMDAwQEBAQEBAQEBAMDAwMDAwMEBAQEAwQEBAQDAwMDAwMDBAQEAwMDBAQEAwMDAwMDAwQEAwMDAwMEBAMDAwMDAwMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKAAAACAAAABAAAAAAQAIAAAAAACABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8AY4CbABM6ZQCtwtAAAAdCADtegADS4+sAhaG7AAAlUgAuSG4AfIyoAObz+AC+0NsAECldAAAXSAAdQ28AyNnjAEZmhwB9l7IA8fz+AN3r8QAALF0AcIqkACQ+ZgAJMmMACyRTAIWdsgBEXoQACS9aAAAFOQArTnMAd5OrAGqEnwAAG1AA6fn/AAAPRQDQ2uIAEDFfANbn8QAEKlcAI0dvAPr7/AAAJVwA6O/zAHSPpwCJorYA4e/0AAAMPgDN3uYADTZlAOv3+gDX5ewAfJWtAPj//wAAIE4ABitcAGF8mAAAJ1cADjZgAH6btQAAG0sA9Pr7ALzN2QAMMl0AIEVsAIikvADt+v4AABRLAMzZ4QAAIlUA8Pn7ANrp7wCqwM4AOVx+AAAPQQDz//8A5PH2AMvb5AAILFgAEDdjAIigtAB3kakAc4ylAGqHoQDU5e8AJkBoAERkhQDd7PQAASBRAHqSqwD8//8A6PX5AN/t8wDY5+4ADDRfABU8ZgAfRXAAfpeuAAAHOwAAEUMAABVGAAAZTgAAJ1QAACpbAH+ZsgBhfpoA+v7+AO/7/QDs+fwA6vD0AAEaSQDU5OwAACJQAAIrWADO2+MACTFcABIqXgAOM14Avc/aAA44ZgAhRm4AKkxyAC9JbwCGoLUAfZm0AH6NqQAAHUwAztjhAAAoVgAKMl8ADjViAK3AzwCFn7MAdpGqAHWQqAB0jKcA7vn8AN/t9AAAHk4AACVUAAAqXQAQNmAAcYylAHOKpQBjfpoA8v3/AOn2+gDg7vQA3OrwANXm8AAAGUkA1+btAAojUgDM3OUAAypWAM3a4gDJ2uQABSpbAAguWQAJMFsACTFeAA8wXgAROGQAq8HPACU/ZwAfRGsAOl1/AIejvABDXYMARWWGAHuUrAB5k6sAco6mAGuGoABgfZkAYn2ZAPr//wD5/v8A+vz9APP5+wDx+vsA6vr/AOr3+wAABjoA6PT4AOf0+QAADT8A5fP3AAAOQADe7fMAARtKANvp8AAAGk8A2ejvAAAhTwDY5u0A1+ftAAAjVgDT4+wAASdXANHi6wDM3eYACzFcAM/Z4gAJMWIACzNfAAwzXgANNF4ADTRgAA81YAAPNmMAFDtmAK7C0QAgRW4ArMHQACJGbwAvSG4AOl2AAIaftACGnrMAfZatAHyWrgB4kqoAeJGpAHWPpwBzjaYAZH+bAGuFnwBphKAAaoOeAP7//wD9//8A+///APn+/gD6/PwA8/7/APL+/wDx/f8A8fz/AAAHOgDz+vsA7/r9AO36/wDu+vwA7fn8AOz5/QAAEUQA7Pn7AOz4/AAAFkYA6/f7AAAWSADq9/oAABhIAOr2+gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAxrQ7m5ubm5ubn1a14tdPCf5hG0FDOTMxTxneSDInEAkwEBsbGxsbGxsQEBtjx4JJ6pCFUBAQEBAZaoqRkrCQAMAUxDQ0NDQ0NDTAG+IFD8WZnWWsmxsbEHq3kayBZnALmx87m5ubm5ubn1sV4tjv6L+n8Kh0VsnIYKf/qMFmcAubHzubm5ubm5ufWxXi2O/nHDPW+mG3fbQW89w4EWZwC5sfO5ubm5ubm59bFeLY7+cTdlMHFKr9pxMGU3gRZnALmx87m5ubm5ubn1sV4tjvoJdHabcZvLm3GbdnRyaGcAubHzubm5ubm5ufWxXi12vU+qAgZxu2S7cacCEl9GCQD1AUz9uQy5ubm59bFeLXRjdjV3UXmXD5dB3Hdi1CJxAGsBAe5cvAy5ubn1sV4tdB7QUU0l31ZxpVLMTS5gZnEANCxYXQxcubm5ufWxXi10uHTglLMx4x+wmusvrKPBcQCQCxOEXbX/ubm59bFeLXS4oI+VAewEfKSSARWt08FxAKIOEKtesvW5ubn1sV4tdLig4l7o7y/ALxTowi1QwXEA9wU65TRb9bm5ufWxXi10uKDimLHy7TbtbLHFLVDBcQB/RKEXmLH1ubm59bFeLXS4oOKYsYn9+f2JsV4tUMFxAHHB0+KYsfW5ubn1sV4tdLig4pix9bm5ufWxXi1QwXEAccHT4pixiTNt+/SxXi10uKDimLH1ubm59bFej4JEfwBxwdPimLHy7TbtbLHFLXS4oOKYsfW5ubn1W5hUOgX3AHHB061e6O+USJQU58ItdLig4pix9bm5ufXqwt5hdSYAccGDj5UB7NeFSZIBFa10uKDimLH1ubm5/0eU1Wl+iABxwVDglOvKkXo5TiovrEC4oOKYsfW5ubm5XAxdim7EAHFm1FFNzIalwxjhgE0uOx6g4pix9bm5uQy8XO8BAWsAcSIDqz/cQZcPl6YbP907Y6DimLH1ubm5ubm5/UwB9QAJxs5Xatpxu2S7cUpqqp9Lz+KYsfW5ubm5ubm5Q7G5AGdocnRAm3EoQChxm0B0CfrS4pix9bm5ubm5ublDsbkAZxaBN2UwcadqBnEwZTdx/tLimLH1ubm5ubm5uUOxuQBnFoHDPW9B3A1Reb89w3H+0uKYsfW5ubm5ubm5Q7G5AGcWjPp/2VKcbHPfe39li/7S4pix9bm5ubm5ublDsbkAZ43IGtirx+np6XA1KRpZ/NOGWAFM8/Pz8/Pz80wBuQAJK80cqJYBAQEBASdCHDgkMn0jAQGxsbGxsbGxAQG3AHHB0SGdPhQzkzMUPk6uHWOgUzTq+Lm5ubm5ubn26roA/////wAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAE="></link></head>
+<body>
+<div class="centered">
+<p><a href="http://www.murphywong.net/hello/hello.htm">Hello</a></p>
+<p><a href="http://www.murphywong.net/hello/forth.htm">Forth</a></p>
+</div>
+<div>
+<h2><font color="brown">Simple Forth</font></h2>
+<h3>Rudiments of a Programming Language</h3>
+<p>2 January 2004 +</p>
+<p><strong>Lesson:</strong><br>
+<a href="#L00">0. What is <cite>Simple Forth</cite> ?</a><br>
+<a href="#L01">1. The Forth Programmer Interface</a><br>
+<a href="#L02">2. Forth in One Sentence</a><br>
+<a href="#L03">3. "The Stack"</a> <code>.S DROP</code><br>
+<a href="#L04">4. The Dictionary</a> <code>WORDS SEE</code><br>
+<a href="#L05">5. Adding to the Dictionary</a> <code>: ; \</code><br>
+<a href="#L06">6. Forth Arithmetic 1</a> <code>+ - * /</code><br>
+<a href="#L07">7. Forth Arithmetic 2</a> <code>/MOD MOD .</code><br>
+<a href="#L08">8. Forth Arithmetic 3</a> <code> 1+ 1- ABS NEGATE MAX MIN */ */MOD</code><br>
+<a href="#L09">9. Managing the Stack 1</a> <code>DEPTH</code><br>
+<a href="#L10">10. Managing the Stack 2</a> <code>DUP ?DUP SWAP OVER ROT PICK ROLL NIP TUCK 2DROP 2DUP 2OVER 2SWAP</code><br>
+<a href="#L11">11. Programming by Teaching and Learning</a><br>
+<a href="#L12">12. Thoroughly Modern Forth</a><br>
+<a href="#L13">13. Comparisons</a> <code>TRUE FALSE = &lt; &gt; 0= 0&lt;</code><br>
+<a href="#L14">14. Conditional Execution</a> <code>IF ELSE THEN</code><br>
+<a href="#L15">15. Repeated Execution</a> <code>EXIT BEGIN AGAIN UNTIL WHILE REPEAT</code><br>
+<a href="#L16">16. Counted Loops</a> <code>?DO DO I J LEAVE UNLOOP LOOP +LOOP</code><br>
+<a href="#L17">17. Source Files</a> <code>S" INCLUDED</code><br>
+<a href="#L18">18. Game of Sticks</a> <code>CR SPACE SPACES ." .(</code><br>
+<a href="#L19">19. More to Display</a> <code>PAGE AT-XY .R MS</code><br>
+<a href="#L20">20. Data on the Return Stack</a> <code>&gt;R R@ R&gt; 2&gt;R 2R@ 2R&gt;</code><br>
+<a href="#L21">21. Named Storage</a> <code>CONSTANT VARIABLE U. U.R ! @ +! ?</code><br>
+<a href="#L22">22. Accessing Memory 1</a> <code>UNUSED CELLS</code><br>
+<a href="#L23">23. Accessing Memory 2</a> <code>CREATE HERE ALLOT ERASE CELL+</code><br>
+<a href="#L24">24. Accessing Memory 3</a> <code>,</code><br>
+<a href="#L25">25. Decimal Hexadecimal Binary</a> <code>BASE DECIMAL HEX DUMP</code><br>
+<a href="#L26">26. Booleans and Bits</a> <code>AND OR XOR  0&lt;&gt; INVERT 2* 2/ LSHIFT RSHIFT</code><br>
+<a href="#L27">27. A Software Stack</a> <code>2@ 2!</code><br>
+<a href="#L28">28. Characters A</a> <code> EMIT CHAR BL</code><br>
+<a href="#L29">29. Characters B</a> <code> [CHAR] KEY</code><br>
+<a href="#L30">30. Characters C</a> <code> C, C@ C! CHARS CHAR+ ALIGN</code><br>
+<a href="#L31">31. Strings 1</a> <code>S" TYPE</code><br>
+<a href="#L32">32. Strings 2</a> <code>COUNT MOVE</code><br>
+<a href="#L33">33. Strings 3</a> <code>/STRING FILL BLANK -TRAILING</code><br>
+<a href="#L34">34. Strings 4</a> <code>SEARCH COMPARE</code><br>
+<a href="#L35">35. Values</a> <code>VALUE TO</code><br>
+<a href="#L36">36. Locals</a> <code>LOCALS| TO</code>
+
+
+</p><p>Please e-mail comments and suggestions to Leo Wong <a href="mailto:hello@albany.net">hello@albany.net</a>
+
+</p><blockquote>
+'Tis the gift to be simple, 'tis the gift to be free,<br>
+'Tis the gift to come down where we ought to be,<br>
+And when we find ourselves in the place just right,<br>
+'Twill be in the valley of love and delight.<br>
+<br>
+When true simplicity is gain'd<br>
+To bow and to bend we shan't be asham'd,<br>
+To turn, turn will be our delight<br>
+'Till by turning, turning we come round right.<br>
+<br>
+"Simple Gifts," a Shaker song by Joseph Brackett (1848)<br>
+</blockquote>
+
+
+<a name="L00"></a>
+<p><strong>Ground 0 <em>What is</em> Simple Forth <em> ?</em></strong></p>
+
+<p>Forth is, among other things, a programming language whose ideals are freedom and simplicity.  Freedom requires knowledge and responsibility, and simplicity is yet more demanding.  But "simple" can also mean rudimentary.  <em>Simple Forth</em> attempts to teach the rudiments of Forth.</p>
+
+<em>How to try the examples.</em>
+
+<p>Forth is inherently interactive.  Programming in Forth is carried on as a dialog between you and a machine that understands Forth.  You send the machine some code.  Depending on the circumstances, the machine responds by trying either to perform ("execute") or to remember ("compile") the code.  If the machine then says something like "ok", that's good.  If it doesn't say ok, it might still be ok.  Try sending more code until the machine explicitly objects (or pretends to be dead).</p>
+
+<p>A machine that knows Forth is: a Forth Machine.  Sometimes I don't distinguish between Forth and the machine.  If this is confusing, let me know.</p>
+
+<p>1.  Start up a <a href="http://www.forth.org/compilers.html">Forth system</a>, and type in the examples.  Most Forths accept source from disk, but you'll get a better feeling for Forth by entering into a give-and-take with the computer.  Where you see a space, press the spacebar.  At the end of a line, press the key on your keyboard that means "Enter".</p>
+
+<p>2. If the machine doesn't understand something you entered it may respond by repeating what it didn't understand and adding an error message or maybe just: ?.  Check to see if you typed in the example correctly.  If not, type it in again.  If you and your machine continue to be baffled, write to me at <a href="mailto:hello@albany.net">hello@albany.net</a>.</p> 
+ 
+<p>3.  In Forth named procedures are called words.  Some frequently used words are very short.  For example, the word <code>.</code> displays a signed (plus/minus) integer.  In general, what is punctuation in other languages are procedures in Forth.</p>
+
+<p>4.  Many Forths are case sensitive.  All the examples will work in uppercase.  If you try lowercase and the machine says ok, use whatever case you wish.</p>
+
+<p><em>Start up a Forth and try:</em>
+</p><pre>1 .
+</pre>
+
+<p><em>Forth reads from left to right:</em>
+</p><pre>1 . 2 . 3 .
+</pre>
+
+<p><em>Spaces are separators:</em>
+</p><pre>12 .  3 .  123 .
+</pre>
+<p><em>Your machine probably won't understand this:</em>
+</p><pre>aieee!
+</pre>
+
+<p><em>It should understand when it's time to go:</em>
+</p><pre>BYE
+</pre>
+
+<a name="L01"></a>
+<p><strong>Lesson 1 <em>The Forth Programmer Interface</em>
+</strong></p>
+
+<p>According to Leo Brodie's book <cite>Thinking Forth</cite>, the three characteristics of the Forth Programmer Interface are implicit calls, implicit data passing, and direct access to memory.  None of these characteristics is unique to Forth, but they form quite a combination.</p>
+
+<p>The following examples use Forth words that will be explained later.  For now just type each line exactly as you see it and observe how your Forth responds.</p>
+
+<p>1.  Implicit calls.  The word <code>.S</code> is called by entering its name, <code>.S</code>.</p>
+
+<p><em>Try:</em>
+</p><pre>.S
+</pre>
+
+<p>2.  Implicit data passing.  The word <code>1+</code> takes a number and returns another without specifying either.  The word <code>DROP</code> takes a number without returning one.</p>
+
+<p><em>Try:</em>
+</p><pre>.S
+7
+.S
+1+
+.S
+1+
+.S
+DROP
+.S
+
+</pre>
+
+<p>3.  Direct access to memory.  In Forth you can name addresses of memory and see and change the data at those addresses.</p>
+
+<p>An address of memory identifies an "address unit".  The size of an address unit is often 8 bits - too small to hold a number greater than 255.  Forth typically works with "cells".  The size of a cell is usually two, four, or more address units.  Numbers considerably larger than 255 fit comfortably in a cell.</p>
+
+<em>To name a memory address</em> <code>MINE</code><em> and reserve a cell of memory at </em><code>MINE</code><em> try:</em>
+<pre>CREATE MINE  1 CELLS ALLOT
+</pre>
+
+<p><em>To put a number in the cell of memory at</em> <code>MINE</code> <em>try:</em>
+</p><pre>1 MINE !
+</pre>
+<em>To see the contents (might look rather strange if you're just beginning to learn programming) of the address units in the cell of memory at </em><code>MINE</code><em> try:</em>
+<pre>MINE 1 CELLS DUMP
+</pre>
+
+<p><em>To display the number in the cell of memory at </em> <code>MINE</code><em> try:</em>
+</p><pre>MINE ?
+</pre>
+
+<p><em>To change the number in the cell of memory at </em><code>MINE</code><em> try:</em>
+</p><pre>1024 MINE !
+MINE 1 CELLS DUMP
+MINE ?
+
+-1 MINE !
+MINE 1 CELLS DUMP
+MINE ?
+
+BYE
+</pre>
+
+<a name="L02"></a>
+<p><strong>Lesson 2 <em>Forth in One Sentence</em></strong></p>
+
+<p>The sentence is:  "Forth is a programming language that uses two stacks and a dictionary of words that a programmer adds to in writing a program."</p><p>
+
+</p><p>Words, dictionary, two stacks:  the essence of Forth.</p>
+
+<p>In <a href="#L01">Lesson 1</a>, I wrote that the Forth programmer interface is characterized by implicit calls, implicit data passing, and direct access to data.</p>
+
+<p>Calls are implicit because when a Forth sees space-delimited text, it thinks "word" and tries to find it in its dictionary.  If it finds it, it will immediately do something with it (if Forth doesn't find it in its dictionary it will try to understand it as a number; if that fails, Forth will confess its failure).</p>
+
+<p>Data passing is implicit because Forth words get their input from and return their output to the same stack.</p>
+
+<p>Access to data is direct because the addresses of the data are recorded in the dictionary.</p>
+
+<p><a href="#L03">Lesson 3</a> discusses the Forth data stack.  <a href="#L04">Lesson 4</a> discusses the Forth dictionary.  Addresses will wait until <a href="#L21">Lesson 21</a>.
+  
+<a name="L03"></a>
+</p><p><strong>Lesson 3 <em>"The Stack"</em> <code>.S DROP</code></strong></p>
+
+<p>All Forths have at least two stacks.  The stacks work similarly but serve different purposes.   
+
+</p><p>A stack is a way of managing data.  With a stack, data is added to and taken from the "top", as with a stack of dishes.  The acronym for this is LIFO:  Last In First Out.  The top of the stack is called TOS.  If there's no TOS, the stack is empty.  A stack is such a convenient way of managing data that most (all?) programming languages use it internally.  
+
+</p><p>The stack discussed in this lesson is the Forth data stack: Forth programmers call it "the stack".  The second Forth stack, called the return stack, will be discussed later.  Some Forths have special-purpose stacks for floating-point numbers or for strings.  These special stacks hold data that it may be convenient to keep separate from the data on "the stack".</p>
+
+<p>Words take and return numbers from the stack.  When you type in a number its destination is the stack.
+The following examples use the words <code>.S</code> and <code>DROP</code>.  <code>.S</code> displays (at least some of) the numbers on the stack in stack order, TOS (top of stack) on the right.  In some Forths, <code>.S</code>  also tells how many numbers are on the stack.  <code>DROP</code> removes TOS, reducing the number of numbers on the stack by one.  </p>
+
+<p><em>Try:</em>
+</p><pre>.S
+10
+</pre>
+
+<em>10 is TOS:</em>
+<pre>.S
+</pre>
+
+<em>Now try:</em>
+<pre>20
+</pre>
+
+<em>20 is TOS, and 10 is below 20:</em>
+<pre>.S
+</pre>
+
+<em>Now try:</em>
+<pre>DROP
+</pre>
+
+<em>The word </em><code>DROP</code> <em>removed 20 from the stack.  TOS is again 10:</em>
+<pre>.S
+</pre>
+
+<em>Now try:</em>
+<pre>DROP
+</pre>
+
+<em>The word</em> <code>DROP</code> <em>removed 10 from the stack.  The stack is now (probably) empty:</em>
+<pre>.S
+
+BYE
+</pre>
+
+<a name="L04"></a>
+<p><strong>Lesson 4 <em>The Dictionary</em> <code>WORDS SEE</code></strong></p>
+
+<p>About all a Forth system knows is contained in its dictionary.  The dictionary contains words - words the system came with and words defined by the programmer.  By "word" is meant: the word's name, which Forth uses to look up the word, and the word's action, which is code that Forth either executes or compiles.</p>
+
+<p>The dictionary comes with the Forth system.  The programmer writes a program by adding to the dictionary words defined in terms of words in the dictionary.</p>
+
+<p>As a rule, Forth finds a word by starting with the most recently defined word and working backwards.  If two or more words in the dictionary have the same name, Forth will find the most recently defined and be satisfied.  Re-use of names is allowed but probably isn't <em>Simple Forth</em>.</p>
+  
+<p>Most Forths have the words <code>WORDS</code> and <code>SEE</code>.  <code>WORDS</code> displays the names of words currently in the dictionary.  A "fat" Forth will have lots a words - the names will whizz by unless the display pauses.  A "thin" Forth will have far fewer - the names might fit into a single screen.
+
+<code>SEE</code> followed by a word's name tries to display the word's definition.  <code>SEE</code> may or may not display definitions of words defined in assembly language.  There's no harm in seeing what Forth <code>SEE</code>s.</p>
+
+<p><em>Try:</em>
+</p><pre>WORDS
+SEE WORDS
+SEE SEE
+SEE .S
+SEE ?
+SEE !
+</pre>
+
+<em>Short definitions are ok.  Try (exactly as written):</em>
+<pre>: HELLO  ." Hi! " ;
+HELLO
+SEE HELLO
+
+: GOODBYE  ." Bye! " ;
+GOODBYE
+SEE GOODBYE
+
+: QUICK   HELLO GOODBYE ;
+QUICK
+SEE QUICK
+
+BYE
+</pre>
+
+<a name="L05"></a>
+<p><strong>Lesson 5 <em>Adding to the Dictionary</em> <code>: ; \</code></strong></p>
+
+<p>By far the most common way of adding a word to the dictionary is to write a colon definition.  A colon definition starts with the Forth word <code>:</code> and ends with the Forth word <code>;</code>.  After <code>:</code> comes the name, then the definition, then <code>;</code>.</p>
+
+<p>This is a commonly cited Forth definition:
+</p><pre>: SQUARED  DUP * ;</pre>
+
+<p>Forth reads from left to right.  The definition of <code>SQUARED</code> tells Forth:  when you see <code>SQUARED</code>, first do <code>DUP</code>, then do <code>*</code>.</p>
+
+<p>Because in Forth data is passed implicitly, it is considered insane to define a word without documenting what data (if any) it takes from the stack and what data (if any) it returns to the stack.  The canonical way of doing this is to use the Forth word <code>(</code> which tells the system to ignore what follows up to and including the next <code>)</code>.  Expectations ("before") and results ("after") are separated by <code>--</code>.  The resulting ( before -- after ) is a "stack-effect comment".</p>
+
+<p>So:
+</p><pre>: SQUARED  ( n -- n*n )  DUP * ;</pre>
+
+<p>It's also wise to document what the new word does.  For this the Forth word <code>\</code> is useful.  <code>\</code> tells Forth to ignore the rest of the line.</p>
+
+<p><em>So try:</em>
+</p><pre>\ Return square of n
+: SQUARED  ( n -- n*n )  DUP * ;
+
+\ Skip next line if your system doesn't SEE
+SEE SQUARED
+
+2 SQUARED
+.S
+SQUARED
+.S
+SQUARED
+.S
+DROP
+</pre>
+
+<p><em>For extra credit read:</em><br>
+Leo Brodie's <a href="http://www.forth.org/forth_style.html" target="_top">Forth Style Guide</a> <em>and</em>
+Paul Bennett's <a href="http://www.taygeta.com/forth_coding.html" target="_top">Forth Coding Rules</a><em>.</em>
+
+</p><pre>BYE
+</pre>
+
+<a name="L06"></a>
+<p><strong>Lesson 6 <em>Forth Arithmetic 1</em> <code>+ - * /</code></strong></p>
+
+<p>Most words don't wait before acting.  The word <code>+</code> doesn't ask "plus what?"; it removes the top two stack numbers and returns their sum.  The words <code>- * / </code> also take the top two stack numbers and return a result.</p>
+
+<p><em>Try:</em></p>
+<pre>1 1 + 
+.S
+1 +
+.S
+1 1 +
+.S
++
+.S
+DROP
+</pre>
+
+<p><code>-</code> <em>subtracts TOS from the number below it.  Try:</em></p>
+<pre>1 1 -
+.S
+1 -
+.S
+1 1 -
+.S
+-
+.S
+DROP
+</pre>
+
+<p><code>*</code> <em>multiplies the top two stack numbers.  Try:</em>
+</p><pre>2 2 *
+.S
+2 *
+.S
+2 2 *
+.S
+*
+.S
+DROP
+</pre>
+
+<p><code>/</code> <em>takes the number below TOS and divides it by TOS.  Try:</em>
+</p><pre>100 2 /
+.S
+2 /
+.S
+2 /
+.S
+2 2 /
+.S
+/
+.S
+DROP
+</pre>
+
+<em>Forth reads from left to right.  There is no "operator precedence."  Try:</em>
+<pre>\ 1 + (2 * 3)
+2 3 * 1 +
+.S
+DROP
+1 2 3 * +
+.S
+DROP
+
+\ (1 + 2) * 3
+1 2 + 3 *
+.S
+DROP
+</pre>
+
+<p><em>There's a lot to observe in these examples.  You might want to repeat them with the same and with different numbers before saying:</em>
+</p><pre>BYE
+</pre>
+
+<a name="L07"></a>
+<p><strong>Lesson 7 <em>Forth Arithmetic 2</em> <code>/MOD MOD .</code></strong></p>
+<p>I hope you noticed in <a href="#L06">Lesson 6</a> that <code>100  2 /  2 / 2 /</code> left <code>12</code> on the stack.  The words <code>+ - * /</code> are integer operators.  <code>/</code> gives the quotient of <code>n1</code> divided by <code>n2</code>.  To get the remainder, use either <code>/MOD</code>, which returns the quotient as TOS and the remainder below TOS, or <code>MOD</code>, which just returns the reminder.</p>
+
+<p>Here are the stack effects of <code>+ - * /MOD / MOD</code>:
+</p><pre>+  ( n1 n2 -- n1+n2 )
+-  ( n1 n2 -- n1-n2 )
+*  ( n1 n2 -- n1*n2 )
+/MOD  ( n1 n2 -- remainder quotient )
+/  ( n1 n2 -- quotient )
+MOD  ( n1 n2 -- remainder )
+</pre>
+
+<p><code>. ( n -- )</code> displays the signed integer n.
+
+</p><p><em>Try:</em>
+</p><pre>1 .
+-1 . 
+0 -1 + .
+10 10 /MOD . .
+10 11 /MOD . .
+10 3 /MOD . .
+10 3 / .
+10 3 MOD .
+10 3 /MOD 3 * + .
+
+BYE
+</pre>
+
+<a name="L08"></a>
+<p><strong>Lesson 8 <em>Forth Arithmetic 3</em> <code>1+ 1- ABS NEGATE MAX MIN */ */MOD</code></strong></p>
+
+<p>Here are some other arithmetic words to try in your free time.  The words are categorized by stack effect.</p>
+
+<p><em>Take one, leave one:</em>
+</p><pre>1+  ( n -- n+1 )  \ Faster 1 +
+1-  ( n -- n-1 )  \ Faster 1 -
+ABS  ( n -- u )  \ Return absolute value of n
+NEGATE  ( +n|-n -- -n|+n ) \ Return arithmetic inverse of n
+</pre>
+
+<p><em>Take two, leave one:</em>
+</p><pre>MAX  ( n1 n2 -- n1|n2 ) \ Return the greater of n1 and n2
+MIN  ( n1 n2 -- n1|n2 ) \ Return the lesser of n1 and n2
+</pre>
+
+<p><em>Take three, leave one:</em>
+</p><pre>*/  ( n1 n2 n3 -- quotient ) \ Similar to n1 n2 * n3 / </pre>
+
+<p><em>Take three, leave two:</em>
+</p><pre>*/MOD  ( n1 n2 n3 -- rem quot ) \ Similar to n1 n2 * n3 /MOD
+</pre>
+
+<p><code>*/</code> and <code>*/MOD</code> avoid overflow during the multiplication, but the quotient must be within the range of signed integers.</p>
+
+<pre>\ Celsius &lt;-&gt; Fahrenheit 
+: C  ( Celsius -- Fahrenheit )  9 5 */  32 + ;
+
+100 C .
+0 C .
+
+: F  ( Fahrenheit -- Celsius )  32 -  5 9 */ ;
+
+212 F .
+32 F .
+
+BYE
+</pre>
+
+<a name="L09"></a>
+<p><strong>Lesson 9 <em>Managing the Stack 1</em> <code>DEPTH</code></strong></p>
+
+<p><code>.S</code>, discussed in <a href="#L03">Lesson 3</a>, displays the numbers on the stack.  <code>DEPTH (  -- +n )</code> returns how many of those numbers they are.  "Number" can stand for various things: signed integer, unsigned integer, address, count, ASCII code, UNICODE, true/false flag, etc, so I will now refer to stack <em>items</em>.  All the <em>items</em> on the stack are the same size:  one <em>cell</em>.  The size of a <em>cell</em> depends on the implementation.  A cell must be at least 16-bits; nowadays 32-bits is probably most common.  How many bits there are in a cell determines how much information a cell can hold - more about this in a later lesson.</p>
+
+<p>So in somewhat technical terms, <code>DEPTH  ( -- +n )</code> returns as TOS the number of one-celled items that were on the stack before <code>DEPTH</code> was called.  Note that the stack-effect comment doesn't indicate these items, because <code>DEPTH</code> doesn't require that there be any items on the stack and doesn't affect the items that may be on the stack, except of course, to push them one item deeper in the stack by making <em>+n</em> TOS.
+
+</p><p><em>Try:</em>
+</p><pre>\ Tell how many items are on the stack
+:  DEPTH?  ( -- )  DEPTH . ;
+
+DEPTH?
+10
+DEPTH?
+20
+DEPTH?
+30
+DEPTH?
+.
+DEPTH?
+.
+DEPTH?
+.
+DEPTH?
+</pre>
+
+<p><em>Some Forths empty the stack when they encounter a word not in the dictionary; others don't.  To find out what your Forth does, try:</em>
+</p><pre>10 20 30
+DEPTH?
+\ Unlikely word:
+Nonce
+DEPTH?
+
+BYE
+</pre> 
+
+<a name="L10"></a>
+<p><strong>Lesson 10 <em>Managing the Stack 2</em> <code>DUP ?DUP OVER SWAP ROT PICK ROLL NIP TUCK 2DROP 2DUP 2OVER 2SWAP</code></strong></p>
+
+<p>When you said <code>BYE</code> in the last lesson, your dictionary forgot <code>DEPTH?</code>, the word you so carefully added to it.  You could have preserved <code>DEPTH?</code> in either of two ways:  saving the system before saying <code>BYE</code>, or saving the colon definition of <code>DEPTH?</code> as source code and having your Forth read the definition again to add it back to the dictionary.  So are real programs written.  For now you are learning Forth by writing little definitions that you won't miss when they're gone.</p>
+
+<p>With something as strict as a stack (Last In First Out), some legerdemain is necessary, and Forth provides the words for it.  If you want a copy of TOS, you <code>DUP</code>licate it.  If you want a copy of the item below TOS, you bring it <code>OVER</code>  If you want TOS and the item below it to switch positions, <code>SWAP</code> them.  If you want the third stack item to be TOS, you <code>ROT</code>ate it to the top.
+
+</p><pre>DUP  ( x -- x x )  Copy TOS
+?DUP  ( x|0 -- x x | 0 ) Copy TOS if it isn't zero
+OVER  ( x1 x2 -- x1 x2 x1 ) Copy x1 to TOS
+SWAP  ( x1 x2 -- x2 x1 )  Switch positions of x1 and x2
+ROT  ( x1 x2 x3 -- x2 x3 x1 )  Rotate x1 to TOS
+</pre>
+
+<p>These words could be (but likely aren't) defined in terms of the words <code>PICK</code> and <code>ROLL</code>:
+
+</p><pre>PICK  ( xu ... x0 u -- xu ... x0 xu )  Copy xu to TOS
+ROLL  ( xu ... x0 u -- xu-1 ... x0 xu )  Rotate xu to TOS
+: DUP  ( x -- x x )  0 PICK ;
+: OVER  ( x1 x2 -- x1 x2 x1 ) 1 PICK ;
+: SWAP  ( x1 x2 -- x2 x1 )  1 ROLL ;
+: ROT  ( x1 x2 x3 -- x2 x3 x1 ) 2 ROLL ;
+</pre>
+
+<p>Forth programmers generally don't use <code>PICK</code> and <code>ROLL</code> much, preferring specific to general solutions and avoiding the temptation to treat the stack as an array.</p>
+
+<p>On the other hand, these definitions wouldn't be unusual:
+</p><pre>\ Drop the second stack item
+: NIP  ( x1 x2 -- x2 ) SWAP DROP ;
+
+: /  ( n1 n2 -- quotient )  /MOD NIP ;
+: MOD  ( n1 n2 -- remainder )  /MOD DROP ;
+</pre>
+
+<p><code>NIP</code> and <code>TUCK</code> are probably <code>CODE</code>d in assembly language, but one could define:
+</p><pre>\ Copy TOS below the second stack item
+: TUCK  ( x1 x2 -- x2 x1 x2 )  SWAP OVER ;
+</pre>
+
+<p>These words that concern pairs of stack elements are probably also in assembly language:
+</p><pre>\ Drop top two stack items
+: 2DROP  ( x1 x2 -- )  DROP DROP ;
+
+\ Duplicate top two stack items
+: 2DUP  ( x1 x2 -- x1 x2 x1 x2 )  OVER OVER ;
+
+\ Copy lower pair over top pair
+: 2OVER  ( x1 x2 x3 x4  -- x1 x2 x3 x4 x1 x2)
+   3 PICK  3 PICK ;
+
+\ Exchange top two cell pairs
+: 2SWAP  ( x1 x2 x3 x4 -- x3 x4 x1 x2 )
+   3 ROLL  3 ROLL ;
+
+</pre>
+<p>Managing the stack well comes with experience.  Meanwhile my 7-year-old daughter could use this:
+</p><pre>\ Math Family
+\ ." and CR to be discussed later
+: "+"  ." + " ;
+: "-"  ." - " ;
+: "="  ." = " ;
+
+: FAM  ( n1 n2 -- )
+   2DUP +
+   DUP 2OVER           CR . "+" . "=" .
+   DUP 2OVER SWAP      CR . "+" . "=" .
+   DUP 2OVER SWAP ROT  CR . "-" . "=" .
+                       CR . "-" . "=" . ;
+
+\ Did somebody say 3DUP ?
+: 3DUP  ( x y z -- x y z x y z )
+   2 PICK  2 PICK  2 PICK ;
+
+<em>Homework: redefine</em> <code>FAM</code> using <code>3DUP</code>.
+
+BYE
+</pre>
+
+<a name="L11"></a>
+<p><strong>Lesson 11 <em>Programming by Teaching and Learning</em></strong></p>
+
+<p>You program in Forth by teaching a machine new actions that you and the machine know by name.  Each new action is a novel arrangement of known actions, perhaps mixing in some data.  By being added to the dictionary the new action can be used to teach still newer actions.  You choose the names, so a good part of the communication between you and machine is in your terms.  By your pupil you'll be taught - the machine knows a lot of Forth, probably more than you do - and prefers certain ways of doing things, but it will make your ways its own if you teach it well.</p>
+
+<p>As you saw, among the Forth words the machine knows are <code>DUP</code> and <code>*</code>.  You might therefore teach it:
+</p><pre>: SQUARED  ( n -- n**2 )  DUP * ;
+: CUBED  ( n -- n**3 )  DUP SQUARED * ;
+: 4TH  ( n -- n**4 )  SQUARED SQUARED ;
+</pre>
+<p>…and so on until you have taught it all the words your program needs to do.</p>
+
+<p>With Forth you can teach the machine whatever a computer can do.  As you teach you learn, because any word you add to the dictionary you can (and should) immediately test.
+</p><pre>\ ." displays text
+: ME  ( -- )  ." Leonardo DiCaprio" ;
+ME
+\ Oops!
+: ME  ( -- )  ." Leo Wong" ;
+ME
+
+BYE
+</pre>
+
+<a name="L12"></a>
+<p><strong>Lesson 12 <em>Thoroughly Modern Forth</em></strong></p>
+
+<p>In <a href="#L09">Lesson 9</a> I talked about stack items the size of a cell, noting that an item could be represent different kinds of data: a signed integer, an unsigned integer, an ASCII code (character), a true/false (or Boolean) flag, etc.  It used to be that a cell was 16-bits, period.  Then came 32-bit processors and 32-bit Forths, and now there are 64-bit and 128-bit processors.  The notion that in every Forth a stack item (and by implication some other kinds of data) is the size of a cell, but that the size of a cell is determined by the implementation allows for easier porting of Forth programs between different kinds of computers.</p>     
+
+<p>The number of bits (binary digits) in a cell determines how many different bit patterns the cell can distinguish, which determines how many different values of a particular kind of data a cell can distinguish.</p>
+
+<p>For instance, one bit can distinguish two different patterns:0 1, which could be interpreted as:<br>
+the unsigned integers 0 and 1<br>
+the signed integers 0 and -1 or (maybe) -0<br>
+the Boolean flags false and true<br>
+etc.</p>
+
+<p>Two bits can distinguish four patterns: 00 01 10 11, which could be interpreted as:<br>
+the unsigned integers 0 1 2 3<br>
+the signed integers 0 1 -2 -1<br>
+the Boolean flags false(=00) and true(&lt;&gt;false)<br>
+etc.</p>
+
+<p>We can generalize and say that n-bits can distinguish 2**n (2 to the power of n) different patterns.</p>
+
+<p>Getting down to cases,<br>
+a 16-bit cell can distinguish 65,536 different patterns, each of which could represent:<br>
+an unsigned integer between 0 and 65,535<br>
+a signed integer between -32,768 and 32,767<br>
+the Boolean flags false(=0000000000000000) and true(&lt;&gt;false)<br>
+etc.<br>
+<br>
+a 32-bit cell can distinguish 4294967296 patterns, each of which could represent:<br>
+an unsigned integer between 0 and 4,294,967,295<br>
+a signed integer between -2,147,483,648 and 2,147,483,647<br>
+the Boolean flags false(=00000000000000000000000000000000) and true(&lt;&gt;false)<br>
+etc.</p>
+<em>Try the following:</em>
+<pre>-1 U.
+</pre>
+<p>If 65535 is displayed, your Forth has 16-bit cells.  If 4294967295, 32-bit cells.  If another number is displayed, then either the size of cell is other than 16 or 32 bits, or your Forth represents numbers atypically.</p>
+
+<p>Forth easily handles data bigger and smaller than the size of one cell:  "double" (2-cell) numbers and "floating-point" numbers, "bits", "characters", "strings" of characters, database fields and records, files, "objects", etc.</p>
+
+<p>But for now we still stay with one kind of data - cell-sized signed integers.</p>
+
+<a name="L13"></a>
+<p><strong>Lesson 13 <em>Comparisons</em> <code>TRUE FALSE = &lt; &gt; 0= 0&lt;</code></strong></p>
+
+<p>I lied, because I will now talk about flags.  But I lied only a little, because Forth flags are cell-size bit patterns like Forth integers and because Forth integers can be used as Forth flags.</p>
+
+<p>A flag tells whether a condition is true or false, for instance whether TOS is equal to the stack item beneath TOS.  Your Forth may already have the words <code>TRUE</code> and <code>FALSE</code>, which return to TOS "well formed" true and false flags.  A well-formed true flag has all bits set (1), while a well-formed false flag as all bits "reset" (0).  It is highly likely that in your Forth all bits set has the same bit pattern as the integer -1 and all bits reset has the same pattern as the integer 0.</p>
+
+<em>Try:</em>
+<pre>TRUE .
+FALSE .
+</pre>
+
+<em>If your Forth doesn't have</em> <code>TRUE</code> <em>or</em> <code>FALSE</code> <em>you can teach it:</em>
+<pre>\ CONSTANT defines a word that always returns the same value
+0 CONSTANT FALSE
+FALSE .
+
+\ = returns a true flag if the top two stack items are equal
+FALSE FALSE = CONSTANT TRUE
+TRUE .
+</pre>
+
+<p>Each of these words returns a well-formed flag:
+</p><pre>=  ( n1 n2 -- flag )  \ Does n1 equal n2 ?
+&gt;  ( n1 n2 -- flag )  \ Is n1 greater than n2 ?
+&lt;  ( n1 n2 -- flag )  \ Is n1 less than n2 ?
+0=  ( n -- flag )     \ Does n equal 0 ?
+0&lt;  ( n -- flag )     \ Is n less than 0 ?
+</pre>
+
+<em>Try:</em>
+<pre>1 2 +  2 1 + = .
+1 2 -  2 1 - = .
+3 4 *  4 3 * &lt; .
+3 4 /  4 3 / &lt; .
+5 6 /  6 5 / &gt; .
+5 6 MOD  6 5 MOD &gt; .
+1 -1 + 0= .
+1 -1 - 0= .
+-1  0&lt; .
+-1 -1 * 0&lt; .
+</pre>
+
+<p>Given these comparison words, others are easy to define.  Your Forth may already have:</p>
+<pre>\ Does n1 not equal n2 ?
+: &lt;&gt; ( n1 n2 -- flag )  = 0= ;
+
+\ Does n not equal 0 ?
+: 0&lt;&gt; ( n -- flag)  0= 0= ;
+
+\ Frequently seen synonym for 0=
+: NOT  ( n -- flag ) 0= ;
+
+\ Is n1 greater than or equal to n2 ?
+: &gt;=  ( n1 n2 -- flag ) &lt; NOT ;
+
+\ Is n1 less than or equal to n2 ?
+: &lt;=  ( n1 n2 -- flag ) &gt; NOT ;
+
+BYE
+</pre>
+
+<a name="L14"></a>
+<p><strong>Lesson 14 <em>Conditional Execution</em> <code>IF ELSE THEN</code></strong></p>
+
+<p>This is how to tell Forth to execute words conditionally:
+</p><pre>true-flag IF do-this THEN
+true-flag IF do-this ELSE do-that THEN
+</pre>
+<p>Use <code>IF ELSE THEN</code> only colon definitions ( that is between <code>:</code> and <code>;</code>).  <code>IF</code> and <code>THEN</code> must be in the same definition.   <code>ELSE</code> is optional and if used must come between <code>IF</code> and <code>THEN</code>.  Words can come before <code>IF</code> and follow <code>THEN</code>.</p>
+
+<p><em>Try writing two inefficient definitions:</em>
+</p><pre>: EVEN?  ( n -- )  2 MOD IF ." odd" ELSE ." even" THEN ;
+1 EVEN? 
+2 EVEN? 
+
+\ The stack effect of IF is ( flag -- ),
+\ so if TOS is needed after the test
+\ make a copy of it before the test.
+: ABS  ( n -- +n )  DUP O&lt; IF -1 * THEN ;
+1 ABS .
+-1 ABS .
+</pre>
+
+<p><code>IF ELSE THEN</code> <em>can be "nested".  Try:</em>
+</p><pre>: SCORE  ( n -- )
+   DUP 89 &gt; IF  ." Honors"
+            ELSE  DUP 69 &gt; IF  ." Pass"
+                           ELSE  ." Fail"
+                           THEN
+            THEN  DROP ;
+
+100 SCORE
+80 SCORE
+60 SCORE
+</pre>
+
+<p><em>In Forth the true flag need not be "well formed" - have all bits set.  Any flag with at least one bit set is taken to be true.  Try:</em>
+</p><pre>       0 CONSTANT FALSE  
+FALSE 0= CONSTANT TRUE
+
+: TRUE?  ( n -- )
+   DUP TRUE = IF  ." Well-formed true"  ELSE
+   DUP        IF  ." Still true"        ELSE
+                  ." False"
+              THEN THEN  DROP ;
+
+TRUE TRUE?
+FALSE TRUE?
+-1 TRUE?
+1 TRUE?
+2 TRUE?
+0 TRUE?
+
+BYE
+</pre>
+
+<a name="L15"></a>
+<p><strong>Lesson 15 <em>Repeated Execution</em> <code>EXIT BEGIN AGAIN UNTIL WHILE REPEAT</code></strong></p>
+<p>Much of the computer's power comes from its ability to do something repeatedly. One way to tell Forth to something again is to repeat the word or phrase:
+
+<em>Try:</em>
+</p><pre>\ Add five numbers
+: SUM5  ( n1 n2 n3 n4 n5 -- sum ) + + + + ;
+14 26 33 25 18 SUM5 .
+
+</pre>
+
+<p>Repeating words or phrases is quite legitimate but limiting.  In this lesson I'll show you three other ways of repeating execution ("looping").  Each begins with the word <code>BEGIN</code>:
+</p><pre>BEGIN ... AGAIN
+BEGIN ... UNTIL
+BEGIN ... WHILE ... REPEAT
+</pre>
+<p><code>BEGIN AGAIN UNTIL WHILE REPEAT</code>, like <code>IF ELSE THEN</code>, are used colon definitions, with <code>BEGIN</code> and <code>AGAIN</code> or <code>UNTIL</code> or <code>WHILE ... REPEAT</code> in the same definition  (in Forth, other "control structures" can be developed, but we'll just use these for now).  I'll soon use these words in three definitions of a word I'll name <code>INTEGERS</code>.  But first another word that is also used only in colon definitions:  <code>EXIT</code>.
+
+</p><p><code>EXIT</code> says: stop executing the word I'm in.
+
+</p><p><em>Try:</em>
+</p><pre>\ Display 1 2 3
+: JUST3  ( -- ) 1 . 2 . 3 . EXIT 4 . 5 . ;
+JUST3
+</pre>
+<p><code>EXIT</code> <em>just affects the word it's in.  Try:</em>
+</p><pre>\ Display 1 2 3 4 5
+: TO5  ( -- )  JUST3  4 . 5 . ;
+TO5
+</pre>
+<p>We need <code>EXIT</code> because in my first definition of <code>INTEGERS</code>, the words between <code>BEGIN ... AGAIN</code> repeat unconditionally.
+</p><p><em>Try:</em>
+</p><pre>\ Display integers 1 ... +n using BEGIN ... AGAIN
+: INTEGERS  ( +n -- )
+   1 BEGIN  2DUP &lt; IF 2DROP EXIT THEN  DUP . 1+  AGAIN ;
+10 INTEGERS
+1 INTEGERS
+0 INTEGERS
+</pre>
+<code>BEGIN ... AGAIN</code>  executes the words between <code>BEGIN</code> and <code>AGAIN</code> <em>again and again</em> unless Forth executes <code>EXIT</code>, which in <code>INTEGERS</code> happens when <code>+n</code> is less than TOS.
+
+<p>Many published Forth definitions are very short - one or two lines.   The best way to understand them (and to go about defining your own words) is to write them out one word or phrase to a line along with stack and other comments.  Here is the definition of <code>INTEGERS</code> one word to a line, explaining the action of each word and the resulting stack:
+</p><pre>: INTEGERS  ( +n -- )
+   1            \ Initialize i to 1     ( +n i=1 )         
+   BEGIN        \ Start loop: i is TOS  ( +n i )
+      2DUP      \ Duplicate 2 items     ( +n i +n i )
+      &lt;         \ Is +n less than i ?   ( +n i flag )
+      IF        \ Act on flag           ( +n i )
+         2DROP  \ True: drop 2 items    (  )
+         EXIT   \ True: leave word      (  )
+      THEN      \ End IF ... THEN       (  )
+      DUP       \ DUPlicate TOS         ( +n i i )
+      .         \ Display TOS           ( +n i )
+      1+        \ Increment TOS         ( +n i=i+1 )
+   AGAIN        \ Loop back             ( +n i )
+   ;            \ End definition        
+</pre>
+
+<p><code>BEGIN ... UNTIL</code> repeats execution <em>until</em> there's a true flag just before <code>UNTIL</code>.  The words between <code>BEGIN</code> and <code>UNTIL</code> execute at least once, since <code>UNTIL</code> tests whether to leave the loop.  Like <code>IF</code>, <code>UNTIL</code> swallows the flag, and as with <code>IF</code>, a true flag need not be "well formed".  Here's the second definition of <code>INTEGERS</code>:</p>
+<p><em>Try:</em>
+</p><pre>\ Display integers 1 ... +n using BEGIN ... UNTIL
+: INTEGERS ( +n -- )
+   1 BEGIN 2DUP &lt; 0= IF DUP . THEN 1+ 2DUP &lt; UNTIL 2DROP ;
+10 INTEGERS
+1 INTEGERS
+0 INTEGERS
+
+\ Don't do this:
+: INTEGERS  ( +n -- )
+   1 BEGIN  DUP .  1+ 2DUP &lt; UNTIL  2DROP ;
+10 INTEGERS
+1 INTEGERS
+0 INTEGERS \ Not right
+
+</pre>
+<p>Here is the second definition one word to a line:
+</p><pre>: INTEGERS  ( +n -- )
+   1        \ Initialize i to 1      ( +n i=1 )         
+   BEGIN    \ Start loop: i is TOS   ( +n i )
+      DUP   \ DUPlicate TOS          ( +n i i )
+      .     \ Display TOS            ( +n i )
+      1+    \ Increment TOS          ( +n i=i+1 )
+      2DUP  \ Duplicate 2 items      ( +n i +n i )
+      &lt;     \ Is +n less than i ?    ( +n i flag )
+   UNTIL    \ Loop back unless true  ( +n i )
+   2DROP    \ Drop two items         (  )
+   ;        \ End definition 
+</pre>
+
+<p>Notice that an integer ("1") is displayed even when <code>0 INTEGERS</code> is called for.</p>
+
+<p><code>BEGIN ... WHILE ... REPEAT</code> executes the words between <code>BEGIN</code> and <code>WHILE</code>, continues execution to <code>REPEAT</code> <em>while</em> there's a true flag just before <code>WHILE</code>, then at <code>REPEAT</code> loops back to the word just after <code>BEGIN</code>.  If the flag just before <code>WHILE</code> is false, execution skips to after <code>REPEAT</code>.  The words between <code>BEGIN</code> and <code>WHILE</code> will execute at least once.  If the flag before <code>WHILE</code> is false the first time through, the words between <code>WHILE</code> and <code>REPEAT</code> will not execute at all.  <code>WHILE</code>, like <code>UNTIL</code>, swallows its flag, which need not be well formed.  Here's the third definition:</p>
+<p><em>Try:</em>
+</p><pre>\ Display integers 1 ... +n using BEGIN ... WHILE ... REPEAT
+: INTEGERS  ( +n -- )
+   1  BEGIN  2DUP &lt; 0= WHILE  DUP .  1+  REPEAT  2DROP ;
+10 INTEGERS
+1 INTEGERS
+0 INTEGERS
+</pre>
+<p>The third definition with line comments:
+</p><pre>: INTEGERS  ( +n -- )
+   1        \ Initialize i to 1        ( +n i=1 )         
+   BEGIN    \ Start loop: i is TOS     ( +n i )
+      2DUP  \ Duplicate 2 items        ( +n i +n i )
+      &lt; 0=  \ Is +n not less than i ?  ( +n i flag )
+   WHILE    \ If true, continue else
+            \ jump to after REPEAT     ( +n i )
+      DUP   \ DUPlicate TOS            ( +n i i )
+      .     \ Display TOS              ( +n i )
+      1+    \ Increment TOS            ( +n i=i+1 )
+   REPEAT   \ Loop back                ( +n i )
+   2DROP    \ Drop two items           (  )
+   ;        \ End definition 
+
+BYE
+</pre>
+
+<a name="L16"></a>
+<p><strong>Lesson 16 <em>Counted Loops</em> <code>?DO DO I J LEAVE UNLOOP LOOP +LOOP</code></strong></p>
+<p>Forth understands several kinds of <em>counted loops</em>, in which stack arguments before the loop determine the number of iterations.  I recommend that you just use:
+</p><pre><em>+n</em> 0 ?DO ... LOOP
+</pre>
+<p>which executes the words between <code>?DO</code> and <code>LOOP</code> exactly <em>+n</em> times and not at all if <em>+n</em> equals zero.  Like <code>BEGIN</code>, etc.  <code>?DO</code>, etc. should only be used in colon definitions.</p>
+
+<p><em>Try:</em>
+</p><pre>: INTEGERS  ( +n -- )
+   1 SWAP  0 ?DO  DUP .  1+  LOOP  DROP ;
+10 INTEGERS
+1 INTEGERS
+0 INTEGERS
+</pre>
+<p>With line comments:
+</p><pre>: INTEGERS  ( +n -- )
+   1        \ Initialize i        ( +n i=1 )
+   SWAP     \ Set limit for ?DO   ( i limit=+n )
+   0        \ Set index for ?DO   ( i limit index=0 )
+   ?DO      \ Start counted loop  ( i )
+      DUP   \ DUPlicate i         ( i i )
+      .     \ Display i           ( i )
+      1+    \ Increment i         ( i=i+1 )
+   LOOP     \ Increment index.
+            \ Loop back if
+            \ index &lt; limit
+            \ else leave loop     ( i )
+   DROP     \ Drop i              (  )
+   ;        \ End definition
+</pre>
+<p>This is all and more than all you need to know about counted loops.  Please skip the rest of this lesson.</p>
+
+<p>I recommended that you use <code>?DO</code>, use a positive limit, and set the starting index to zero:  <em>+n</em> <code>0 ?DO</code>.  <code>?DO</code> actually takes any limit and starting index: <em>limit start</em> <code>?DO</code>.  You may experiment by writing words that accept various values of <em>limit</em> and <em>start</em>.
+
+</p><p>We saw when commenting on <code>INTEGERS</code> that <code>?DO</code> removes the limit and the starting index from the stack and that <code>LOOP</code> increments the index and compares it to the limit, leaving the loop then the index equals the limit.  It's quite probable that your Forth keeps the limit and the index on Forth's second stack, called the return stack, and drops the limit and index from the return stack on leaving the loop.  This likelihood results in rules about using the return stack that I may or may not discuss later.</p>
+
+<p><code>?DO</code> checks if the limit and the starting index are equal, skipping the loop entirely if the are.  The word <code>DO</code> acts like <code>?DO</code> but doesn't check if the limit and the starting index are equal.  <code>DO</code> may be a tiny bit faster than <code>?DO</code>, but a condition like <code>0 0 DO ... LOOP</code> will likely give you more than you bargained for.</p>
+
+<a name="I"></a>
+<p><code>I</code> returns the current loop index.  This is sometimes useful.  For example one could have defined:
+</p><pre>: INTEGERS ( +n -- )
+   1+ 1 ?DO I . LOOP ;
+</pre>
+
+<p>This program translated from a famous book also uses <code>I</code>:
+</p><pre>\ Power
+\ after Kernighan and Ritchie,
+\ The C Programming Language, 2nd ed., pp. 24-25
+
+\  Raise base to n-th power; n &gt;= 0
+: power  ( base n -- base**n )
+   1 SWAP 0 ?DO OVER * LOOP  NIP ;
+
+\ Test power
+: test  ( -- )
+   10 0 ?DO  CR I .  2 I power .  -3 I power .  LOOP ;
+</pre>
+
+<a name="J"></a>
+<p><code>J</code> returns the index of the next <em>outer</em> loop when counted loops are nested in the same word.  This useful for stepping through two-dimensional arrays:
+</p><pre>\ Display indexes of a 2D array
+: INDEXES  ( rows columns -- )  
+   SWAP          ( columns rows )
+   0 ?DO         \ For number of rows 
+      CR         \ CR goes to next line
+      DUP        \ DUPlicate columns
+      0 ?DO      \ For number of rows  
+          J .    \ Display row index
+          I .    \ Display column index
+          SPACE  \ SPACE displays a space
+     LOOP        \ End of inner loop
+  LOOP ;         \ End of outer loop
+3 4 INDEXES
+</pre>
+
+<p><code>LEAVE</code> and <code>UNLOOP EXIT</code> exit a counted loop or counted loops "prematurely".  <code>LEAVE</code> immediately leaves the loop it is in.  <code>UNLOOP EXIT</code> exits the word it is in, and can exit a word with nested loops.  Here are some phrases to ponder:
+</p><pre>DO ... IF LEAVE THEN ... LOOP
+DO ... IF UNLOOP EXIT THEN ... LOOP
+DO ... DO ... IF UNLOOP UNLOOP EXIT THEN ... LOOP ... LOOP
+</pre>  
+
+<p>The phrase <em>n</em> <code>+LOOP</code> changes the loop index by <em>n</em>.  <em>n</em> can be positive or negative, permitting stepping up or stepping down through the loop.  Depending on whether it's up or down, the ending conditions, I think, "equal or greater than" or "less than".  Try if you like:
+</p><pre>: LOOPY ( limit start step -- )
+   ROT ROT ?DO I . DUP +LOOP DROP ;
+10 0 1 LOOPY
+0 10 -1 LOOPY
+
+10 0 2 LOOPY
+0 10 -2 LOOPY
+
+10 0 3 LOOPY
+0 10 -3 LOOPY
+</pre>
+
+<em>n</em> before <code>+LOOP</code> can vary within the loop.  Here's a cute definition by Wil Baden:
+<pre>: SQRT   ( n1 -- n2 )
+   0 TUCK  DO  1+  DUP 2* 1+  +LOOP ;
+</pre>
+<p>Didn't I ask you not to read this?
+</p><pre>BYE
+</pre>
+
+<a name="L17"></a>
+<p><strong>Lesson 17 <em>Source Files</em> <code>S" INCLUDED</code></strong></p>
+<p>I think I shall write a little game.  Since the game will take a few lines that I will revise as I develop the game  I'll put the <em>source code</em> in a file.  I'll write the code with a text editor and then <em>load</em> the source into Forth by entering: <code>S" </code><cite>filename"</cite> <code>INCLUDED</code> where <cite>filename"</cite> is the name of the file followed by a double quotation mark.  As I develop and correct my program I will get in and out of Forth and go back to my text editor.  This isn't the most efficient way of developing a Forth program - Forth is an "integrated development environment" in which Forth and the source editor can work much more closely together - but it will work regardless of Forth implementation.</p>
+
+<p>Since the game could use a little unpredictability, I'll need a "random number generator".  I'll put that in a file too, so you can test <code>S" </code><em>filename"</em> <code>INCLUDED</code>.
+
+</p><p>The random number generator in Leo Brodie's <cite>Starting Forth</cite> will be more than good enough for our purposes.  Either type or copy and paste the following into a file that you name random.f.  The code has a few words that I might explain in another lesson.  For now just copy the source.</p>
+<a name="random.f" <="" a="">
+<pre>\ random.f
+\ Simple random number generator
+\ from Leo Brodie, _Starting Forth_
+
+VARIABLE RND  \ Holds current result
+
+\ Generate a random integer
+: RANDOM  ( -- u )  RND @  31421 *  6927 +  DUP RND ! ;
+
+\ Return a random integer between 0 and u-1
+: CHOOSE  ( u -- 0...u-1 ) RANDOM UM* NIP ;
+
+\ Initialize
+: RANDOMIZE  ( -- )  TIME&amp;DATE + + + + + RND ! ;
+</pre>
+<p><em>Now try:</em>
+</p><pre>S" random.f" INCLUDED
+100 CHOOSE .
+100 CHOOSE .
+100 CHOOSE .
+100 CHOOSE .
+100 CHOOSE .
+</pre>
+
+<p><em>Excuse me while I write the game.</em>
+</p><pre>BYE
+</pre>
+
+</a><a name="L18"></a>
+<p><strong>Lesson 18 <em>Game of Sticks</em> <code>CR SPACE SPACES ." .( </code></strong></p>
+
+<p>I'm back.  It didn't take very long because I copied the game from David H. Ahl's <cite>BASIC Computer Games</cite>.  If you can find a copy of that book you might wish to compare the BASIC code for "23 Matches" with my Forth code for "Sticks."  Of course, I just didn't sit down and write "Sticks" without changing things and testing words as I went along.  I just give the result.  However, being a careless coder, I appreciate bug reports: <a href="mailto:hello@albany.net">hello@albany.net</a>.
+
+</p><p>Nor do I particularly recommend my style of "coding".  I will say that I value a plain style.</p>
+
+<p>"Sticks" uses a few words that haven't been formally introduced:</p>
+<p>
+<code>CR ( -- )</code> sends the display cursor to the next line.<br>
+<code>SPACE ( -- )</code> displays a space.<br>
+<code>SPACES ( n -- )</code> displays <em>n</em> spaces (<code>SPACES</code> isn't used in sticks.f).<br>
+<code>." </code> <em>text</em><code>" ( -- )</code>, used only in definitions, remembers (compiles) <em>text</em> up to but not including <code>"</code>. <em>text</em> is displayed when the word being defined is executed.<br>
+<code>.( </code> <em>text</em><code>) ( -- )</code> immediately displays <em>text</em> up to but not including <code>)</code>.  You don't see <code>.( </code> much.  I'll use it in the source for "Sticks" to give you an indication of how quickly Forth reads code.</p>
+
+<p><em>Try:</em>
+</p><pre>.( Four score and seven years ago )
+
+: brought  .( our fathers ) ." Forth on this continent." ;
+
+brought 
+</pre>
+
+<p>Type or copy and paste the following code into a file called sticks.f:
+<a name="sticks"></a>
+</p><pre>\ sticks.f
+\ After "23 Matches" in Ahl, _Basic Computer Games_
+\ Ahl attributes the original to Bob Albrecht
+
+CR .( Reading sticks.f)
+
+\ random number generator
+s" random.f" INCLUDED
+
+\ Rules of the game
+: RULES  ( -- )
+   CR ." Sticks"
+   CR
+   CR ." The game starts with 23 sticks.  "
+      ." By turns, you and Forth take"
+   CR ." from 1 to 3 sticks.  " 
+      ." Whoever takes the last stick loses."
+   CR
+   CR ." You take sticks by entering:  n STICKS"
+   CR ." where n is 1, 2, or 3"
+   CR ;
+
+\ Display sticks
+: .STICKS  ( n -- )  0 ?DO  ." |"  LOOP ;
+
+\ Report remaining sticks
+: LEFT  ( sticks taken -- left )
+   -  DUP CR .STICKS SPACE DUP . ." left." ;
+
+\ The fates of Forth 
+: YOU-WIN  ( sticks -- )  DROP  ." You win! " ;
+: FORTH-WINS  ( sticks -- ) 
+   ." Forth took "  1- .
+   CR ." 1 left - sorry!" ;
+: 4-PLAY  ( sticks -- left )
+   ." Forth took " 3 CHOOSE 1+ DUP . LEFT ;
+
+\ My esteemed opponent
+: COMPUTER  ( sticks -- left| )
+   CR  
+   DUP 1 = IF  YOU-WIN     ELSE
+   DUP 5 &lt; IF  FORTH-WINS  ELSE
+               4-PLAY
+           THEN THEN ;
+
+\ First play
+: COIN  ( 23 -- n )
+   2 CHOOSE  
+   CR ." A coin has been flipped:  " 
+   IF   ." Heads, Forth is first."  COMPUTER 
+   ELSE ." Tails, you start."
+   THEN ;
+
+\ Confine n between min and max
+: CLAMP  ( n min max -- n )  ROT MIN MAX ;
+
+\ May take between 1 and 3 sticks, leaving at least 1 
+: LEGAL  ( sticks try -- sticks taken )
+   OVER 1- 3 MIN  1 SWAP CLAMP ; 
+
+\ My play
+: PROGRAMMER  ( sticks try - left )  LEGAL LEFT ;
+
+\ 1 Round
+: STICKS  ( sticks try -- left| )  PROGRAMMER COMPUTER ;
+\ Alias for STICKS
+: STICK  ( sticks try -- left| )  STICKS ;
+
+: GAME  ( -- )
+   RULES  23 DUP CR .STICKS  RANDOMIZE COIN ;
+
+CR .( Ready.  To play, enter: GAME)
+
+</pre> 
+<em>Now try:</em>
+<pre>S" sticks.f" INCLUDED
+GAME
+</pre>
+<em>Homework: write your own version of Sticks or another game.</em>
+<pre>BYE
+</pre>
+
+<a name="L19"></a>
+<p><strong>Lesson 19 <em>More to Display</em> <code>PAGE AT-XY .R MS </code></strong></p>
+
+<p><a href="#sticks">Sticks</a> used <code>CR SPACE SPACES . ." .( </code>  for displaying on the screen.  Here are three other display words:</p>
+<p>
+<code>PAGE ( -- )</code> clears the screen and puts the cursor in the top left corner.<br>
+<code>AT-XY ( col row -- )</code> moves the cursor to <em>col row</em>.  Top left is <code>0 0 </code>.<br>
+<code>.R  ( n u -- )</code> displays the signed integer <em>n</em> right aligned in a field <em>u</em> spaces wide.   <code>.R</code> is often used to display numbers in columns.</p>
+
+<p>Not technically a display word but useful in this context is:</p>
+<p>
+<code>MS  ( +n -- )</code>  Wait <em>+n</em> milliseconds.
+
+</p><p><em>Try:</em>
+</p><pre>PAGE  30 12 AT-XY .( Simple Forth )
+PAGE  CR 1 3 .R  CR 12 3 .R  CR 123 3 .R
+PAGE  33 12 2DUP AT-XY  100 5 .R  2000 MS  AT-XY 1 5 .R
+
+</pre>
+<em>Homework:  Improve Sticks by using words introduced in this lesson.</em>
+<pre>BYE
+</pre>
+
+<a name="L20"></a>
+<p><strong>Lesson 20 <em>Data on the Return Stack</em> <code>&gt;R R@ R&gt; 2&gt;R 2R@ 2R&gt;</code></strong></p>
+
+<p>You will occasionally find it convenient to be able to put a stack item temporarily in another place.  "Another" place is the return stack.  Your Forth almost certainly uses the return stack for its own purposes, so <em>your</em> use of the return stack must follow certain rules:</p>
+<ol>
+<li>Data put on the return stack must be taken back <em>within the same word</em>.
+</li><li>Data put on the return stack <em>outside</em> a <code>?DO (DO) ... LOOP (+LOOP)</code> cannot be accessed <em>within</em> the loop.
+</li><li>Data put on the return stack <em>within</em> a <code>?DO (DO) ... LOOP (+LOOP)</code> must be taken back <em>before</em> leaving the loop.
+</li><li>Data cannot be on the return stack when executing
+<a href="#I"><code>I</code></a> or <a href="#J"><code>J</code></a> in a loop.
+</li></ol>
+<p>In the following descriptions of return stack words,
+<code>( S: ... -- ... )</code> shows the (data) stack effect<br>
+<code>( R: ... -- ... )</code> shows the return stack effect.
+</p>
+<p>
+<code>&gt;R ( S:  x -- )  ( R: -- x )</code> moves <em>x</em> from the stack to the return stack.<br>
+<code>R@ ( R: x -- x )  ( S:  -- x )</code> copies <em>x</em> from the return stack to the stack.<br>
+<code>R&gt; ( R: x -- )  ( S: -- x )</code> moves <em>x</em> from the return stack to the stack.<br>
+<code>2&gt;R ( S: x1 x2 -- )  ( R: -- x1 x2 )</code> moves <em>x1 x2</em> from the stack to the return stack.<br>
+<code>2R@ ( R: x1 x2 -- x1 x2 ) ( S: -- x1 s2 )</code> copies <em>x1 x2</em> from the return stack to the stack.<br>
+<code>2R&gt; ( R: x1 x2 -- )  ( S: -- x1 x2)</code> moves <em>x1 x2</em> from the return stack to the stack.</p>
+
+<p>I'll use return stack words in future lessons.  The uses will simplify coding.  You won't find anything like this:
+</p><pre>\ pascal.f
+\ Pascal's Triangle
+: POSITION  ( row -- )  CR  33 SWAP 2 *  - SPACES ;
+: PAS ( 0 ... 0 -- 0 ... 0 )
+   0 &gt;R    
+   BEGIN  OVER + &gt;R  DUP 0= UNTIL
+   BEGIN  R&gt; DUP WHILE  DUP 4 .R  REPEAT ;
+: PASS  ( -- )
+   0 1 0  
+   13 0 ?DO  DUP POSITION  &gt;R  PAS  R&gt;  1+  LOOP  DROP ;
+: PAX  ( 0 ... 0 -- )  DROP BEGIN 0= UNTIL ;
+: PASCAL  ( -- )  PASS PAX ;
+
+BYE
+</pre>
+
+<a name="L21"></a>
+<p><strong> Lesson 21 <em>Named Storage</em> <code>CONSTANT VARIABLE U. U.R ! @ +! ?</code></strong></p>
+
+<p>Stack items are anonymous, documented only by the stack effect comments you are urged but not required to write.  Forth can also name data.  We start with two words:</p>
+
+<p><em>x</em> <code>CONSTANT</code> <em>name</em> defines the word <em>name</em> <code>( -- x )</code> that returns <em>x</em>.<br>
+<code>VARIABLE</code> <em>name</em> defines the word <em>name</em> <code> ( -- addr )</code> that returns the memory address <em>addr</em> where is reserved space for one cell of data (remember that a stack item is the size of one cell).</p>
+
+<p>Your Forth dictionary probably comes with the constants TRUE and FALSE, which return the well-formed flags all bits set and all bit reset respectively.  If not, they are easy to define (I think we've defined them twice before).</p>
+
+<p><em>Try:</em>
+</p><pre>0 CONSTANT FALSE
+FALSE FALSE = CONSTANT TRUE
+FALSE .
+TRUE .
+
+123 CONSTANT EASY
+EASY .
+</pre>
+<p>We defined the variable <code>RND</code> in <a href="#random.f">random.f</a>.  Let's define another variable and display its address.</p>
+
+<p><em>Try:</em>
+</p><pre>VARIABLE x
+x U.
+</pre>
+<p><code>U.</code> displays an <em>unsigned integer</em>.  Memory addresses are always positive integers.</p>
+
+<p><code>U.  ( u -- )</code> displays the unsigned integer <em>u</em>.<br>
+<code>U.R  ( u n -- )</code> displays the unsigned integer <em>u</em> right aligned in a field <em>n</em> spaces wide.</p>
+
+<p>A constant's value doesn't change (in Forth one can change anything, but this is Simple Forth).  A variable returns an address at which a value can be "stored" and from which a copy of the stored value can be "fetched".  To change what is fetched from a variable's address, store a different value at it.  The words for storing and fetching are:</p>
+<p><code>! ( x addr -- )</code> stores <em>x</em> at the address <em>addr</em>.<br>
+<code>@ ( addr -- x )</code> fetches a copy of <em>x</em> from the address <em>addr</em>.<br>
+<code>+!  ( x addr -- )</code> adds <em>x</em> to the value at <em>addr</em>.</p>
+<em>Try:</em>
+<pre>VARIABLE y
+y U.
+50 y !
+y @ .
+
+100 y !
+y @ .
+
+1 y +!
+y @ .
+</pre>
+<p>Most Forths have a word for <code>@ .</code>:<br>
+<code>?  ( addr -- )</code> displays the value at <em>addr</em>.</p><p>
+<em>Try:</em>
+</p><pre>VARIABLE z
+7 z !
+z ?
+
+VARIABLE w
+11 w !
+w ?
+
+z @ w @ z ! w !
+z ?
+w ?
+
+\ Exchange values of two variables
+: VSWAP  ( addr1 addr2 -- )  2DUP 2&gt;R  @ SWAP @  R&gt; !  R&gt; ! ;
+
+w ?
+z ?
+w z VSWAP
+w ?
+z ?
+
+\ Addresses are cell-sized data
+VARIABLE OLD
+VARIABLE NEW
+VARIABLE INDIRECTION
+
+67 OLD !
+70 NEW ! 
+
+OLD INDIRECTION !
+
+\ EMIT displays a character
+INDIRECTION @ @ EMIT
+
+NEW INDIRECTION !
+INDIRECTION @ @ EMIT
+
+BYE
+</pre>
+
+<a name="L22"></a>
+<p><strong>Lesson 22 <em>Accessing Memory 1</em> <code>UNUSED CELLS</code></strong></p>
+
+<p>In the last lesson, we learned how to access a cell of data in memory by using <code>! +! @</code>.  In this and the next few lessons we'll work with groups of cells in memory.  Much of the discussion will be applicable when working with data that may be more or less than a cell in size.</p>
+
+<p>Forth systems tend to be small.  What the system doesn't use is available to the programmer.  Your system may have the word <code>UNUSED</code> that tells how many memory addresses are currently available for data.</p>
+
+<p><code>UNUSED  ( -- u )</code> returns <em>u</em>, the number of addresses still available.</p>
+
+<p><em>Try:</em>
+</p><pre>UNUSED U.
+</pre>
+
+<p>As you add words and data structures to your program the amount of unused space gets smaller.</p>
+
+<p><em>Try:</em>
+</p><pre>UNUSED U.
+VARIABLE x
+UNUSED U.
+</pre>
+
+<p>Since we've been working with cell-sized data, we now introduce:</p>
+
+<p><code>CELLS  ( n1 -- n2 )</code> returns <em>n2</em>, the number of address units in <em>n1</em> cells.</p>
+
+<p>It's likely that a cell occupies 2 address units if you have a 16-bit Forth and 4 address units if you have a 32-bit Forth.  I say address <em>units</em>, since the <em>address</em> of the cell is the address of the first address unit occupied by the cell.</p><p>
+
+</p><p><em>To see for yourself, try:</em>
+</p><pre>1 CELLS .
+2 CELLS .
+10 CELLS .
+</pre>
+
+<p><em>To see how many cells could fit in currently unused memory, try:</em>
+</p><pre>UNUSED 1 CELLS / .
+
+BYE
+</pre>
+
+<a name="L23"></a>
+<p><strong>Lesson 23 <em>Accessing Memory 2</em> <code>CREATE HERE ALLOT ERASE CELL+</code></strong></p>
+
+<p>Let us claim some unused memory.</p>
+
+<p><code>CREATE</code> <em>name</em> defines <em>name</em>, which returns a memory address.<br>
+<code>HERE ( -- addr )</code> returns the next free memory address.<br>
+<code>ALLOT  ( n -- )</code> reserves <em>n</em> address units of memory.</p>  
+
+<p><code>CREATE</code> <em>name</em> resembles <code>VARIABLE</code> <em>name</em> but doesn't reserve space.  To reserve space after <code>CREATE</code> <em>name</em>, <code>ALLOT</code> it.  The first address that is reserved is the address returned by <code>HERE</code>.
+
+</p><p><em>Try:</em>
+</p><pre>CREATE ITEMS
+ITEMS U.
+HERE U.
+1 CELLS ALLOT
+HERE U.
+4 CELLS ALLOT
+HERE U.
+</pre>
+
+<p>A word that combines <code>CREATE</code> and <code>ALLOT</code> can be defined.</p>
+
+<p><em>Try:</em>
+</p><pre>\ Reserve n address units starting at name
+\ n BUFFER: name
+: BUFFER:   ( n -- )  CREATE ALLOT ;
+
+4 20 + CELLS BUFFER: BLACKBIRDS
+BLACKBIRDS 24 CELLS DUMP
+</pre>
+
+<p><code>BUFFER:</code> could be "enhanced" by making it initialize (typically set to zeroes) the space <code>ALLOT</code>ed, but we'll leave it as it is and initialize with in separate step:
+
+</p><p><code>ERASE  ( a u -- )</code> sets the contents u addresses starting from a to zero.</p>
+
+<p><em>Try:</em>
+</p><pre>BLACKBIRDS 24 CELLS ERASE
+BLACKBIRDS 24 CELLS DUMP
+</pre>
+
+
+<p>Once you have <code>CREATE</code>d (that is, named) and <code>ALLOT</code>ed space in memory, you can <code>!</code> (store), <code>+!</code> ( add to or "plus" store), @ (fetch), and <code>?</code> (question) data from within that space by calculating the particular address needed.  The starting address is returned by <em>name</em>.  The addresses of the following cells are calculated by adding <em>n</em> <code>CELLS</code> to the starting address.</p>
+
+<p><em>Given 5 cells starting at</em> <code>ITEMS</code> <em>try:</em>
+</p><pre>ITEMS U.
+50 ITEMS !
+ITEMS ?
+
+ITEMS 0 CELLS + U.
+ITEMS 0 CELLS + ?
+
+ITEMS 1 CELLS + U.
+95 ITEMS 1 CELLS + !
+ITEMS 1 CELLS + ?
+
+ITEMS 2 CELLS + U.
+77 ITEMS 2 CELLS + !
+ITEMS 2 CELLS + ?
+23 ITEMS 2 CELLS + +!
+ITEMS 2 CELLS + ?
+</pre>
+
+<p>There are many ways of not having to repeatedly write <em>n</em> <code>CELLS</code> to calculate memory addresses.  Here are two simple ways:</p>
+
+<p><em>Try:</em>
+</p><pre>\ Return address of cell n from addr
+: TH  ( addr n -- n-addr )  CELLS + ;
+
+ITEMS ?
+ITEMS 0 TH ?
+
+ITEMS 3 TH U.
+33 ITEMS 3 TH !
+ITEMS 3 TH ?
+
+\ Return address of cell n of ITEMS
+: ITEM  ( n -- addr )  CELLS ITEMS +
+
+ITEMS ?
+0 ITEM ?
+
+25 4 ITEM !
+4 ITEM ?
+</pre>
+
+<p>The word for going from one cell address to the next is:</p>
+<p><code>CELL+ ( addr1 -- addr2 )</code> adds 1 CELLS to <em>addr1</em>.</p>
+
+<p><em>Try:</em>
+</p><pre>\ Display n cells beginning at addr
+: .CELLS  ( addr n -- )
+   0 ?DO  DUP ?  CELL+  LOOP  DROP ;
+
+ITEMS 5 .CELLS
+
+\ Sum of n cells beginning at addr
+: SUM-CELLS  ( addr n -- sum )
+   0 ROT ROT  0 ?DO  DUP &gt;R  @ +  R&gt; CELL+  LOOP  DROP ;
+
+ITEMS 5 SUM-CELLS
+</pre>
+
+<p><em>For another definition of</em> <code>SUM-CELLS</code> <em>try:</em>
+</p><pre>: UNDER+  ( n1 x n2 -- n1+n2 x )  ROT + SWAP ;
+: SUM-CELLS  ( addr n -- sum )
+   0 ROT ROT  0 ?DO  DUP @ UNDER+  CELL+  LOOP  DROP ; 
+
+ITEMS 5 SUM-CELLS
+</pre>
+
+<p><em>Homework:  write yet another definition of</em> <code>SUM-CELLS</code> <em>by using</em>
+</p><pre>: @+  ( addr1 -- addr2 n )  DUP CELL+  SWAP @ ;
+</pre>
+
+<p><em>and any other words you know or care to define.</em></p>
+
+<pre>BYE
+</pre>
+
+<a name="L24"></a>
+<p><strong>Lesson 24 <em>Accessing Memory 3</em> <code>,</code></strong></p>
+
+<p>After a long lesson a short one on a short word:</p>
+
+<p><code>,  ( x -- )</code> reserves a cell of memory and stores <em>x</em> in it.</p>
+
+<p><em>Try:</em>
+</p><pre>: TH  ( addr1 n -- addr2 )  CELLS + ;
+\ Powers of 2 from 2^0 to 2^8
+CREATE 2^  1 ,  2 ,  4 ,  8 ,  16 ,  32 ,  64 ,  128 ,  256 ,
+2^ ?
+2^ CELL+ ?
+2^ 2 CELLS + ?
+
+2^ 0 TH ?
+2^ 1 TH ?
+2^ 2 TH ?
+2^ 8 TH ?
+</pre>
+
+<p>A word by Wil Baden can make this procedure even nicer.</p>
+
+<p><em>Try:</em>
+</p><pre>\ "commas" by Wil Baden
+: ,S  ( x1 ... xn n -- )
+   BEGIN ?DUP WHILE  DUP ROLL ,  1-  REPEAT ;
+
+\ Redefine   2^ 0 1 2 3  4  5  6   7   8
+CREATE 2^       1 2 4 8 16 32 64 128 256   9 ,S
+
+: ?+  ( addr1 -- addr2 )  DUP ? CELL+ ;
+
+2^ ?+ ?+ ?+ ?+ ?+ ?+ ?+ ?+ ?
+
+BYE
+</pre>
+
+<a name="L25"></a>
+<p><strong>Lesson 25 <em>Decimal Hexadecimal Binary</em> <code>BASE DECIMAL HEX DUMP</code></strong></p>
+
+<p>Mostly we've been using ordinary-looking numbers like <code>5 12 33</code>.  These are decimal - or base 10 - numbers represented with the 10 digits from 0 to 9.  In Forth, numbers can be entered or displayed in any base from 2 to 36 (the computer stores the numbers in binary - base 2).  The base in which numbers are input and displayed is stored in a variable:</p>
+
+<p><code>BASE  ( -- addr)</code> holds the current base.</p>
+
+<p>Forth has words for making the base decimal or hexadecimal:</p>
+
+<p><code>DECIMAL  ( -- )</code> stores 10 (decimal) in <code>BASE</code><br>
+<code>HEX  ( -- )</code> stores 16 (decimal) in <code>BASE</code></p>
+
+<p><em>Try:</em>
+</p><pre>DECIMAL
+16 .
+16 HEX .
+FF .
+FF DECIMAL .
+1024 .
+1024 HEX .
+DECIMAL
+</pre>
+
+<p>Usually the base is decimal but hexadecimal - base 16, where digits range from 0 to F - is very convenient in computing because a hexadecimal digit represents 4 bits (0=0001, 1=0001, 2=0010, 3=0011 ... F=1111).  That means that 8 bits can be represented by 2 hexadecimal digits, 16 bits by 4 hexadecimal digits, 32 bits by 8 hexadecimal digits, and so on.  This grouping of bits makes it easier to understand what's going on inside a computer.  The word <code>DUMP</code> reports in hexadecimal:
+
+</p><p><code>DUMP  ( addr u -- )</code> displays the contents of u consecutive addresses beginning at addr.  The display depends on the implementation.  You'll often see on each line an address, then 16 2-digit hexadecimal numbers representing the contents of 16 addresses, then the ASCII equivalents of these contents.</p>
+  
+We can write words that restore the current base after displaying in another base.
+
+<p><em>Try:</em>
+</p><pre>\ Display as an unsigned hexadecimal number
+: H.  ( n -- )  BASE @ &gt;R  HEX U.  R&gt; BASE ! ;
+\ Display as an unsigned binary number
+: B.  ( n -- )  BASE @ &gt;R  2 BASE !  U.  R&gt; BASE ! ;
+\ Display as an unsigned decimal number
+\ D. is already used in Forth 
+: D#.  ( n -- )  BASE @ &gt;R  DECIMAL .  R&gt; BASE ! ;
+
+\ Display as decimal, hexadecimal, binary
+: DHB.  ( n -- )  DUP D#.  DUP H.  B. ;
+
+DECIMAL
+1 DHB.
+2 DHB.
+3 DHB.
+4 DHB.
+10 DHB.
+15 DHB.
+16 DHB.
+1023 DHB.
+1024 DHB.
+
+HEX
+1 DHB.
+2 DHB.
+A DHB.
+F DHB.
+10 DHB.
+FF DHB.
+100 DHB.
+1000 DHB.
+FFFF DHB.
+1000 DHB.
+
+CREATE POTS  3 CELLS ALLOT
+
+10 POTS !
+100 POTS CELL+ !
+1000 POTS 2 CELLS + !
+
+POTS ?
+POTS CELL+ ?
+POTS 2 CELLS + ?
+
+DECIMAL
+POTS 3 CELLS DUMP
+POTS @ DHB.
+POTS CELL+ @ DHB.
+POTS 2 CELLS + @ DHB.
+
+2 BASE !
+1 DHB.
+10 DHB.
+11 DHB.
+100 DHB.
+
+DECIMAL
+
+BYE
+</pre>
+
+<a name="L26"></a>
+<p><strong>Lesson 26 <em>Booleans and Bits</em> <code>AND OR XOR 0&lt;&gt; INVERT 2* 2/ LSHIFT RSHIFT</code></strong></p>
+
+<p>Forth's "logical operators" are all <em>bit operators</em>.
+
+</p><p>
+<code>AND  ( x1 x2 -- x3 )</code><br>
+<code>OR  ( x1 x2 -- x3 )</code><br>
+<code>XOR  ( x1 x2 -- x3 ) </code></p>
+
+<p><em>Try:</em>
+</p><pre>1 1 AND .
+1 0 AND .
+0 1 AND .
+0 0 AND .
+
+1 1 OR .
+1 0 OR .
+0 1 OR .
+0 0 OR .
+
+1 1 XOR .
+1 0 XOR .
+0 1 XOR .
+0 0 XOR .
+
+: B.  ( u -- )  BASE @ &gt;R  2 BASE ! U.  R&gt; BASE ! ;
+
+1 DUP B. 2 DUP B. AND B.
+1 DUP B. 2 DUP B. OR B.
+1 DUP B. 2 DUP B. XOR B.
+
+1 DUP B. 3 DUP B. AND B.
+1 DUP B. 3 DUP B. OR B.
+1 DUP B. 3 DUP B. XOR B.
+</pre>
+
+<p>Any non-zero flag is treated as true, but <code>1 2 AND</code> leaves zero, so it's wise to <code>AND</code> only well-formed flags.  You can make a flag well formed with <code>0&lt;&gt;</code>:</p>
+<p><code>0&lt;&gt; ( x -- flag )</code>  \ Does <em>x</em> not equal zero?</p>
+
+<p>A definition of <code>0&lt;&gt;</code> might be:
+</p><pre>: 0&lt;&gt;  ( x -- flag)  0= 0= ;
+</pre>
+
+<p><em>Try:</em>
+</p><pre>1 2 AND .
+1 0&lt;&gt; 2 0&lt;&gt; AND .
+
+\ A year is a leap year if:
+\ it's divisible by 4 but not by 100 
+\ or it's divisible by 400
+: LEAP ( year -- flag )  \ nonzero flag means a leap year
+   DUP 4 MOD 0=  OVER 100 MOD AND
+   SWAP 400 MOD 0= OR ;
+
+: LEAP?  ( year -- )
+   DUP .
+   LEAP IF ." is" ELSE  ." isn't" THEN  ."  a leap year." ;
+
+2000 LEAP?
+ 
+\ A word can be saved by deciding if a year isn't a leap year
+: -LEAP  ( year -- flag )  \ nonzero flag means not a leap year
+   DUP 100 MOD 0=  OVER 400 MOD AND  SWAP 4 MOD OR ;
+
+\ Using EXIT skips some tests for most years
+: LEAPX  ( year -- flag )
+   DUP 4 MOD IF DROP FALSE EXIT THEN
+   DUP 100 MOD SWAP 400 MOD 0= OR ;
+
+: -LEAPX  ( year -- flag )
+   DUP 4 MOD IF EXIT THEN
+   DUP 100 MOD 0= SWAP 400 MOD AND ;
+</pre>
+
+<p>Forth's other bit operators are:</p>
+<p>
+<code>INVERT  ( x1 -- x2 )</code> toggles bits of <em>x1</em><br>
+<code>2*  ( x1 -- x2 )</code> shifts bits of <em>x1</em> one place left, leaving the least significant bit zero.  A fast <code>2 *</code> on most systems.<br>
+<code>2/  ( x1 -- x2 )</code> shifts bits of <em>x1</em> one place right, leaving the most significant bit unchanged.  A fast <code>2 /</code> on most systems.<br>
+<code>LSHIFT  ( x1 u -- x2 )</code> shifts bits of <em>x1 u</em> places to the left, putting zeros in the empty places on the right.<br>
+<code>RSHIFT  ( x1 u -- x2 )</code> shifts bits of <em>x1 u</em> places to the right, putting zeroes in the into empty places on the left.<br>
+
+</p><p><em>Try:</em>
+</p><pre>0 DUP B. INVERT B.
+1 DUP B. INVERT B.
+-1 DUP B. INVERT B.
+
+1 DUP B. 2* DUP B. .
+-1 DUP B. 2* DUP B. .
+
+2 DUP B. 2/ DUP B. .
+-2 DUP B. 2/ DUP B. .
+
+1 DUP B. 4 LSHIFT DUP B. .
+1 DUP B. 8 LSHIFT DUP B. .
+
+-1 DUP B. 4 LSHIFT DUP B. .
+-1 DUP B. 8 LSHIFT DUP B. .
+
+\ 2 to the nth power
+: 2^  ( +n -- u )  1 SWAP LSHIFT ;
+
+0 2^ U.
+1 2^ U.
+2 2^ U.
+3 2^ U.
+4 2^ U.
+10 2^ U.
+
+-1 DUP B. 4 RSHIFT DUP B. .
+-1 DUP B. 8 RSHIFT DUP B. .
+</pre>
+
+<p>The following code uses several bit operators.
+
+</p><pre>\ lights.f
+\ Usage: S" lights.f" INCLUDED
+
+VARIABLE LIGHTS  \ holds state of lights
+
+\ Set nth bit only
+: MASK  ( n1 -- n2 ) 1 SWAP LSHIFT ;
+
+: LAMP  ( -- )  PAGE
+   26  4 AT-XY  ." LIGHTS"
+    4  7 AT-XY  0 16 0 ?DO  DUP 3 .R  1+  LOOP  DROP
+   13  9 AT-XY  ." n ON/OFF/TOGGLE / BRIGHT/DARK/BYE " ;
+
+: ON?  ( n1 -- n2|0 )  MASK LIGHTS @ AND ;
+
+: LIGHT  ( -- )  ."  @ " ;
+: .LIGHT?  ( u -- )  ON? IF LIGHT ELSE 3 SPACES THEN ;
+: .LIGHTS  ( -- )
+   5  6 AT-XY  0 16 0 ?DO  DUP .LIGHT?  1+  LOOP  DROP
+   0 11 AT-XY  80 SPACES  0 10 AT-XY ;
+
+\ Set individual lights
+: ON  ( u -- )  MASK LIGHTS @ OR LIGHTS !  .LIGHTS ;
+: OFF ( u -- )  MASK INVERT LIGHTS @ AND LIGHTS !  .LIGHTS ;
+: TOGGLE ( u -- )  MASK LIGHTS @ XOR LIGHTS !  .LIGHTS ;
+
+\ Set all lights
+: DARK  ( -- )  FALSE LIGHTS !  .LIGHTS ;
+: BRIGHT  ( -- )  TRUE LIGHTS !  LAMP .LIGHTS ;
+
+BRIGHT
+</pre>
+
+<p><em>Bit data can extend beyond one cell.  Try:</em>
+</p><pre>\ highest on-bit in x
+: HI-BIT  ( x -- u )
+   0 SWAP
+   BEGIN DUP WHILE  1 RSHIFT  1 UNDER+  REPEAT  DROP ;
+
+\ Number of bits in a cell
+TRUE HI-BIT CONSTANT BITS/CELL
+
+\ bit is the nth bit of cell
+: BIT  ( bit - n cell )  BITS/CELL /MOD ;
+
+\ Number of cells needed to hold bits
+: BITS  ( bits - cells )  BIT SWAP IF 1+ THEN ;
+
+\ Create bit array
+: BIT-ARRAY  ( bits -- ) 
+   CREATE             \ Name of array  
+   DUP ,              \ Size in bits
+   BITS CELLS ALLOT   \ Reserve space in memory
+;
+
+64 BIT-ARRAY LIGHT
+
+\ Set nth bit only
+: MASK  ( n1 -- n2 ) 1 SWAP LSHIFT ;
+
+\ Individual bits
+: &gt;BIT  ( addr1 bit1 -- bit2 addr2 )  BIT CELLS ROT + CELL+ ;
+: ON  ( addr bit -- )  &gt;BIT &gt;R  MASK R@ @ OR  R&gt; ! ;
+: OFF ( addr bit -- )  &gt;BIT &gt;R  MASK INVERT R@ @ AND  R&gt; ! ;
+: TOGGLE ( addr bit -- )  &gt;BIT &gt;R  MASK R@ @ XOR  R&gt; ! ;
+: ON?  ( addr bit -- flag )  &gt;BIT &gt;R  MASK R&gt; @ AND 0&lt;&gt; ;
+
+\ Set cells
+: &gt;CELL  ( addr1 cell -- addr2 ) 1+ CELLS + ;
+: CELL-ON  ( addr cell -- ) &gt;CELL  TRUE SWAP ! ;
+: CELL-OFF  ( addr cell -- ) &gt;CELL  FALSE SWAP ! ;
+: CELL-TOGGLE ( addr cell -- ) &gt;CELL DUP @ INVERT  SWAP ! ;
+
+\ Set all bits
+: @+  ( addr1 -- addr2 x )  DUP CELL+  SWAP @ ;
+: !S  ( x addr1 u -- )  0 ?DO  2DUP !  CELL+  LOOP  2DROP ;
+
+: DARK  ( addr -- )  FALSE SWAP @+ BITS !S ;
+: BRIGHT  ( addr -- )  TRUE SWAP @+ BITS !S ; 
+
+\ Inspect bit-array in memory
+: MEMORY  ( bit-array -- )  @+ BITS CELLS DUMP ;
+
+\ Display bit array
+: SHOW  ( addr )  CR
+   0 OVER @
+   0 ?DO  2DUP ON? 1 AND 0 .R  1+  LOOP  2DROP ;
+
+LIGHT BRIGHT
+LIGHT MEMORY
+LIGHT SHOW
+
+LIGHT DARK
+LIGHT MEMORY
+LIGHT SHOW
+
+LIGHT 0 CELL-ON
+LIGHT MEMORY
+LIGHT SHOW
+
+LIGHT 0 CELL-OFF
+LIGHT MEMORY
+LIGHT SHOW
+
+LIGHT 1 CELL-TOGGLE
+LIGHT MEMORY
+LIGHT SHOW
+
+LIGHT 1 CELL-TOGGLE
+LIGHT MEMORY
+LIGHT SHOW
+
+LIGHT 32 ON
+LIGHT 32 ON? .
+LIGHT SHOW
+
+LIGHT 32 OFF
+LIGHT SHOW
+LIGHT 32 ON? .
+LIGHT SHOW
+
+LIGHT 32 TOGGLE
+LIGHT 32 ON? .
+LIGHT SHOW
+
+LIGHT 32 TOGGLE
+LIGHT 32 ON? .
+LIGHT SHOW
+
+BYE
+</pre>
+
+<a name="L27"></a>
+
+<p><strong>Lesson 27 <em>A Software Stack</em> <code>2@ 2!</code></strong></p>
+
+<p>For an excursion, here are some words for software stacks. Each stack element occupies a cell; stack depth is checked.  To create a stack, specify its maximum depth and its name.  The name is used when <code>PUSH</code>ing, <code>POP</code>ing, displaying, and <code>EMPTY</code>ing.  For an implementation of stacks with elements of arbitrary size, see Len Zettel's <a href="http://www.lenzettel.com/stacks/stacks.htm" target="_top">User Stacks in Forth</a>.  And for a use of such user stacks see Len's <a href="http://www.lenzettel.com/Simulation/simulation.htm" target="_top">Discrete Event Simulation in Forth</a>.</p>
+
+<p>First, two words to add to your repertory:</p>
+
+<p><code>2! ( x1 x2 addr -- )</code> does <code>SWAP OVER ! CELL+ !</code><br>
+<code>2@  ( addr -- x1 x2 )</code> does <code>DUP CELL+ @ SWAP @</code></p>
+
+<p><code>2!</code> and <code>2@</code> are typically used to store and fetch "double numbers", which are integers 2 cells wide.  In our software-stack implementation, we'll use <code>2@</code> to fetch values from the two addresses starting at addr. 
+
+
+</p><p><em>Try:</em>
+</p><pre>\ Software stack implementation
+
+\ Two addition words
+: ++  ( addr -- )   1 SWAP +! ;
+: --  ( addr -- )  -1 SWAP +! ;
+
+\ Fetch from and advance address
+: @+  ( addr -- addr+ x )  DUP CELL+ SWAP @ ;
+
+\ Make a stack u cells deep
+\ Usage:  u STACK &lt;name&gt;
+: STACK  ( u -- )
+   CREATE         \ stack &lt;name&gt;
+   0 ,            \ initialize depth
+   DUP ,          \ set maximum depth
+   CELLS ALLOT ;  \ reserve space
+
+\ If there's room on stack, move x from the Forth stack to it
+\ else leave x on the Forth stack
+: PUSH  ( x stack -- |x )
+   DUP 2@ &gt;
+   IF  DUP ++  @+ CELLS + !
+   ELSE  DROP ." Stack full"  THEN ;
+
+\ If there's an x, move it from stack to the Forth stack
+\ else put nothing on the Forth stack
+: POP  ( stack -- x| )
+   DUP @+ ?DUP
+   IF  ROT --  CELLS + @
+   ELSE  DROP ." Empty stack"  THEN ;
+
+\ Display stack items, bottom --&gt; top 
+: .STACK  ( stack -- )
+   @+ ?DUP
+   IF  0 ?DO  CELL+  DUP ?  LOOP
+   ELSE  ." Empty stack"  THEN
+   DROP ;
+
+\ Clear stack
+: EMPTY  ( stack -- )  0 SWAP ! ;
+
+3 STACK MYSTACK
+
+33 MYSTACK PUSH
+
+-33 MYSTACK PUSH
+
+MYSTACK .STACK
+
+MYSTACK POP .
+
+MYSTACK EMPTY
+
+BYE
+</pre>
+
+<a name="L28"></a>
+<p><strong>Lesson 28 <em>Characters A</em> <code>EMIT CHAR BL</code></strong></p>
+
+<p>Characters, like other data in a computer, are bit patterns treated in a particular way.  An integer and a character can have the same bit pattern.</p>
+
+<p><code>EMIT ( char -- )</code> displays char.<br>
+<code>CHAR ( -- char )</code> puts the next char on the stack.<br>
+<code>BL ( -- char )</code> puts the value for space (decimal 32) on the stack.</p>
+
+<p><em>Try:</em></p>
+<pre>BL DUP . EMIT
+BL DUP EMIT .
+65 DUP . EMIT
+CHAR A DUP . EMIT
+</pre>
+
+<p>Decimal 65 is the ASCII (American Standard Code for Information Interchange) and ISO IRV (International Standards Organization? International Reverence Version) code for 'A'.  Both standards have the same character interpretation for codes 32-126 except for 36.</p>
+
+<p><em>Try:</em>
+</p><pre>36 EMIT
+</pre>
+
+<p>If $ is displayed, it's ASCII.</p>
+
+
+<p>Codes 0-31 are control codes with generally accepted meanings.  Codes beyond 126 exist in other standards.  We'll stick to 32-126.  Here are characters 32-126 with the implementation-defined character 127 thrown in.</p>
+
+<p><em>Try:</em>
+</p><pre>\ Display next n characters and their codes
+: .CHARS ( c n -- c+n )
+   0 ?DO  DUP 5 .R  DUP SPACE EMIT  1+  LOOP ;
+
+\ Display characters 32-127 and their codes
+: .CHARS32-127 ( -- )
+   BL 12 0 ?DO  CR 8 .CHARS  LOOP  DROP ;
+
+.CHARS32-127
+
+BYE
+</pre>
+
+<a name="L29"></a>
+<p><strong>Lesson 29 <em>Characters B </em> <code>[CHAR] KEY</code></strong></p>
+
+<p>To put a particular character in a definition, use <code>[CHAR]</code>.  To wait for a character from the keyboard, use <code>KEY</code>.</p>
+
+<code>[CHAR] &lt;char&gt;</code> in a definition puts char on the stack when the definition is executed.<br>
+<code>KEY ( -- char )</code> waits for a key press, then puts the character pressed on the stack.
+
+<p><em>Try:</em>
+</p><pre>\ Is character Y or y?
+: Y?  ( char -- flag )
+   DUP [CHAR] Y =  SWAP [CHAR] y = OR ;
+
+: YES?  ( -- )
+   ." Press Y for yes."  KEY
+   Y? IF  ." Yes"  ELSE  ." No"  THEN ;
+
+YES?
+
+\ KEY doesn't automatically EMIT
+: PRESS  ( -- )
+   ." Please press a key. " KEY
+   ." You pressed " EMIT ;
+
+PRESS
+
+BYE
+</pre>
+
+<a name="L30"></a>
+<p><strong>Lesson 30 <em>Characters C</em> <code>C, C@ C! CHARS CHAR+ ALIGN</code></strong></p>
+<p><code>C, C@ C! CHARS CHAR+</code> are character versions of <code>, @ ! CELLS CELL+</code>.  Although on the stack a character occupies a cell, in many Forths a character in memory occupies less space than a cell.  Character codes 0-127 fit into 7 bits, and 8 bits (a byte) can hold codes 0-255.  A Forth with 8-bit characters can therefore store two characters in 16 bits and 4 characters in 32 bits.  Since <code>, @ ! CELLS CELL+</code> are intended for cell-size values in memory, character versions are need for character-size values.
+
+</p><p><code>C,  ( char -- )</code> reserves a character of memory and stores character-size value in it.<br>
+<code>C@  ( c-addr -- char )</code> fetches char from c-addr.<br>
+<code>C!  ( char c-addr -- )</code> stores char at c-addr.<br>
+<code>CHARS  ( n1 -- n2 ) </code>  n1 chars fit into n2 address units.<br>
+<code>CHAR+  ( c-addr1 -- c-addr2 )</code> advances c-addr1 by one character.</p>
+<code>ALIGN</code> assures proper placement of cell values.  Use after 
+<code>C,</code> and <code>CHARS ALLOT</code>.<br>
+
+<p><em>Try:</em>
+</p><pre>CREATE CHARACTER  CHAR A C, CHAR  B C, ALIGN
+CHARACTER C@ EMIT
+CHARACTER CHAR+ C@ EMIT
+CHAR Z CHARACTER C!
+CHAR ! CHARACTER CHAR+ C!
+CHARACTER C@ EMIT
+CHARACTER CHAR+ C@ EMIT  
+: C!+  ( c-addr char -- c-addr+ )  OVER C! CHAR+ ;
+\ C@+ and EMITS we'll meet again as COUNT and TYPE
+: C@+  ( c-addr -- c-addr+ char )  DUP CHAR+ SWAP C@ ;
+: EMITS  ( c-addr n )  0 MAX  0 ?DO  C@+ EMIT  LOOP  DROP ;
+CREATE 5CHARS 5 CHARS ALLOT ALIGN
+5CHARS
+CHAR F C!+  CHAR o C!+  CHAR r C!+  CHAR t C!+  CHAR h C!+
+DROP  \ drop the c-addr remaining after the last C!+
+ 
+5CHARS 5 EMITS
+
+BYE
+
+</pre>
+
+<a name="L31"></a>
+<p><strong>Lesson 31 <em>Strings 1</em> <code>S" TYPE</code></strong></p>
+
+<p>A string is an array of characters.  We already used <code>."</code> and <code>.(</code> to display strings.  To just define a string one can use:</p>
+
+<p><code>S" </code><em>text</em><code>"  ( -- a u )</code>, used in a definition, compiles <em>text</em> up to but not including the next <code>"</code>, returning the character address <em>c-addr</em> and the length of the string <em>u</em> when the definition is executed. Using <code>S"</code> in a definition is an easy way to create a string constant.</p>
+<p><em>Try:</em>
+</p><pre>: HI  S" Ni hao!" ;
+HI CHARS DUMP
+</pre>
+
+
+<p>If your ANS Forth system has file words, <code>S"</code> can also be used outside a definition to put <em>text</em> in a temporary buffer that could be overwritten by the next use of <code>S"</code> outside a definition. This <code>S"</code> also returns an address and a length.  I'll assume that you can use <code>S"</code> outside a definition.</p>
+
+<p><em>Try:</em>
+</p><pre>S" Xiexie."  .S CHARS DUMP
+S" Bu keqi." .S CHARS DUMP
+</pre>
+
+
+<p><code>TYPE  ( c-addr u -- )</code> displays the first <em>u</em> characters of a string, starting at address <em>c-addr</em>.</p>
+
+<p><em>Try:</em></p>
+<pre>\ Assumes HI is defined
+HI TYPE
+
+\ Equivalent to : GOODBYE  ." Zaijian" ;
+: GOOD-BYE  S" Zaijian" TYPE ;
+
+GOOD-BYE
+
+BYE
+</pre>
+
+
+<a name="L32"></a>
+<p><strong>Lesson 32 <em>Strings 2</em> <code>COUNT MOVE</code></strong></p>
+
+<p>Since most string functions use the starting address of a string and the string's length, it's convenient to store the length along with the string.  In Forth, a string that has its length in a character-sized address and the string itself in the following character addresses is called a <em>counted string</em>.  For example, the counted string "Leo" is: <code>3 'L' 'e' 'o'</code>.  The word that takes the address of a counted string and returns the address and length of the string is:</p>
+
+<p><code>COUNT ( c-addr1 -- c-addr2 u )</code> returns the address <em>c-addr2</em> of the first character and the number of characters <em>u</em> in the counted string at <em>c-addr1</em>.</p>
+
+<p><code>COUNT</code> is effectively <code>DUP CHAR+ SWAP C@</code>.  It is used for other things besides getting the start and "count" of a counted string and would have been better named <code>C@+</code>.
+
+</p><p>Since the "count" is stored in a character-sized space, the maximum length of a counted string can't be larger than the largest number that space can hold.  For a Forth with 8-bit characters, the maximum length of a counted string is 255.  However, longer strings are easy to accommodate in Forth.
+
+</p><p>The easiest way to create a counted string is to <code>MOVE</code> a string ( c-addr u ) into data space.</p>
+
+<p><code>MOVE  ( addr1 u addr2 -- )</code> copies the contents of <em>u</em> consecutive address units at <em>addr1</em> to the <em>u</em> consecutive address units at <em>addr2</em>.
+
+</p><p>Since <code>MOVE</code> uses address units, it can be used for any type of data.  The two Forth words <code>CMOVE</code> and <code>CMOVE&gt;</code> specifically copy characters, but we'll just use <code>MOVE</code> and specify that we are moving <code>CHARS</code>.
+
+</p><p>I'm getting tired of typing <code>addr c-addr char</code> in comments, so from now on I'll just write <code>a ca c</code>.  Also, I'll continue to write ANS Forth words in uppercase but start writing non-ANS Forth words in lowercase.</p>
+`s`
+
+<p><em>Try:</em>
+</p><pre>CREATE my-string  50 CHARS ALLOT
+\ Copy ca1 u as a counted string to ca2
+: place  ( ca1 u ca2 -- )
+   2DUP 2&gt;R  CHAR+ SWAP CHARS MOVE  2R&gt; C! ;
+
+S" The quick brown fox jumped over the lazy dog."
+my-string place
+my-string COUNT TYPE
+
+\ Illustrating COUNT as C@+
+: my-type  ( ca u -- )  0 ?DO COUNT EMIT LOOP DROP ;
+my-string COUNT my-type
+
+BYE
+</pre>
+<a name="L33"></a>
+<p><strong>Lesson 33 <em>Strings 3</em> <code>/TRAILING FILL BLANK -TRAILING</code></strong></p>
+
+<p>A penknife for strings is:</p>
+
+<code>/STRING  ( ca1 u1 n -- ca2 u2 )</code> returns <em>ca2</em> = ca1+nchars, <em>u2</em> = u1-n.  <code>/STRING</code> is officially "slash string"; a nicer name would be "cut string".  <code>/STRING</code> could be defined:<br>
+<blockquote><code>
+: /STRING  ( ca1 u1 n -- ca2 us )  TUCK - &gt;R CHARS + R&gt;</code></blockquote>
+
+<p><em>Try:</em>
+</p><pre>\ Three words useful in string processing.
+\ Skip leading c's in ca u; return remaining string ca' u'
+: skip  ( ca u c -- ca' u' )
+   &gt;R
+   BEGIN DUP WHILE OVER C@ R@ = WHILE 1 /STRING REPEAT THEN
+   R&gt; DROP ;
+
+\ Look for 1st c in ca u; return ca' u' including c
+: scan  ( ca u c -- ca' u' )
+   &gt;R
+   BEGIN DUP WHILE OVER C@ R@ &lt;&gt; WHILE 1 /STRING REPEAT THEN
+   R&gt; DROP ;
+
+\ From ca u, return 1st "word" ca2 u2 and remainder ca1 u1
+\ WORD is a Forth word, so I'll call this:
+: "word"  ( ca u -- ca1 u1 ca2 u2 )
+   BL skip  2DUP 2&gt;R  BL scan  DUP 2R&gt; ROT - ;
+
+\ Illustration using word
+: list-words  ( ca u -- )
+   BEGIN DUP WHILE "word" CR TYPE REPEAT 2DROP ;
+
+S" To be or not to be" list-words
+</pre>
+
+<p><code>FILL BLANK</code> and <code>-TRAILING</code> are also handy.  I give them and possible Forth definitions.</p>
+
+<p><code>FILL  ( ca u c -- )</code> stores <em>c</em> in <em>u</em> consecutive characters of memory beginning at <em>ca</em>.</p>
+<code>: FILL  ( ca u c -- )  ROT ROT  0 ?DO  2DUP C! CHAR+ LOOP 2DROP ;</code>
+<p><code>BLANK  ( ca u -- )</code> <code>FILL</code>s with spaces.<br>
+<code>: BLANK  ( ca u -- )  BL FILL ;</code></p>
+<p><code>-TRAILING  ( ca u1 -- ca u2 )</code> returns <em>ca u1</em> minus any trailing spaces.  "Dash trailing".<br>
+</p><pre>: &lt;skip  ( ca u1 c -- ca u2 )
+   &gt;R
+   BEGIN DUP WHILE 1- 2DUP CHARS + C@ R@ &lt;&gt; UNTIL 1+ THEN
+   R&gt; DROP ;<br>
+: -TRAILING  ( ca u1 -- ca u2 &gt;  BL &lt;skip ;
+</pre>
+
+<p><em>Try:</em>
+</p><pre>CREATE BUFFER 40 CHARS ALLOT
+BUFFER 40 CHAR Y FILL
+BUFFER 40 TYPE
+BUFFER 20 CHARS + 20 BLANK
+BUFFER 40 TYPE
+BUFFER 40 -TRAILING TYPE
+BUFFER 20 BLANK
+BUFFER 40 TYPE
+BUFFER 40 -TRAILING TYPE
+
+BYE
+</pre>
+
+<a name="L34"></a>
+<p><strong>Lesson 34 <em>Strings 4</em> <code>SEARCH COMPARE</code></strong></p>
+
+<p>String searches and compares are done with <code>SEARCH</code> and <code>COMPARE</code>:</p>
+
+<p><code>SEARCH  ( ca1 u1 ca2 u2 -- ca3|ca1 u3|u1 true|false )</code> searches <em>ca1 u1</em> for the string specified by <em>ca2 u2</em>.  If found, returns address <em>ca3</em> of first match, characters remaining <em>u3</em>, and <em>true</em>, else returns <em>ca1 u1 false</em>.</p>
+
+<p><code>COMPARE  ( ca1 u1 ca2 u2 -- -1|0|1 )</code> compares <em>ca1 u1</em> and <em>ca2 u2</em> and returns <em>-1</em> if <em>ca1 u1</em> is less than  <em>ca2 u2</em>, <em>0</em> if the two strings are the same, and <em>1</em> if <em>ca1 u1</em> is greater than <em>ca2 u2</em>.  (See the examples for what is meant by less, same, and greater.) </p>
+
+<p><code>SEARCH</code> and <code>COMPARE</code> are case sensitive.</p>
+
+<p><em>Try:</em>
+</p><pre>: s1  S" Out out out!" ;
+s1 s" Out" SEARCH . TYPE
+s1 S" out" SEARCH . TYPE
+s1 s" out!" SEARCH . TYPE
+s1 S" OUT"  SEARCH . TYPE
+
+\ Char is lowercase?
+: lower?  ( c -- t|f)  [CHAR] a - 26 U&lt; ;
+\ Make char uppercase
+: upper  ( c -- c' )  DUP lower? BL AND XOR ;
+\ Make string uppercase
+: supper  ( a u -- )
+   0 ?DO DUP C@ upper OVER C! CHAR+ LOOP DROP ;
+
+s1 2DUP supper S" ouT" 2DUP supper SEARCH . TYPE
+
+: outs?  ( a u -- n )
+   2DUP supper  0 &gt;R
+   BEGIN S" OUT" SEARCH
+   WHILE R&gt; 1+ &gt;R  1 /STRING
+   REPEAT  2DROP
+   R&gt; ;
+
+S" out spout mouth" outs? .
+
+: ABC?  S" ABC" COMPARE . ;
+S" ABC" ABC?
+S" abc" ABC?
+S" AB" ABC?
+S" ABCD" ABC?
+S" B" ABC?
+S" @ABC" ABC?
+S" abc" 2DUP supper ABC?
+
+\ Compare for integers
+: sgn  ( n - -1|0|1 )
+   -1 MAX 1 MIN ;
+: ncompare  ( n1 n2 -- -1|0|1 )
+   - sgn ;
+
+-10 sgn .
+0 sgn .
+10 sgn .
+
+10 5 ncompare .
+5 5 ncompare .
+-10 5 ncompare .
+
+BYE
+</pre>
+
+<a name="L35"></a>
+<p><strong>Lesson 35 <em>Values</em> <code>VALUE TO</code></strong></p>
+
+<p>In some programs a value is set once or infrequently and used often.  For example, many words that have to do with files require a file identifier (fid) that is returned when the file is created or opened.  The fid could easily be stored in a variable:
+</p><pre>VARIABLE fid
+</pre>
+and fetched whenever needed:
+<pre>fid @
+</pre>
+
+Many Forths provide a cross between a constant and the variable that is called a value.  It might be used as follows:
+<pre>0 VALUE fid      \ Define fid as a value set to 0
+...
+( u -- ) TO fid  \ Set fid to u
+...
+fid ( -- u )     \ Return u
+</pre>
+
+<p><em>x</em> <code>VALUE</code> <em>name</em> defines the word <em>name</em> that returns <em>x</em> unless the value to be returned is changed by <code>TO</code>.</p>
+
+<p><em>y</em> <code>TO</code> <em>name</em> makes <em>name</em> return <em>y</em>.</p>
+
+<p><em>y</em> <code>+TO</code> <em>name</em>, available in some Forths, increments by <em>y</em> the value returned by <em>name</em>.</p>
+
+
+<p><em>Try:</em>
+</p><pre>FALSE VALUE love
+love FALSE = .
+love love = TO love
+love TRUE = .
+
+BYE
+</pre>
+
+<p>For a less sappy use of <code>VALUE</code> and a preview of file words, see <a href="http://www.murphywong.net/hello/fans.htm">Fans</a>.</p><p>
+<a name="L36"></a>
+</p><p><strong>Lesson 36 <em>Locals</em> <code>LOCALS| TO</code></strong></p>
+
+A named <code>VARIABLE</code> or <code>VALUE</code> can appear in several parts of a program: its possible use is "global" within the program.  Forths that implement "locals" also provide for value names that apply only within the word they are defined in.<p>
+
+</p><p>Using locals can prevent the bug in which a change in a variable in one part of the program has unintended consequences in another part.  Locals can also make a definition easier to write and to read by making values explicit and reducing stack manipulation.  Here are definitions of <code>vswap</code> without and with locals:<br>
+
+</p><pre>\ Exchange values of two variables
+\ Without locals
+: vswap1  ( addr1 addr2 -- )  2DUP 2&gt;R  @ SWAP @  R&gt; !  R&gt; ! ;
+
+\ Exchange values of two variables
+\ With locals
+: vswap2  ( addr1 addr2 -- )
+    LOCALS| v1 v2 |
+    v1 @ v2 @ v1 ! v2 ! ;
+</pre>
+
+<p><code>LOCALS|</code> allows the creation of up to eight (in some Forths more than eight) names as local identifiers.  The list of names ends with <code>|</code>.  Given <code>0 1 LOCALS| a b |</code>, <code>a</code> returns <code>1</code> and <code>b</code> returns <code>0</code>.  (Some Forths implement a word that allows the values and the names to be placed in the same order.)</p>
+
+<p><em>y</em> <code>TO</code> <em>name</em> makes <em>name</em> return <em>y</em>. The usage is the same as that for <code>VALUE</code>s.</p>
+
+<p><em>y</em> <code>+TO</code> <em>name</em>, available in some Forths, increments by <em>y</em> the value returned by <em>name</em>.  Again, the usage is the same as that for <code>VALUE</code>s.</p>
+
+
+<p>I wrote the following after trying to explain to my daughter how to find out if a given integer is a prime number.</p>
+
+<pre>\ prime.f LW 10 Jan 02002 +
+
+\ An integer is a prime number if it can be evenly divided
+\ only by itself and 1.  Integers that are not prime numbers
+\ are composite numbers, divisible without a remainder by
+\ numbers (factors) other than itself and 1.
+\ We want to find out if a given integer n is prime or
+\ composite.
+
+\ Two English words for easier reading code.
+: not  ( ? -- ? )  0= ;
+: between  ( n1 n2 n3 -- ? )  1+ WITHIN ;
+
+\ If n is evenly divisible by f, then f is a factor of n.
+\ Is f a factor of n?
+: factor  ( n f -- ? )  MOD 0= ;
+
+\ 2 is a factor of even numbers.
+: even  ( n -- ? )  2 factor ;
+
+\ A composite number has at least one factor less than
+\ or equal to its square root, so we only try f's whose
+\ squares are less than or equal to n.
+: square  ( f -- f*f )  DUP * ;
+
+\ Find out if n has a factor between 3 and its square root
+: factorable  ( n -- ? )
+   3 LOCALS| f n |   \ Start with f = 3
+   BEGIN 
+     n f factor not WHILE  \ Continue if f not a factor of
+     f 2 + TO f            \ make f the next odd number
+     n f square &lt; not WHILE  \ Continue if f squared &lt;= n
+   REPEAT THEN
+   n f factor ;
+   
+: prime?  ( +n -- )
+   LOCALS| n |
+   n 1 3 between IF ." prime"     \ 1, 2, 3 : prime
+   ELSE n even IF  ." composite " \ Even &amp; &gt; 2 : composite
+   ELSE n factorable IF ." composite"  ELSE ." prime" THEN 
+   THEN THEN ;
+
+</pre>
+
+
+A third example of using locals multiplies complex numbers.
+
+<pre>\ complex multiply by ward mcfarland
+: ComplexMultiply ( x1\y1\x2\y2 -- xp\yp )
+\ calculate (x1 + j*y1) * (x2 + j*y2) 
+\            = (x1*x2 - y1*y2) + j(x1*y2 + x2*y1)
+   locals| y2 x2 y1 x1 |
+   x1 x2 *
+   y1 y2 *  -
+   x1 y2 *
+   x2 y1 *  +
+;
+</pre>
+
+<p>Without locals a solution might be:</p>
+<pre>: cm  2OVER 2OVER ROT ROT * &gt;R * &gt;R ROT * &gt;R * R&gt; - 2R&gt; + ;
+</pre>
+
+<p>[To be continued....]</p>
+
+<address>
+1999-2002 Leo Wong <a href="mailto:hello@albany.net">hello@albany.net</a>
+</address>
+</div>
+<div class="centered">
+<p><a href="http://www.murphywong.net/hello/forth.htm">Forth</a></p>
+<p><a href="http://www.murphywong.net/hello/hello.htm">Hello</a></p>
+</div>
+
+</body></html>

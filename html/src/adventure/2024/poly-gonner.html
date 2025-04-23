@@ -1,0 +1,181 @@
+<h1>Poly Gonner</h1>
+
+<p>
+
+<pre>
+?(?-) (Applicative order rules)
+&lt;&gt; ((?x) (?y) &lt;=!=&gt;) (&lt;&gt; ?x ?y)
+&lt;&gt; ((?x) ?. &lt;=!=&gt;) (&lt;&gt; ?x (?.))
+&lt;&gt; (?x ?y &lt;=!=&gt;) (&lt;&gt; ?x ?y)
+&lt;&gt; (&lt;!&gt; ?x ?y) ((?x) (?y) ?(?x ?x) &lt;=!=&gt;)
+
+?((?0 ?1 ?:) ?:) 1024 1024 size
+
+?(?-) (First we may begin by getting the mouse position)
+
+?(?-) (Math)
+
+&lt;&gt; $color1 ((color #ffffff))
+&lt;&gt; $color2 ((color #000000))
+&lt;&gt; $color3 ((color #ff0000))
+&lt;&gt; $color4 ((color #00ff00))
+&lt;&gt; $color5 ((color #0000ff))
+&lt;&gt; $color6 ((color #72dec2)) ?(?-) (the merveilles color)
+&lt;&gt; $screen-size ((number 1024))
+
+&lt;&gt; (sqrt-intermed (?i) (?n) (1) (?x)) ((?i) (2) `-)
+&lt;&gt; (sqrt-intermed (?i) (?n) (0) (1)) ((?i) (1) `-)
+&lt;&gt; (sqrt-intermed (?i) (?n) (0) (0)) (sqrt-intermed ((?i) (1) `+) (?n) 
+                                ((?n) ((?i) (?i) `*) `&lt;)
+                                ((?n) ((?i) (?i) `*) `=))
+&lt;&gt; (sqrt (?n)) (sqrt-intermed (1) (?n) (0) (0))
+
+&lt;&gt; (square (?x)) ((?x) (?x) `*)
+&lt;&gt; (distance (?a ?b) (?c ?d)) (sqrt ((square ((?c) (?a) `-)) (square ((?d) (?b) `-)) `+))
+
+&lt;&gt; (read-event ?~) (handle-event ?~ read-event Any)
+
+&lt;&gt; ((state ((?a ?b) ?s) ?t debouncing) handle-event (Touch (?x ?y ?z)))
+   ((state ((?x ?y) ?s) ?t listening))
+
+&lt;&gt; ((state ?s ?t listening) handle-event (Touch (?x ?y 1)))
+   ((state ((?x ?y) ?s) ?t debouncing))
+
+?(?-) (
+  c - Clear
+  q - quit    
+  1 - Circle
+  2 - line
+  3 - triangle
+  4 - quadrangle
+  5 - fill-circle
+  r - Rotate-color-pRev
+  t - roTate-color-nexT
+)
+
+&lt;&gt; ((state ?s ?t ?f) handle-event (Key (?x c)))
+   (draw fill-rect (number 0) (number 0) $screen-size  $screen-size $color2
+    draw-ui (state () ?t listening))
+
+&lt;&gt; ((state ?s ?f) handle-event (Key (?x q)))
+   (cmd quit)
+
+&lt;&gt; ((state ?s (?t ?r) ?f) handle-event (Key (?x 1)))
+   (draw-ui (state () (circle ?r) ?f))
+
+&lt;&gt; ((state ?s (?t ?r) ?f) handle-event (Key (?x 2)))
+   (draw-ui (state () (line ?r) ?f))
+
+&lt;&gt; ((state ?s (?t ?r) ?f) handle-event (Key (?x 3)))
+   (draw-ui (state () (triangle ?r) ?f))
+
+&lt;&gt; ((state ?s (?t ?r) ?f) handle-event (Key (?x 4)))
+   (draw-ui (state () (quadrangle ?r) ?f))
+
+&lt;&gt; ((state ?s (?t ?r) ?f) handle-event (Key (?x 5)))
+   (draw-ui (state () (fill-circle ?r) ?f))
+
+&lt;!&gt; (next-color $color1) ($color2)
+&lt;!&gt; (next-color $color2) ($color3)
+&lt;!&gt; (next-color $color3) ($color4)
+&lt;!&gt; (next-color $color4) ($color5)
+&lt;!&gt; (next-color $color5) ($color6)
+&lt;!&gt; (next-color $color6) ($color1)
+
+&lt;!&gt; (prev-color $color1) ($color6)
+&lt;!&gt; (prev-color $color2) ($color1)
+&lt;!&gt; (prev-color $color3) ($color2)
+&lt;!&gt; (prev-color $color4) ($color3)
+&lt;!&gt; (prev-color $color5) ($color4)
+&lt;!&gt; (prev-color $color6) ($color5)
+
+&lt;&gt; ((state ?s (?t ?r) ?f) handle-event (Key (?x r))) (draw-ui (state ?s (?t prev-color ?r) ?f))
+&lt;&gt; ((state ?s (?t ?r) ?f) handle-event (Key (?x t))) (draw-ui (state ?s (?t next-color ?r) ?f))
+
+&lt;&gt; (draw-ui (state ?s (?t ?r) ?f)) (
+  draw-brush-icon ?t
+  draw-color-dot ?r 
+  (state ?s (?t ?r) ?f))
+
+&lt;!&gt; (draw-color-dot $color2) 
+(draw fill-circ $icon-position-1 (number 6) $color2
+ draw circ $icon-position-1 (number 5) $color1)
+&lt;!&gt; (draw-color-dot (color ?c)) (draw fill-circ $icon-position-1 (number 6) (color ?c))
+
+&lt;&gt; clear-brush-icon (draw fill-rect (number 10) $screen-size (number 54) `- (number 16) (number 16) $color2)
+
+&lt;&gt; (draw-brush-icon line) (
+  clear-brush-icon
+  draw line (number 10) $screen-size (number 42) `- (number 22) $screen-size (number 54) `- $color1
+)
+
+&lt;&gt; (draw-brush-icon quadrangle) (
+  clear-brush-icon
+  draw rect (number 10) $screen-size (number 54) `- (number 12) (number 12) $color1
+)
+
+&lt;&gt; (draw-brush-icon triangle) (
+  clear-brush-icon
+  draw line (number 10) $screen-size (number 42) `- (number 16) $screen-size (number 54) `- $color1
+  draw line (number 16) $screen-size (number 54) `- (number 22) $screen-size (number 42) `- $color1
+  draw line (number 10) $screen-size (number 42) `- (number 22) $screen-size (number 42) `- $color1
+)
+
+&lt;&gt; (draw-brush-icon circle) (
+  clear-brush-icon
+  draw circ (number 16) $screen-size (number 48) `- (number 6) $color1
+)
+&lt;&gt; (draw-brush-icon fill-circle) (
+  clear-brush-icon
+  draw fill-circ (number 16) $screen-size (number 48) `- (number 6) $color1
+)
+
+&lt;&gt; $icon-position-1 ((number 16) $screen-size (number 16) `-)
+
+?(?-) (c)
+
+&lt;&gt; (handle-event ?x) ()
+
+&lt;&gt; (state ((?a ?b) ((?c ?d) ?s)) (circle ?r) listening)
+   
+   (draw circ (number ?c) (number ?d) (number distance (?a ?b) (?c ?d)) ?r
+    state ?s (circle ?r) listening)
+
+&lt;&gt; (state ((?a ?b) ((?c ?d) ?s)) (fill-circle ?r) listening)
+   
+   (draw fill-circ (number ?c) (number ?d) (number distance (?a ?b) (?c ?d)) ?r 
+    state ?s (fill-circle ?r) listening)
+
+&lt;&gt; (state ((?a ?b) ((?c ?d) ?s)) (line ?r) listening)
+   (draw line (number ?a) (number ?b) (number ?c) (number ?d) ?r
+    state ?s (line ?r) listening)
+
+&lt;&gt; (state ((?a ?b) ((?c ?d) ((?e ?f) ?s))) (triangle ?r) listening)
+   (draw line (number ?a) (number ?b) (number ?c) (number ?d) ?r
+    draw line (number ?c) (number ?d) (number ?e) (number ?f) ?r
+    draw line (number ?e) (number ?f) (number ?a) (number ?b) ?r
+    state ?s (triangle ?r) listening)
+
+&lt;&gt; (state ((?a ?b) ((?c ?d) ((?e ?f) ((?g ?h) ?s)))) (quadrangle ?r) listening)
+   (draw line (number ?a) (number ?b) (number ?c) (number ?d) ?r
+    draw line (number ?c) (number ?d) (number ?e) (number ?f) ?r
+    draw line (number ?e) (number ?f) (number ?g) (number ?h) ?r
+    draw line (number ?g) (number ?h) (number ?a) (number ?b) ?r
+    state ?s (quadrangle ?r) listening)
+
+?(?-) (Action handlers)
+&lt;&gt; (draw ?: (number ?0) (number ?1) (number ?2) (number ?3) (color ?4)) ?:
+&lt;&gt; (draw ?: (number ?0) (number ?1) (number ?2) (color ?3)) ?:
+&lt;&gt; (draw ?: (number ?0) (number ?1) (color ?2)) ?:
+&lt;&gt; ((?0) (?1) `?:) ?:
+&lt;&gt; ((number ?0) (number ?1) `?:) ((number ?:))
+
+&lt;&gt; (dec (number ?x)) ((number ?x) (number 1) `-)
+&lt;&gt; (inc (number ?x)) ((number ?x) (number 1) `+)
+
+&lt;&gt; (cmd ?:) ?:
+
+draw fill-rect (number 0) (number 0) $screen-size $screen-size $color2
+draw-ui
+(state () (circle $color1) listening) read-event Any
+</pre>

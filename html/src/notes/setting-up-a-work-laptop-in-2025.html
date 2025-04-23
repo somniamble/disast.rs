@@ -1,0 +1,43 @@
+<h1>Setting up a work laptop in 2025</h1>
+
+<article>
+  <h2>Setting up a work laptop in 2025</h2>
+  <p>Thanks god it's linux, at least</p>
+  <p>First things first, get my <a href="dummy">dotfiles</a> on there</p>
+  <p>Here's the software I'll be using, and where I'll get it:</p>
+  <ul>
+    <li>Neovim (apt)</li>
+    <li>Mise (?)</li>
+    <li>jq (mise)</li>
+    <li>az (mise)</li>
+    <li>kubectl (az or mise)</li>
+  </ul>
+  <p>What about all those fancy treesitters for neovim?</p>
+  <p>Best thing to do is to build neovim from source:</p>
+<pre>
+sudo apt update
+# get em all
+sudo apt install git neovim tmux wget curl zsh \
+                 lua python3 go rust clang gcc cc xsel \
+                 syncthing chromium-browser magic-wormhole kitty
+# get some other tools set up
+# <a href="https://mise.jdx.dev/getting-started.html">mise</a>
+# bkt
+# sponge
+# cha
+
+# atuin fuckery
+# my atuin setup was all bunged up, so I remade an account and then from schiz:
+atuin store purge        # blow away everything I can't decrypt locally
+atuin store push --force # blow away remote store, push up local
+
+# then from skinny
+atuin store pull --force # ok? ok.
+
+
+# generate SSH keys
+ssh-keygen -t ed25519-sk -C cheek-key-comment -f ~/.ssh/cheeky-key-name
+
+</pre>
+
+</article>

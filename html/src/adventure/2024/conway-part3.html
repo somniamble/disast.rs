@@ -1,0 +1,208 @@
+<h1>Conway Day 3</h1>
+<p>As you see at the bottom of this, I am in the process of debugging this.</p>
+<pre>
+?(?-) (An implementation of conway's game of life
+
+Incomplete.)
+
+?(?-) (I have the sense that I'm dancing around some very simple thing here, which is why there's so much.)
+
+?(?-) (Applicative order rules)
+&lt;&gt; ((?x) (?y) &lt;=!=&gt;) (&lt;&gt; ?x ?y)
+&lt;&gt; ((?x) ?. &lt;=!=&gt;) (&lt;&gt; ?x (?.))
+&lt;&gt; (?x ?y &lt;=!=&gt;) (&lt;&gt; ?x ?y)
+&lt;&gt; (&lt;!&gt; ?x ?y) ((?x) (?y) ?(?x ?x) &lt;=!=&gt;)
+
+?(?-) (Evaluate left-hand-side of rule only)
+&lt;&gt; ((?x) &lt;=!=&lt; (?y)) (&lt;&gt; ?x ?y)
+&lt;&gt; ((?x) &lt;=!=&lt; ?. ) (&lt;&gt; ?x (?.))
+&lt;&gt; (?x &lt;=!=&lt; ?y) (&lt;&gt; ?x ?y)
+&lt;&gt; (&lt;!&lt; ?x ?y) ((?x) ?(?x ?x) &lt;=!=&lt; (?y))
+
+?(?-) (Applicative-order lambdas)
+&lt;&gt; ((?l ?r) ?. &lt;=!@=&gt;) (?(?l ?r) ?.)
+&lt;&gt; (&lt;!@&gt; (?l ?r) ?x) ((?l ?r) ?x ?(?z ?z) &lt;=!@=&gt;)
+
+?(?-) (Function application)
+&lt;&gt; (?. &lt;=$=&gt; ?f) (?f ?.)
+&lt;&gt; ((?a) &lt;=$=&gt; ?f) (?f ?a)
+&lt;&gt; (&lt;$&gt; ?f ?a) (?a ?(?x ?x) &lt;=$=&gt; ?f)
+
+
+&lt;&gt; $screen-size ((16))
+&lt;&gt; $board-offset ((4))
+&lt;!&gt; $board-size (($screen-size ($board-offset (2) `*) `-))
+ 
+&lt;&gt; $live-color ((#ffffff))
+&lt;&gt; $dead-color ((#000000))
+
+
+?(?-) (Utils)
+&lt;&gt; (!random) (?((?: ?0 ?1) ?:) rand 0 2)
+&lt;&gt; (eq (?x ?x)) #t
+&lt;&gt; (eq (?x ?y)) #f
+&lt;&gt; ((?0) (?1) `?:) ?:
+&lt;&gt; (?x -1) ((?x) (1) `-)
+&lt;&gt; (?x +1) ((?x) (1) `+)
+&lt;&gt; (read ?: (point ?0 ?1) (?2)) ?:
+&lt;&gt; (read ?: (?0 ?1) (?2)) ?:
+&lt;&gt; (draw ?: (point ?0 ?1) (?2)) ?:
+
+
+?(?-) (Initialize the game board)
+
+&lt;!&gt; (?p (0) cell) (draw pixel ?p $dead-color)
+&lt;!&gt; (?p (1) cell) (draw pixel ?p $live-color)
+
+
+&lt;&gt; (handle-event (Tic ?x)) (Conway)
+&lt;&gt; (handle-event ?x) (?(?: ?:) (print (Unknown event: ?x \n)))
+&lt;&gt; (on-event ?~) (handle-event ?~ on-event Any)
+
+
+&lt;!&lt; ($board-offset $board-offset init) ()
+&lt;!&lt; ($board-offset (?j) init) ($board-size ((?j) (1) `-) init)
+&lt;&gt; ((?i) (?j) init) (
+  (point ?i ?j) ((0) (2) `rand) cell
+  ((?i) (1) `-) (?j) init
+)
+
+&lt;!@&gt; (((?0) (?1) ?:) ?:) ($screen-size $screen-size size)
+&lt;!@&gt; ((?0 ?1 (?2) (?3) ?4 ?:) ?:) (0 0 $screen-size $screen-size #ff0000 rect)
+
+?(?-) ($board-size $board-size init)
+
+?(?-) (Conway stuff. We can do standard arithmetic on hexadecimal values.)
+
+&lt;!&gt; (judge $live-color ($live-color (#000002) `*)) $live-color
+&lt;!&gt; (judge $live-color ($live-color (#000003) `*)) $live-color
+&lt;!&gt; (judge $dead-color ($live-color (#000003) `*)) $live-color
+&lt;!&gt; (judge (?c) (?d)) $dead-color
+
+?(?-) (Let's get an incorrect version going first)
+&lt;&gt; (Conway) ($board-size $board-size row-to-ram $board-size $board-size Iterate)
+&lt;!&lt; ($board-offset $board-offset Iterate) ()
+&lt;!&lt; ($board-offset (?y) Iterate) ($board-size ((?y) (1) `-) row-to-ram $board-size ((?y) (1) `-) Iterate)
+
+&lt;&gt; ((?x) (?y) Iterate) (
+  copy (0 0) (1 0)
+  copy (?x ?y) (0 0)
+  (at ?x ?y it's (read @pixel (?x ?y) (#000000)) (sum-neighbors-of ?x ?y))
+  draw pixel (point ?x ?y) (judge (read @pixel (?x ?y) (@000000)) (sum-neighbors-of ?x ?y))
+  ((?x) (1) `-) (?y) Iterate
+)
+
+
+?(?-) (Operations)
+&lt;&gt; (``?: (?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7)) ?:
+
+&lt;!&lt; (sum-neighbors-of ?x $board-size) (
+    ``+
+    (read @pixel ((?x) (1) `- (?y) (1) `-) (#000000)
+     read @pixel ( ?x         (?y) (1) `-) (#000000)
+     read @pixel ((?x) (1) `+ (?y) (1) `-) (#000000)
+
+     read @pixel ((?x) (1) `- ?y) (#000000)
+     read @pixel (1 0) (#000000)
+     #000000 #000000 #000000)
+)
+&lt;&gt; (sum-neighbors-of ?x ?y) (
+    ``+
+    (read @pixel ((?x) (1) `- (?y) (1) `-) (#000000)
+     read @pixel ( ?x         (?y) (1) `-) (#000000)
+     read @pixel ((?x) (1) `+ (?y) (1) `-) (#000000)
+
+     read @pixel ((?x) (1) `- ?y) (#000000)
+     read @pixel (1 0) (#0)
+
+     read @pixel ((?x) (1) `- 0) (#000000)
+     read @pixel ( ?x         0) (#000000)
+     read @pixel ((?x) (1) `+ 0) (#000000))
+)
+
+&lt;&gt; (copy (?a ?b) (?c ?d)) ( draw pixel (point ?c ?d) (read @pixel (?a ?b) (#000000)))
+
+&lt;!&gt; ($board-offset (?r) row-to-ram) ()
+&lt;&gt; ((?x) (?r) row-to-ram ) (copy (?x ?r) (?x 0) ((?x) (1) `-) (?r) row-to-ram)
+
+
+?(?-) (
+on-event Any
+
+$board-size $board-size Iterate
+)
+
+?(?-) (Try starting with a simple oscillator)
+draw pixel (point 0 0) (#000000)
+draw pixel (point 1 0) (#000000)
+draw pixel (point 5 6) (#ffffff)
+draw pixel (point 6 6) (#ffffff)
+draw pixel (point 7 6) (#ffffff)
+
+$board-size (1) row-to-ram
+
+?(?-) (
+
+copy (0 0) (1 0)
+copy (?x ?y) (0 0)
+draw pixel (point ?x ?y) (judge (read @pixel (?x ?y) (#000000)) (sum-neighbors-of ?x ?y))
+draw pixel (point 1 0) (#000000)
+read @pixel (7 7) (#000000) sum-neighbors-of 7 7
+read @pixel (6 7) (#000000) sum-neighbors-of 6 7
+read @pixel (5 7) (#000000) sum-neighbors-of 5 7
+)
+
+?(?-) (
+We're drawing a grid like this:
+[
+this is (5 5) -> - - - -
+                 # # # -
+                 - - - -
+                 - - - -
+this is (8 8) ---------^
+]
+We would expect that the first pass would look like this:
+
+(at 8 8 it's (#000000) (0))
+(at 7 8 it's (#000000) (0))
+(at 6 8 it's (#000000) (0))
+(at 5 8 it's (#000000) (0))
+(at 8 7 it's (#000000) (16711680)) (1 neighbor)
+(at 7 7 it's (#000000) (33554430)) (2 neighbors)
+(at 6 7 it's (#000000) (50331645)) (3 neighbors)
+(at 5 7 it's (#000000) (33554430)) (2 neighbors)
+(at 8 6 it's (#000000) (16711680)) (1 neighbor)
+(at 7 6 it's (#ffffff) (16711680)) (1 neighbor)
+(at 6 6 it's (#ffffff) (33554430)) (2 neighbors)
+(at 5 6 it's (#ffffff) (16711680)) (1 neighbor)
+(at 8 5 it's (#000000) (16711680)) (1 neighbor)
+(at 7 5 it's (#000000) (33554430)) (2 neighbors) 
+(at 6 5 it's (#000000) (50331645)) (3 neighbors) 
+(at 5 5 it's (#000000) (33554430)) (2 neighbors) 
+
+Instead we have something fucking crazy like this:
+
+(at 8 8 it's (#000000) (16711680))
+(at 7 8 it's (#000000) (0))
+(at 6 8 it's (#000000) (0))
+(at 5 8 it's (#000000) (16711680))
+(at 8 7 it's (#000000) (33488895))
+(at 7 7 it's (#000000) (33554430))
+(at 6 7 it's (#000000) (50331645))
+(at 5 7 it's (#000000) (50266110))
+(at 8 6 it's (#000000) (50266110))
+(at 7 6 it's (#ffffff) (50331645))
+(at 6 6 it's (#ffffff) (83886075))
+(at 5 6 it's (#ffffff) (67043325))
+(at 8 5 it's (#000000) (33488895))
+(at 7 5 it's (#000000) (0))
+(at 6 5 it's (#000000) (0))
+(at 5 5 it's (#000000) (16711680))
+(at 8 4 it's (#000000) (16711680))
+(at 7 4 it's (#000000) (0))
+(at 6 4 it's (#000000) (0))
+(at 5 4 it's (#000000) (16711680))  
+)
+
+ Conway
+</pre>

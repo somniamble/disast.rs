@@ -1,0 +1,31 @@
+<h1>How to fix a broken Mise registry</h1>
+
+<section>
+<p>I wanted to download <code>kube-linter</code>, to lint my kubernetes manifests with</p>
+<p>I use <a href="https://mise.jdx.dev">mise</a> to install it, but (currently) the plugin is broken -- the link it uses for the binary download has a minor typo.</p>
+<p>I thought, "how do I fix this without googling it?"</p>
+<h2>Strace Rules</h2>
+<p><a href="/notes/strace-my-beloved.html">strace</a> can show files opened by a process—</p>
+<pre>
+# from the man page, on the `-e` (trace filtering) flags:
+# Trace  all  system calls which take a file name as an argument.  You can think of this
+# as an abbreviation for -e trace=open,stat,chmod,unlink,...  which is useful to  seeing
+# what  files  the process is referencing.  Furthermore, using the abbreviation will en‐
+# sure that you don't accidentally forget to include a call like lstat(2) in  the  list.
+# Betchya  woulda  forgot  that  one.   The syntax without a preceding percent sign ("-e
+# trace=file") is deprecated.
+strace -e trace=%file mise upgrade kube-linter
+
+# outputs many things, including:
+# statx(AT_FDCWD, "/home/rosin/.local/share/mise/plugins/kube-linter", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL|STATX_MNT_ID, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
+</pre>
+
+<p>Nice, we found where mise keeps the <code>kube-linter</code> plugin</p>
+<p>From here, it's a little bit of sleuthing to find the code that sets the download url:</p>
+<pre>
+# lib/utils.bash, line 48
+--- url="$GH_REPO/releases/download/${version}/kube-linter-${os}.tar.gz"
++++ url="$GH_REPO/releases/download/<span style="background-color:lightgreen;">v</span>${version}/kube-linter-${os}.tar.gz"
+</pre>
+<p><code>mise install kube-linter &amp;&amp; mise use kube-linter</code> and all is well!</p>
+</section>

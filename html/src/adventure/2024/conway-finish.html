@@ -1,0 +1,176 @@
+<h1>Conway's game of life</h1>
+<p><i>Here lies the afternoon for 2024-12-20</i>, happily spent.</p>
+<pre>
+?(?-) (An implementation of conway's game of life.)
+
+?(?-) (I have the sense that I'm dancing around some very simple thing here, which is why there's so much.)
+
+?(?-) (Applicative order rules)
+&lt;&gt; ((?x) (?y) &lt;=!=&gt;) (&lt;&gt; ?x ?y)
+&lt;&gt; ((?x) ?. &lt;=!=&gt;) (&lt;&gt; ?x (?.))
+&lt;&gt; (?x ?y &lt;=!=&gt;) (&lt;&gt; ?x ?y)
+&lt;&gt; (&lt;!&gt; ?x ?y) ((?x) (?y) ?(?x ?x) &lt;=!=&gt;)
+
+?(?-) (Evaluate left-hand-side of rule only)
+&lt;&gt; ((?x) &lt;=!=&lt; (?y)) (&lt;&gt; ?x ?y)
+&lt;&gt; ((?x) &lt;=!=&lt; ?. ) (&lt;&gt; ?x (?.))
+&lt;&gt; (?x &lt;=!=&lt; ?y) (&lt;&gt; ?x ?y)
+&lt;&gt; (&lt;!&lt; ?x ?y) ((?x) ?(?x ?x) &lt;=!=&lt; (?y))
+
+?(?-) (Applicative-order lambdas)
+&lt;&gt; ((?l ?r) ?. &lt;=!@=&gt;) (?(?l ?r) ?.)
+&lt;&gt; (&lt;!@&gt; (?l ?r) ?x) ((?l ?r) ?x ?(?z ?z) &lt;=!@=&gt;)
+
+?(?-) (Function application)
+&lt;&gt; (?. &lt;=$=&gt; ?f) (?f ?.)
+&lt;&gt; ((?a) &lt;=$=&gt; ?f) (?f ?a)
+&lt;&gt; (&lt;$&gt; ?f ?a) (?a ?(?x ?x) &lt;=$=&gt; ?f)
+
+
+&lt;&gt; $board-offset ((4))
+&lt;&gt; $board-size ((24))
+&lt;!&gt; $screen-size (($board-size ($board-offset (2) `*) `+))
+ 
+&lt;&gt; $live-color ((#ffffff))
+&lt;&gt; $dead-color ((#000000))
+
+
+?(?-) (Utils)
+&lt;&gt; (!random) (?((?: ?0 ?1) ?:) rand 0 2)
+&lt;&gt; ((?0) (?1) `?:) ?:
+&lt;&gt; (?x -1) ((?x) (1) `-)
+&lt;&gt; (?x +1) ((?x) (1) `+)
+&lt;&gt; (read ?: (point ?0 ?1) (?2)) ?:
+&lt;&gt; (read ?: (?0 ?1) (?2)) ?:
+&lt;&gt; (draw ?: (point ?0 ?1) (?2)) ?:
+
+
+?(?-) (Initialize the game board)
+
+&lt;!&gt; (?p (.) cell) (draw pixel ?p $dead-color)
+&lt;!&gt; (?p (#) cell) (draw pixel ?p $live-color)
+&lt;!&gt; (?p (0) cell) (draw pixel ?p $dead-color)
+&lt;!&gt; (?p (1) cell) (draw pixel ?p $live-color)
+
+
+&lt;&gt; (handle-event (Tic ?x)) (Conway)
+&lt;&gt; (handle-event ?x) (?(?: ?:) (print (Unknown event: ?x \n)))
+&lt;&gt; (on-event ?~) (handle-event ?~ on-event Any)
+
+
+&lt;!&lt; ($board-offset $board-offset init) ()
+&lt;!&lt; ($board-offset (?j) init) ($board-size ((?j) (1) `-) init)
+&lt;&gt; ((?i) (?j) init) (
+  (point ?i ?j) ((0) (2) `rand) cell
+  ((?i) (1) `-) (?j) init
+)
+
+
+
+
+?(?-) (Conway stuff. We can do standard arithmetic on hexadecimal values.)
+
+&lt;!&gt; (judge $live-color ($live-color (#000002) `*)) $live-color
+&lt;!&gt; (judge $live-color ($live-color (#000003) `*)) $live-color
+&lt;!&gt; (judge $dead-color ($live-color (#000003) `*)) $live-color
+&lt;!&gt; (judge (?c) (?d)) $dead-color
+
+?(?-) (Let's get an incorrect version going first)
+&lt;&gt; (Conway) ($screen-size (0) copy-row $board-size $board-size Iterate)
+&lt;!&lt; ($board-offset $board-offset Iterate) ()
+&lt;!&lt; ($board-offset (?y) Iterate) ((1) (0) copy-row ((?y) (1) `-) (1) copy-row $board-size ((?y) (1) `-) Iterate)
+
+&lt;&gt; ((?x) (?y) Iterate) (
+  (0 1) (0 0) copy
+  (?x ?y) (0 1) copy
+  draw pixel (point ?x ?y) (judge (read @pixel (?x ?y) (@000000)) (sum-neighbors-of ?x ?y))
+  ((?x) (1) `-) (?y) Iterate
+)
+
+
+?(?-) (Operations)
+&lt;&gt; (``?: (?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7)) ?:
+&lt;&gt; (sum-neighbors-of ?x ?y) (
+    ``+
+    (read @pixel ((?x) (1) `- (?y) (1) `-) (#000000)
+     read @pixel ( ?x         (?y) (1) `-) (#000000)
+     read @pixel ((?x) (1) `+ (?y) (1) `-) (#000000)
+
+     read @pixel ((?x) (1) `- ?y) (#000000)
+     read @pixel (0 0) (#0)
+
+     read @pixel ((?x) (1) `- 0) (#000000)
+     read @pixel ( ?x         0) (#000000)
+     read @pixel ((?x) (1) `+ 0) (#000000))
+)
+
+&lt;&gt; ((?a ?b) (?c ?d) copy) ( draw pixel (point ?c ?d) (read @pixel (?a ?b) (#000000)))
+&lt;!&lt; ($board-offset ?a ?b copy-row-step) ()
+&lt;&gt; ((?x) ?a ?b copy-row-step) ((?x ?a) (?x ?b) copy ((?x) (1) `-) ?a ?b copy-row-step)
+&lt;&gt; ((?a) (?b) copy-row) ($board-size ?a ?b copy-row-step) 
+
+&lt;!@&gt; (((?0) (?1) ?:) ?:) ($screen-size $screen-size size)
+
+&lt;&gt; ((?x) (?y) () init-board-step) ()
+&lt;!&lt; (($board-size $board-offset `+) ($board-size $board-offset `+) ?s init-board-step) ()
+&lt;!&lt; (($board-size $board-offset `+) (?y) ?s init-board-step) ($board-offset ((?y) (1) `+) ?s init-board-step)
+&lt;&gt; ((?x) (?y) (?a ?s) init-board-step) ((point ?x ?y) (?a) cell ((?x) (1) `+) (?y) ?s init-board-step)
+&lt;&gt; (init-board ?*) ($board-offset $board-offset (?*) init-board-step)
+
+
+?(?-) (I've noticed strange behavior at the edges of the game-board.)
+
+?(?-) (
+
+Gosper gun. 
+
+Requires a board size of 39
+
+For some reason, my program draws the rightmost block as a zig-zag
+So, the gosper gun blows up. Oh well!
+init-board (
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  
+. . . . . . . . . . . . . . . . . . . . . . . . . # . . . . . . . . . . . . .  
+. . . . . . . . . . . . . . . . . . . . . . . # . # . . . . . . . . . . . . .  
+. . . . . . . . . . . . . # # . . . . . . # # . . . . . . . . . . . . # # . .  
+. . . . . . . . . . . . # . . . # . . . . # # . . . . . . . . . . . . # # . .  
+. # # . . . . . . . . # . . . . . # . . . # # . . . . . . . . . . . . . . . .  
+. # # . . . . . . . . # . . . # . # # . . . . # . # . . . . . . . . . . . . .  
+. . . . . . . . . . . # . . . . . # . . . . . . . # . . . . . . . . . . . . .  
+. . . . . . . . . . . . # . . . # . . . . . . . . . . . . . . . . . . . . . .  
+. . . . . . . . . . . . . # # . . . . . . . . . . . . . . . . . . . . . . . .  
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  
+)
+)
+
+?(?-) (Requires a board-size of 20
+init-board (
+. . . . . . . . . . . . . . . . . . . .
+. . . . . # # # . . . # # # . . . . . .
+. . . . . . . . . . . . . . . . . . . .
+. . . # . . . . # . # . . . . # . . . .
+. . . # . . . . # . # . . . . # . . . .
+. . . # . . . . # . # . . . . # . . . .
+. . . . . # # # . . . # # # . . . . . .
+. . . . . . . . . . . . . . . . . . . .
+. . . . . # # # . . . # # # . . . . . .
+. . . # . . . . # . # . . . . # . . . .
+. . . # . . . . # . # . . . . # . . . .
+. . . # . . . . # . # . . . . # . . . .
+. . . . . . . . . . . . . . . . . . . .
+. . . . . # # # . . . # # # . . . . . .
+. . . . . . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . . . . . .
+)
+)
+
+?(?-) (Randomize board)
+$board-size $board-size init
+on-event Any
+</pre>

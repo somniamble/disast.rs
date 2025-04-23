@@ -1,0 +1,72 @@
+<h1>Networking/IPSEC glossaries</h1>
+
+<p>Networking/Security terms.</p>
+
+<ul>
+  <li>Peering</li>
+  <li>Subnet</li>
+  <li>VNet / virtual network</li>
+  <li>north south east west</li>
+  <!-- Is this how you nest lists? -->
+  <li>
+    load balancer
+    <ul>
+      <li>standard</li>
+      <li>internal</li>
+    </ul>
+  </li>
+  <li>DNS</li>
+  <li>DNS Zone</li>
+  <li>Application Security Group</li>
+  <li>Network Security Group</li>
+  <li><h5>IDOR Vulnerabilty<h5>
+        <p>Insecure Direct Object Reference</p>
+        <p>when a website takes user input unmolested to select resources 
+        -- e.g. changing <code>https://example.com/profile/edit?id=5</code> to <code>https://example.com/profile/edit?id=10</code> 
+        and getting somebody else's profile editor.</p>
+  </li>
+  <li>
+    <ul>
+      <h5>CIDR notation</h5>
+    <p>CIDR: Classless Inter-Domain Routing</p>
+    <p>Notates an IP address and its network mask</p>
+    <li>E.g. <code>10.0.0.0/24</code> means "every IP from <code>10.0.0.0</code> to <code>10.0.0.255</code>".</li>
+    <li>E.g. <code>10.0.0.0/16</code> means "every IP from <code>10.0.0.0</code> to <code>10.0.255.255</code>".</li>
+    <li>E.g. <code>10.0.0.0/8</code> means "every IP from <code>10.0.0.0</code> to <code>10.255.255.255</code>".</li>
+    </ul>
+  </li>
+  <li>
+    DHCP
+    <ul>
+      <li>Dynamic Host Configuration Protocol</li>
+    </ul>
+  </li>
+  <li>
+    NAT Gateway
+    <ul>
+      <p>NAT stands for: Network Address Translation</p>
+      <p>From <a href="https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/NATgateway.htm">oracle's documentation</a>:</p>
+      <blockquote>
+<p>
+NAT is a networking technique commonly used to give an
+entire private network access to the internet without assigning 
+each host a public IPv4 address. The hosts can initiate connections 
+to the internet and receive responses, but not receive inbound 
+connections initiated from the internet.
+</p>
+<p>
+When a host in the private network initiates an internet-bound connection,
+the NAT device's public IP address becomes the source IP address 
+for the outbound traffic. The response traffic from the internet 
+therefore uses that public IP address as the destination IP address. 
+The NAT device then routes the response to the host in 
+the private network that initiated the connection.
+</p>
+<p>
+NAT gateways are highly available and support TCP, UDP, and ICMP ping traffic.
+</p>
+      </blockquote>
+
+      </ul>
+  </li>
+</ul>

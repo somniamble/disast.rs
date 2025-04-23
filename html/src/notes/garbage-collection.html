@@ -1,0 +1,31 @@
+<h1>Garbage Collection</h1>
+
+<p>See the <a href="http://gchandbook.org/">Garbage Collection Handbook</a></p>
+
+<p>Garbage collection is one of the features you may use to distinguish a
+   "high-level" language from a 
+   <a href="what-makes-something-low-level.html">lowlevel language</a></p>
+
+<p>High-level languages "hide irrelevant details" (behind abstraction).</p>
+
+<p>Glossary</p>
+<ul>
+  <li>Reachability :: <p>Can the runtime reach this data?</p></li>
+  <li>Conservative GC</li>
+  <li>Garbage :: 
+    <p>Unreachable memory</p></li>
+  <li>Managed language :: 
+    <p>A language which automatically manages memory</p>
+    <p>Contrast with a language like <code>C</code></p>
+  </li>
+  <li>Precise GC</li>
+  <li>Mark-and-Sweep :: 
+    <p>two-phase traversal of all reachable memory in a program</p>
+    <p>In the first phase, any data which is reachable is <i>marked</i></p>
+    <p>In the second phase, any data which is not marked is <i>swept</i>
+       (i.e. <code>freed</code>)</p>
+  </li>
+  <li>Weak Reference ::
+    <p>A reference which does not protect an object from garbage-collection</p>
+  </li>
+</ul>

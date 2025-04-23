@@ -1,0 +1,106 @@
+<h1>AZ Pipeline Scripting and You</h1>
+
+<article>
+  <p>
+    I find myself going back to the docs for azure pipeline scripts every time I
+    write one
+  </p>
+  <section>
+    <h2>Common</h2>
+    <p>
+      Like other pipeline tasksm these are run from the root of the pipeline
+      workspace by default.
+    </p>
+  </section>
+
+  <section>
+    <h2>AzureCli@2 Scripts</h2>
+    <p>
+      These are for running a script as a particular user ID, usually a Service
+      Principal that's conferred certain privileges for working with Azure
+      resources. These can be script files, or inline scripts (which can call
+      other scripts).
+    </p>
+
+    <p>Here are some examples:</p>
+
+    <pre>
+- steps:
+  # simple inline script
+  - task: AzureCli@2
+    displayName: "Foo the bar"
+    inputs:
+      azureSubscription: "My Azure Resource Manager"
+      scriptType: "bash"
+      scriptLocation: "inlineScript"
+      inlineScript: |
+        az account show
+  - task: AzureCli@2
+    displayName: "Bar the Foo"
+    inputs:
+      azureSubscription: "My Azure Resource Manager"
+      scriptType: "bash"
+      scriptLocation: "inlineScript"
+      addSpnToEnvironment: true # adds some variables to the environment, shown below
+      inlineScript:
+        echo "Hi, I'm $servicePrincipalId"
+        echo "I belong to the tenant $tenantId"
+        echo "My secret key is $servicePrincipalKey"
+        echo "and my secret Access Token is $idToken"
+  - task: AzureCli@2
+    displayName: "Powershell The Foobar"
+    inputs:
+      azureSubscription: "My Azure Resource Manager"
+      scriptType: pscore #bash and pscore are usable on linux agents
+      scriptLocation: scriptPath
+      scriptPath: scripts/my-pwsh-script.ps1
+      arguments: "-Pac Man -Verbose"
+  # a more fully featured Azure Powershell
+  # allows accessing the very powerful Az module
+  # however, using az cli takes some doing.
+  # I forget how to do it!
+    - task: AzurePowerShell@5
+      displayName: "Extra Powerful PowerShell"
+      inputs:
+        azureSubscription: "My Azure Resource Manager"
+        # workingDirectory: "some/working/directory"
+        pwsh: true
+        azurePowerShellVersion: LatestVersion 
+        ScriptType: "FilePath"
+        ScriptPath: "path/to/my/script.ps1"
+        ScriptArguments:
+          -scriptParam1 arg1
+          -scriptParam2 arg2
+          -scriptFlag
+    </pre>
+
+    <p>
+    If you need to use <code>az</code> inside of your <code>AzurePowerShell@5</code> task, 
+    you can use job-scoped variables to jury-rig something like this:
+    </p>
+    <pre>
+  - task: AzureCLI@2
+    displayName: 'Azure CLI - get credentials'
+    inputs:
+      azureSubscription: 'My Azure Resource MAnager'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      addSpnToEnvironment: true
+      inlineScript: |
+        Write-Host "##vso[task.setvariable variable=ARM_CLIENT_ID]$servicePrincipalId"
+        Write-Host "##vso[task.setvariable variable=ARM_CLIENT_SECRET]$servicePrincipalKey"
+        Write-Host "##vso[task.setvariable variable=ARM_TENANT_ID]$tenantId"      
+
+  - task: AzurePowerShell@5
+    displayName: 'collector'
+    inputs:
+      azurePowerShellVersion: LatestVersion
+      azureSubscription: 'My Azure Resource MAnager'
+      pwsh: true
+      scriptType: inlineScript
+      inline: |
+        az login --service-principal --username "$($env:ARM_CLIENT_ID)" --password "$($env:ARM_CLIENT_SECRET)" --tenant "$($env:ARM_TENANT_ID)"
+        ./another-script.ps1
+    </pre>
+  </section>
+</article>

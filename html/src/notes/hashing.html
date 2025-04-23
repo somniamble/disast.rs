@@ -1,0 +1,54 @@
+<h1>Hash</h1>
+
+<p>
+  So much of our modern digital infrastructure is built off hash tables, it
+  seems I should have an entry.
+</p>
+
+<article>
+  <blockquote>You can think of a hash table as a dynamic array, 
+              with a really strange policy for inserting items.
+  </blockquote>
+  <section>
+    <h3>Hash Functions</h3>
+    <blockquote>Many hash functions follow the same pattern. You start with some
+      initial hash value, usually a constant with certain carefully chosen
+      mathematical properties. Then you walk the data to be hashed. For each
+      byte, you mix the bits into the hash value somehow, and then scramble
+      the resulting bits around some.
+    </blockquote>
+    <p>FNV-1a</p>
+  </section>
+  <section>
+    <h3>Techniques</h3>
+    <p>See: double hashing, cuckoo hashing, Robin Hood hashing, linear probing</p>
+  </section>
+  <section>
+  <h3>Glossary</h3>
+  <ul>
+    <li><h4>Collision</h4>:
+      <p>Occurs when the calculated index (i.e. <i>hash</i>) of two elements 
+         in a hashtable are the same.</p></li>
+    <li><h4>Load Factor</h4>:
+      <p>The ratio between the size of a hash table, and the number of elements it contains</p></li>
+    <li><h4>Separate Chaining</h4>:
+      <p>A strategy for resolving collisions between elements wherein each <i>bucket</i>
+      of a hash table points to a linked-list of elements, rather than a single position. </p>
+      <p>It's simple to implement, but tends to be memory inefficient.</p>
+    </li>
+    <li>
+      <h4>Open Addressing</h4>
+      <p>Also known as "closed hashing"</p>
+      <p>A hashing technique wherein each element is stored directly in the table</p>
+      <p>Upon collision, the table <i>probes</i> for the next available bucket.</p>
+      <p>The simplest form of probing is <i>linear probing</i>, in which the table
+         walks its internal array looking for the first open bucket.</p>
+    </li>
+    <li>
+      <h4>Clustering</h4>
+      <p>The presence of multiple entries in one section of the table</p>
+      <p>High degrees of clustering in a table suggest a different hashing
+         algorithm or probing algorithm may be appropriate.</p>
+  </ul>
+  <section>
+</article>

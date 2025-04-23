@@ -1,0 +1,11 @@
+<h1>File systemics</h1>
+
+<p>
+  Make an ext4 file system, with 4kb per block, 1% drive space reserved for
+  root, hinting large-file-size usage (on my machine that's 4mb per inode), and
+  name it after the great grey knight
+</p>
+
+<pre>
+mkfs.ext4 -b 4096 -T largefile4 -m 1 -L BAZUSO /dev/sdd1
+</pre>

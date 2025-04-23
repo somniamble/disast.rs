@@ -1,0 +1,43 @@
+<h1>jq :: json query</h1>
+
+<article>
+  <h1>jq :: json query</h1>
+  <p>So much to love.</p>
+  
+  <section>
+    <h2>Cookbook stuff</h2>
+    <h3>String concatenation</h3>
+    <p>Perform concatenation within parenthesis:</p>
+    <pre>
+    jq 
+    </pre>
+    <h3>Variable interpolation</h3>
+    <p>Use the <code>--arg<code> cli argument to pass variables through to the filter expression:</p>
+    <pre>
+    jq '(.foo + "..." + .moo)' &lt;&lt;&lt; '{"foo": "fah", "moo":"min"}'
+    &gt; "fah...min"
+    </pre>
+FAV="redbean mochi"
+cat desserts.json | jq --arg preferredFlavor "$FAV" '.[] | select(.flavor == $preferredFlavor)'
+    </pre>
+    <p>You can also safely build json objects in the cli this way.</p>
+    <h3>String interpolation</h3>
+    <p>Use <code>\(...)</code> to interpolate query results into strings delimited with quotes:</p>
+    <pre>
+echo '{"foo": "bar"}' | jq '"foo = \(.foo)"'
+> "foo = bar"
+    </pre>
+    </section>
+    <h3>Outputting</h3>
+    <p>Select keys from json</p>
+    <pre>
+
+# use `{}` operator to construct json object
+echo '{"one": "two", "buckleMy": "shoe", "three": "four"}' | jq '. | {buckleMy: .buckleMy}'
+> { "buckleMy": "shoe" }
+
+# equivalent shorthand, specify key without leading `.`
+echo '{"one": "two", "buckleMy": "shoe", "three": "four"}' | jq '. | {buckleMy}'
+> { "buckleMy": "shoe" }
+    </pre>
+</article>

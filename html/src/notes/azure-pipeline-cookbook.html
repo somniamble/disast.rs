@@ -1,0 +1,28 @@
+<h1>Blue Tube Cook Book</h1>
+
+<section id="i-wanna">
+  <h2>I want to...</h2>
+
+  <h3>Run a pipeline in repository A when I open a PR for repository B</h3>
+  <p></p>
+
+
+  <h3>Only run a stage on master:</h3>
+<pre>
+stages:
+- stage: Production
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+</pre>
+    <p>Only run a stage when the last one succeeded:</p>
+<pre>
+stages:
+- stage: Production
+  condition: succeeded()
+</pre>
+    <p>Combine conditions:</p>
+<pre>
+stages:
+- stage: Production
+  condition: and(succeeded(), eq(variables['resources.pipeline.Artifact.sourceBranch'], 'refs/heads/master'))
+</pre>
+</section>

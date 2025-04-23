@@ -1,0 +1,73 @@
+<h1>Why cli?</h1>
+
+<article>
+
+<h2>Why CLI?</h2>
+<p>
+It is a little surprising to me how strong my preference for solving technical problems with shell scripting and pipelining is, when I <i>know</i> that 
+<a href="https://lisp-lang.org/">more powerful,</a> 
+<a href="https://github.com/rakitzis/rc">more interesting,</a>
+<a href="https://www.python.org/">equally ubiquitous,</a> 
+alternatives exist.
+</p>
+
+<p>I refer to "the cli" somewhat generically here.</p>
+<p>I really specifically mean POSIX shells like <code>zsh</code>, <code>sh</code> or <code>bash</code></p> <!-- personally I'm a zsh-bitch -->
+
+<p>This document is an attempt to enumerate the specific reasons I reach for the CLI, and shell scripts.</p>
+
+<h2>The cli is immediate</h2>
+<p>It is very easy to run a command or open a file.</p>
+<p>Contrast to heavyweight languages, where running a command involves explicitly popping open a subprocess.</p>
+<p>The cli "hides" that, it just <i>does</i> it.</p>
+
+<h2>The cli is persistent</h2>
+<p>If I need something to "live forever", I write it to a file. Simple.</p>
+
+<h2>The cli is flat</h2>
+<p>A shell script is, generally, executed the way that I read a book.</p>
+<p>Context flows downward, and to the right</p>
+<p>I can usually guess what a piped command is doing, based on the evolution of commands in the pipe.</p>
+
+<h2>The cli is right there.</h2>
+<p>If I need a cli I can go and get one</p>
+<p>It's built into my editor (neovim), and copy/pasting into it is <i>usually</i> easy.</p>
+<p>Opening a terminal emulator with a tmux-session running is literally a keybind away for me</p>
+
+<h2>The cli is noisy.</h2>
+<p>When I need to know what's going on, I can find out.</p>
+<p>Running commands generally tell me as much as I need to know, or I can ask them to tell me more</p>
+<p>If I really <em>really</em> need to know more, there's always <code>strace</code></p>
+
+<h2>The cli is transparent</h2>
+<p>It's all text, basically. If I can make it into text, I can work with it.</p>
+
+<h2>The cli is well-known</h2>
+<p>This really pertains more to something like <code>sh</code> or <code>bash</code> or, (worst case) <code>powershell<!-- 🤮 --></code></p> 
+<p>People will generally not freak out if I write a bash script</p>
+<p>Even if I sneak in a very specialized tool like <a href="jq-my-beloved.html">jq</a>, I can get away with it as long as:<p>
+<ul>
+  <li>The tool is readily available</li>
+  <li>I say exactly what the tool is doing, and how</li>
+</ul>
+
+<h2>The cli is adaptable</h2>
+<p>If I need the objects-first capabilities of something like <code>powershell<!-- 🤢 --></code>, I can pipe json to jq</p>
+<p>If I need to persist some structured information I can use intermediate files, which, conveniently, can be inspected outside of shell scripts.</p>
+<p>I <i>will</i> have to admit this is rather clunky, though.</p>
+
+<h2>The cli is interactive</h2>
+<p>It's a transparently writeable execution environment.<p>
+<p>TUIs are back in style</p>
+<p>I can use my keyboard for everything</p>
+<p>Tab-complete rules</p>
+<p><a href="https://atuin.sh/">Command history</a> <em>fucking</em> rules</p>
+
+<h2>The cli is scriptable</h2>
+<p>Scripts look like sequences of commands, because that's <i>what they are.</i></p>
+
+<h2>The cli is familiar</h2>
+<p>Oh, right, I've been writing shell scripts more-or-less professionally for over 10 years now.</p>
+<p>Hm.</p>
+<!-- The truth is, I am a professional textual-mechanic -->
+</article>

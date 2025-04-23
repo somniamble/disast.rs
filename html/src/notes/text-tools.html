@@ -1,0 +1,38 @@
+<h1>Meals Ready To Eat</h1>
+
+<h2>For when you need to chop text, and chop it fast</h2>
+
+<section>
+  <h3>Awk</h3>
+  <p>My dear friend awk:</p>
+<pre>
+<span style="color: grey"># split on multi-char delimiters, e.g. print the second field after " :: "</span>
+cat file.txt | awk -F ' :: ' '{ print $2 }'
+</pre>
+</section>
+
+<h3>JQ</h3>
+<section>
+<h3>Git</h3>
+<p>Prune tracking branches not on the remote 
+    -- e.g. those branches that have been merged 
+    in to remote.</p>
+<p>I use <code>git branch -D &lt;branch name&gt;</code> 
+   because I tend to squash-commit pull requests. This means
+   that git will usually not detect that a branch has been
+   merged.
+</p>
+<pre>
+git remote prune origin # --dry-run
+git checkout master \
+  && git fetch -p \
+  && git remote prune origin \
+  && git branch -vv \
+  | grep ': gone]' \
+  | grep -v '\*' \
+  | awk '{ print $1 }' \
+  | xargs -I{} git branch -D {}
+
+</pre>
+</section>
+
